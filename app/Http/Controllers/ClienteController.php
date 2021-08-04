@@ -1,5 +1,7 @@
-<?php
 
+<?php
+//unibol_caja_user
+//caja_user
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;

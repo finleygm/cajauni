@@ -16,6 +16,8 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+Route::get('/usuario/contrasenha/{id}', 'UsuarioController@edit_contrasenha')->name('usuario.cambiar_contrasenha');
+Route::put('/usuario/contrasenha/{id}', 'UsuarioController@update_contrasenha')->name('usuario.actualizar_contrasenha');
 Route::get('/home', 'HomeController@index')->name('home');
 // para la cuenta
 Route::get('/cuenta/index', 'CuentaController@index')->name('cuenta.index');
