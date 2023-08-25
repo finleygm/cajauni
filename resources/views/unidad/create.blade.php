@@ -25,12 +25,20 @@
                     <input type="text" class="form-control" id="inumero_unidad" placeholder="Numero Unidad" name="numero_unidad" value="{{old('numero_unidad',)}}">
                   </div>
                   <div class="form-group">
-                    <label for="idescripcion">Descripcion de Unidad</label>
+                    <label for="idescripcion">Nombre de la Unidad</label>
                     <input type="text" class="form-control" id="idescripcion" placeholder="Descripcion" name="descripcion" value="{{old('descripcion')}}">
-                  </div>        
+                  </div>    
                   <div class="form-group">
-                    <label for="irubro_id">Rubro</label>
-                      <select class="form-control" id="irubro_id" name="rubro_id" placeholder="Rubro">
+                    <label for="tipo_unidad">Tipo de unidad</label>
+                      <select class="form-control" id="tipo_unidad" name="tipo_unidad" placeholder="tipo de unidad">  
+                      <option value="Administracion" selected>Administracion</option>
+                      <option value="Carrera">Carrera</option>
+                      <option value="Modulo"> Modulo</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="unidad_id">Unidad a la pertenece</label>
+                      <select class="form-control" id="unidad_id" name="unidad_id" placeholder="unidad_id">
                       <option value="5">values</option>
                       <option value="6">values1</option>
                     </select>
@@ -56,14 +64,16 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')     
                   }
             });             
-            cargarRubros();            
+            cargarRubros(); 
+            cargarUnidad();           
             function cargarRubros()
             {           
               //para chosen el combox que te permite select amigable
               //npm install chosen-js    
                   $.ajax({
                         url: '/ajax/ajaxRubros',
-                        type: 'get',
+                        type: 'post',
+                        data : { name : $("#name").value },
                         dataType: 'json',
                         success:function(response){                              
                               var len = response.length;
@@ -80,7 +90,37 @@
                             $("#irubro_id").chosen({no_results_text: "No se encontro la organización"});     
                         }
                   });
-            }    
+            }   
+            
+            function cargarUnidad() {
+      //para chosen el combox que te permite select amigable
+      //npm install chosen-js    
+      $.ajax({
+        url: '/ajax/ajaxUnidad',
+        type: 'get',
+        dataType: 'json',
+        success: function(response) {
+          var len = response.length;
+          console.log(response);
+          $("#unidad_id").empty();
+          for (var i = 0; i < len; i++) {
+            var unidad_id = response[i];
+            var id = unidad_id.id;
+            var descripcion = unidad_id.descripcion;
+            var htmlinsert = "<option value='" + id + "'>" + descripcion + "</option>";
+            $("#unidad_id").append(htmlinsert);
+          }
+          $("#unidad_id").chosen({
+            no_results_text: "No se encontro la organización"
+          });
+        }
+      });
+    }
+            
+
+
+
+
       });
 </script>
 @endpush

@@ -15,7 +15,10 @@ class Cuenta extends Model
         'nombre_cuenta',
         'descripcion',
         'precio_unitario',
-        'cuenta_clasificador_id'
+        'rubro_id',
+        'unidad_id',
+        'tipo_cuenta',
+        'stock',
     ];    
     public function cuenta_clasificador(){
         return $this->belongsTo(CuentaClasificador::class);

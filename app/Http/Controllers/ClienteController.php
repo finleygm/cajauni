@@ -1,13 +1,11 @@
-
 <?php
-//unibol_caja_user
-//caja_user
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Redirect;
 use App\Cliente;
+
 class ClienteController extends Controller
 {
     public function index(Request $request){

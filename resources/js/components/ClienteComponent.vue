@@ -1,5 +1,7 @@
 <template>
-<transition name="modal">
+  <transition name="modal">
+  <form  action="" v-cloak method="POST"  mid="form-cuenta" @submit.prevent>
+  
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
@@ -36,7 +38,7 @@
                   </div> 
           </div>
           <div class="modal-footer">            
-              <button class="modal-default-button" @click="guardar">
+              <button class="modal-default-button" @click="guardar1">
                 GUARDAR
               </button> 
               <button class="modal-default-button" @click="$emit('close')">
@@ -46,6 +48,7 @@
         </div>
       </div>
     </div>
+  </form>
   </transition>
 </template>
 <style scoped>
@@ -124,7 +127,7 @@
        this.apellidos="";
 
      },
-     guardar(){
+     guardar1(){
        var cliente={
          ci:this.ci,
          ci_expedido:this.ci_expedido,

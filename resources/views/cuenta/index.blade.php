@@ -22,7 +22,7 @@
                     <tr>
                         <td>{{$cuenta->numero_cuenta}}</td>
                         <td>{{$cuenta->nombre_cuenta}}</td>
-                        <td>{{$cuenta->cuenta_clasificador->descripcion}}</td>                    
+                        <td>{{$cuenta->descripcion}}</td>                    
                         <td>
                         <a href="{{route('cuenta.show',$cuenta->id)}}"><button class="btn btn-primary">Detalle</button></a>                      
                         <a href="{{route('cuenta.edit',$cuenta->id)}}" ><button class="btn btn-primary">Editar</button></a>                        

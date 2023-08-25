@@ -9,6 +9,7 @@ use DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Database\Query\JoinClause;
+// use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class ReportesController extends Controller
@@ -17,12 +18,13 @@ class ReportesController extends Controller
         $reportes_clasificador=DB::table('pago_detalle')
                  ->leftjoin('pago', 'pago.id','=','pago_detalle.pago_id')
                  ->leftjoin('cuenta_clasificador','pago.cuenta_clasificador_id','=','cuenta_clasificador.id')
-                 ->leftjoin('rubro','rubro.id','=','cuenta_clasificador.rubro_id')
+                 ->leftjoin('unidad','unidad.id','=','cuenta_clasificador.unidad_id')
+                 ->leftjoin('rubro','rubro.id','=','unidad.rubro_id')
                  ->select(
                     'rubro.numero_identificador',
                     'rubro.descripcion as rubro_descripcion',
-                    'cuenta_clasificador.descripcion as descripcion_clasificador',
-                    'cuenta_clasificador.id',
+                    
+                    
                     DB::raw("sum(pago_detalle.precio_unitario) as monto_consolidado")                    
 
                  )->where('fecha_pago','>=',ReportesController::mysqlDatetoStr($fecha_ini))
@@ -50,19 +52,30 @@ class ReportesController extends Controller
 
     ///POR RUBRO
     public function getReportesRubro($fecha_ini, $fecha_fin){
+        
+        $reportes_clasificador=DB::table('pago_detalle')->get();
+        
+        // DB::enableQueryLog();
+        //DB::enableQueryLog();
         $reportes_clasificador=DB::table('pago_detalle')
-                 ->leftjoin('pago', 'pago.id','=','pago_detalle.pago_id')
-                 ->leftjoin('cuenta_clasificador','pago.cuenta_clasificador_id','=','cuenta_clasificador.id')
-                 ->leftjoin('rubro','rubro.id','=','cuenta_clasificador.rubro_id')
-                 ->select(
-                    'rubro.numero_identificador',
-                    'rubro.descripcion as rubro_descripcion',
-                    DB::raw("sum(pago_detalle.precio_unitario) as monto_consolidado")                    
-                 )->where('fecha_pago','>=',ReportesController::mysqlDatetoStr($fecha_ini))
-                 ->where('fecha_pago','<=',ReportesController::mysqlDatetoStr($fecha_fin))
-                 ->groupby('rubro.id')
-                 ->get();
+        ->leftjoin('pago', 'pago.id','=','pago_detalle.pago_id')
+        ->leftjoin('cuenta_clasificador','pago.cuenta_clasificador_id','=','cuenta_clasificador.id')
+        ->leftjoin('unidad','unidad.id','=','cuenta_clasificador.unidad_id')
+        ->leftjoin('rubro','rubro.id','=','unidad.rubro_id')
+        ->select(
+           'rubro.numero_identificador',
+           'rubro.descripcion as rubro_descripcion',
+           DB::raw("sum(pago_detalle.precio_unitario) as monto_consolidado")                    
+        )->where('fecha_pago','>=',ReportesController::mysqlDatetoStr($fecha_ini))
+        ->where('fecha_pago','<=',ReportesController::mysqlDatetoStr($fecha_fin))
+        ->groupby('rubro.id')
+        ->get();
+        //          //dd($reportes_clasificador);
+       
+          //       dd(DB::enableQueryLog());
+                // dd($reportes_clasificador);
         return $reportes_clasificador;
+        //return response()->json($reportes_clasificador);
     }
     public function reportes_rubro(){
         return view('reportes.reportes_rubro');
@@ -70,7 +83,8 @@ class ReportesController extends Controller
     public function getReporteFromIniFinPorRubro(Request $request){
         $fecha_ini=$request->get('fecha_ini');
         $fecha_fin=$request->get('fecha_fin');
-        $lrubros=$this->getReportesRubro($fecha_ini,$fecha_fin);//Pago::where('fecha_pago','>=',$fecha_ini)->where('fecha_pago','<=',$fecha_fin);        
+        $lrubros=$this->getReportesRubro($fecha_ini,$fecha_fin);//Pago::where('fecha_pago','>=',$fecha_ini)->where('fecha_pago','<=',$fecha_fin);  
+              
         return view('reportes.reportes_rubro_resultado',['lconsolidado_rubro'=>$lrubros,"fecha_ini"=>$fecha_ini,"fecha_fin"=>$fecha_fin]);
     }
     /// return Reportes rubro

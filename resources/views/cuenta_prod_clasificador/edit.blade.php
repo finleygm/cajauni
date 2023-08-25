@@ -2,9 +2,11 @@
 
 @extends('layouts.master')
 @section('contenido')
+
 <div id="app">
-<pago-component tipo_cuenta= {{Auth::user()->categoria}} />
+<pago-prod-component pid_clasificador={{$id}} />
 </div>
+
 @endsection
 
 @push('scripts')

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Cuenta;
 use App\CuentaClasificador;
+use App\CuentaProdClasificador;
 use App\Unidad;
 use Illuminate\Support\Facades\Redirect;
 
@@ -19,7 +20,7 @@ class CuentaClasificadorController extends Controller
         return view('cuenta_clasificador.index',["lcuenta_clasificador"=>$lcuenta_clasificador1]);            
     }
     public function create(){
-        return view('cuenta_clasificador.create');
+        return view('cuenta_prod_clasificador.create');
     }
     public function store(Request $request){
         $cuenta_clasificador=new CuentaClasificador();      
@@ -72,4 +73,68 @@ class CuentaClasificadorController extends Controller
     public function ajaxGetUnidad(){
         return Unidad::all();      
    }
+
+   public function ajaxCuentaClasificador($numero_clasificador){
+    $cuenta_clasificador=CuentaClasificador::where("numero_clasificador",'=',$numero_clasificador)->first(); 
+    $datos_clasificados=CuentaProdClasificador::join('cuenta','cuenta.id','cuenta_producto_clasificador.cuenta_id')                                    
+                                    ->where('cuenta_producto_clasificador.cuenta_clasificador_id','=',$cuenta_clasificador->id)
+                                    ->select(
+                                        'cuenta.id',
+                                        'cuenta.numero_cuenta',
+                                        'cuenta.nombre_cuenta',
+                                        'cuenta.descripcion',
+                                        'cuenta.stock',
+                                        'cuenta_producto_clasificador.id as id_cuenta_clasificador'                                        
+                                    )
+                                    ->get(); 
+    
+   // $datos_clasificados_p=Cuenta::where("id",'=',$datos_clasificados->cuenta_id)->get();
+    
+
+    $datos_agrupados=(object)[];
+    $datos_agrupados->cuenta_clasificador=$cuenta_clasificador;
+    $datos_agrupados->listado_cuentas=$datos_clasificados;
+    // $datos_agrupados->numero_cuenta=$datos_clasificados_p->numero_cuenta;
+    // $datos_agrupados->nombre_cuenta=$datos_clasificados_p->nombre_cuenta;
+    // $datos_agrupados->tipo_cuenta=$datos_clasificados_p->tipo_cuenta;
+    // $datos_agrupados->stock=$datos_clasificados_p->stock;
+    // $datos_agrupados->descripcion=$cuenta_clasificador->descripcion;
+   // dd($datos_agrupados);
+if(($datos_agrupados->cuenta_clasificador->id)!=null){
+        return json_encode($datos_agrupados) ;
+}else{
+         return json_encode($datos_agrupados->cuenta_clasificador);
+}
+      
+}
+public function ajaxCuentaClasificadorById($id){
+    $cuenta_clasificador=CuentaClasificador::find($id); 
+    $datos_clasificados=CuentaProdClasificador::join('cuenta','cuenta.id','cuenta_producto_clasificador.cuenta_id')                                    
+                                    ->where('cuenta_producto_clasificador.cuenta_clasificador_id','=',$cuenta_clasificador->id)
+                                    ->select(
+                                        'cuenta.id',
+                                        'cuenta.numero_cuenta',
+                                        'cuenta.nombre_cuenta',
+                                        'cuenta.descripcion',
+                                        'cuenta.stock',
+                                        'cuenta_producto_clasificador.id as id_cuenta_clasificador'                                        
+                                    )
+                                    ->get(); 
+    
+   // $datos_clasificados_p=Cuenta::where("id",'=',$datos_clasificados->cuenta_id)->get();
+    
+
+    $datos_agrupados=(object)[];
+    $datos_agrupados->cuenta_clasificador=$cuenta_clasificador;
+    $datos_agrupados->listado_cuentas=$datos_clasificados;
+   // dd($datos_agrupados);
+if(($datos_agrupados->cuenta_clasificador->id)!=null){
+        return json_encode($datos_agrupados) ;
+}else{
+         return json_encode($datos_agrupados->cuenta_clasificador);
+}
+      
+}
+
+
 }

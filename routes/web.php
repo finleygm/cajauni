@@ -1,5 +1,6 @@
 <?php
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,11 +12,42 @@
 |
 */
 
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CuentaProdClasificadorController;
+use App\Http\Controllers\UsuarioController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
 Route::get('/', function () {
     return view('welcome');
 });
 
 Auth::routes();
+
+Route::get('/detalle', function () {
+    return view('auth.detalleuser');
+});
+
+Route::get('/authreg', function () {
+    return view('auth.register');
+})->name('authreg')->middleware('auth');
+
+Route::get('/registro',[ RegisterController::class,'index']) ->name('registro.index'); 
+Route::get('/usuario',[ UsuarioController::class,'index']) ->name('usuario.index'); 
+
+//Route::get('/cuentaPC',[ CuentaProdClasificadorController::class,'create']) ->name('cuenta_prod_clasificador.create'); 
+
+
+Route::delete('/cuenta_prod_clasificador/eliminar/{id}','CuentaProdClasificadorController@delete')->name('cuenta_clasificador.delete');
+
+Route::get('/cuentaPCI', 'CuentaProdClasificadorController@index')->name('cuenta_prod_clasificador.index');
+Route::get('/cuentaPC', 'CuentaProdClasificadorController@create')->name('cuenta_prod_clasificador.create');
+
+Route::get('/cuentaPCe/{idr}',[CuentaProdClasificadorController::class,'edit'])->where('id','[0-9]+')->name('cuenta_prod_clasificador.edit');
+Route::get('/detalle/{id}',[UsuarioController::class,'show'])->where('id','[0-9]+')->name('usuario.detallado');
+
+Route::get('/detalle',[ UsuarioController::class,'mostrarUltimo']) ->name('usuario.detalle'); 
+
 Route::get('/usuario/contrasenha/{id}', 'UsuarioController@edit_contrasenha')->name('usuario.cambiar_contrasenha');
 Route::put('/usuario/contrasenha/{id}', 'UsuarioController@update_contrasenha')->name('usuario.actualizar_contrasenha');
 Route::get('/home', 'HomeController@index')->name('home');
@@ -74,10 +106,14 @@ Route::get('/reportes/clasificador', 'ReportesController@reportes_clasificador')
 Route::get('/reportes/rubro', 'ReportesController@reportes_rubro')->name('reportes.reportes_rubro');
 Route::get('/reportes/extracto_pago', 'ReportesController@reportes_extracto')->name('reportes.reportes_extracto');
 //servicios ajax
+Route::get('/ajax/Cuente/{numero_cuenta}', 'CuentaController@ajaxCuente')->name('cuenta.ajaxCuente');
 Route::get('/ajax/Cuenta', 'CuentaController@ajaxCuenta')->name('cuenta.ajaxCuenta');
 Route::get('/ajax/cuentaPorClasificador/{id}', 'CuentaController@ajaxCuentaPorClasificador')->name('cuenta.ajaxCuentaPorClasificador');
 Route::get('/ajax/clasificadorPorUnidad/{id}', 'CuentaController@ajaxClasificadorPorUnidad')->name('cuenta.ajaxClasificadorPorUnidad');
 Route::get('/ajax/Cliente/{ci}', 'ClienteController@ajaxCliente')->name('cuenta.ajaxCliente');
+
+Route::get('/ajax/CuentaClasificador/{numero_clasificador}', 'CuentaClasificadorController@ajaxCuentaClasificador')->name('cuentaclas.ajaxCuentaClasificador');
+Route::get('/ajax/CuentaClasificadorById/{id}', 'CuentaClasificadorController@ajaxCuentaClasificadorById')->name('cuentaclas.ajaxCuentaClasificadorById');
 //pago
 Route::post('/ajax/Pagar', 'PagoController@pagar')->name('pago.ajaxPagar');
 //Route::post('/ajax/Pagar', 'PagoController@pagar')->name('pago.ajaxPagar');
@@ -90,3 +126,4 @@ Route::post('/ajax/ajaxGetReportePorClasificador', 'ReportesController@getReport
 Route::post('/ajax/ajaxGetReportePorRubro', 'ReportesController@getReporteFromIniFinPorRubro')->name('reportes.ajaxGetRubro');
 Route::post('/ajax/ajaxGetExtracto', 'ReportesController@getReporteFromIniFinExtracto')->name('reportes.ajaxGetExtracto');
 Route::post('/ajax/ajaxStoreCliente', 'ClienteController@ajaxClienteStore')->name('cliente.ajaxClienteStore');
+Route::post('/ajax/ajaxAsociarCuenta', 'CuentaProdClasificadorController@ajaxGuardarCuentaClasificada')->name('CuentaClasificadorCuenta.ajaxAsociarCuenta');

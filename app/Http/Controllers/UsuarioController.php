@@ -4,11 +4,31 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use  App\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 class UsuarioController extends Controller
 {
      
+  protected $user;
+
+  public function __construct(User $user)
+  {
+      $this->user = $user;
+  }
+
+  public function index() {               
+   // $Usuario=User::all();
+   // $Usuario['user']=User::paginate(10);
+   // $Usuario = User::paginate(10);
+   $Usuario = DB::table('users')->simplePaginate(10);
+    return view('auth.listaruser',compact('Usuario'));   
+   } 
+
+
+
+
+
     public function edit($id){
         // $usuario=User::findOrFail($id);
         // return view('usuario.edit',[
@@ -35,10 +55,8 @@ class UsuarioController extends Controller
         // }
     }
     public function show($id){
-      //   $usuario=User::findOrFail($id);        
-      //   return view("usuario.show",[      
-      //     "usuario"=>$usuario      
-      // ]);
+        $userdeta=User::findOrFail($id);        
+        return view('auth.detalleuser',compact('userdeta'));
     }
     public function edit_contrasenha($id){
       $usuario=User::findOrFail($id);
@@ -64,4 +82,14 @@ class UsuarioController extends Controller
           return view('usuarios.cambiar_contrasenha',['usuario'=>$usuario]); 
         }        
     }
+    
+    public function mostrarUltimo(){
+     
+      $user = User::latest()->first()->id;
+      $userdeta=User::findOrFail($user);
+
+      return view('auth.detalleuser',compact('userdeta'));
+      
+     
+  }
 }

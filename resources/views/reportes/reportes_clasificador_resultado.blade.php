@@ -15,8 +15,7 @@
                   <tr role="row">
                     <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Rendering engine: activate to sort column ascending">RUBRO</th>
                     <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Rendering engine: activate to sort column ascending">NOMBRE RUBRO</th>                    
-                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">DESCRIPCION CLASIFICADOR</th>                                        
-                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">MONTO</th>                                        
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">MONTO CLASIFICADOR</th>                     
                  </tr>
                   </thead>
                   <tbody>                
@@ -26,8 +25,7 @@
                   @foreach ( $lconsolidado_clasificador as $consolidado_clasificador)
                     <tr class="odd">                      
                       <td class="dtr-control" tabindex="0">{{$consolidado_clasificador->numero_identificador}}</td>
-                      <td>{{$consolidado_clasificador->rubro_descripcion}}</td>                    
-                      <td>{{$consolidado_clasificador->descripcion_clasificador}}</td>                    
+                      <td>{{$consolidado_clasificador->rubro_descripcion}}</td>                           
                       <td>{{$consolidado_clasificador->monto_consolidado}}</td>
                     @php
                      $suma_monto+=$consolidado_clasificador->monto_consolidado;
@@ -37,7 +35,7 @@
                   </tbody>
                   <tfoot>
                   <tr>
-                    <th rowspan="1" colspan="3">TOTAL BS.</th>                    
+                    <th rowspan="1" colspan="2">TOTAL BS.</th>                    
                     <th rowspan="1" colspan="1">{{$suma_monto}}</th>
                   </tr>
                   </tfoot>

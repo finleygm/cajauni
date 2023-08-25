@@ -18,14 +18,16 @@
                     <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">MONTO</th>                                        
                  </tr>
                   </thead>
-                  <tbody>                
+                  <tbody>   
+                  
+
                    @php
                    $suma_monto=0;
                    @endphp
                   @foreach ( $lconsolidado_rubro as $consolidado_rubro)
                     <tr class="odd">                      
                       <td class="dtr-control" tabindex="0">{{$consolidado_rubro->numero_identificador}}</td>
-                      <td>{{$consolidado_rubro->rubro_descripcion}}</td>                    
+                      <td>{{$consolidado_rubro->rubro_descripcion}}</td>
                       <td>{{$consolidado_rubro->monto_consolidado}}</td>
                     @php
                      $suma_monto+=$consolidado_rubro->monto_consolidado;

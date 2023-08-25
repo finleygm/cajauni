@@ -13,10 +13,10 @@ class CuentaClasificador extends Model
         'id',
         'numero_clasificador',
         'descripcion',
-       'unidad_id'
     ];
     public function unidad(){
         return $this->belongsTo(Unidad::class);
     } 
-     
+
+    
 }

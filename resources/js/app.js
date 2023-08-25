@@ -27,6 +27,9 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 Vue.component('chosen-select', require('vue-multiselect/src/Multiselect.vue').default);
 
 Vue.component('pago-component', require('./components/PagoComponent.vue').default);
+
+
+Vue.component('pago-prod-component', require('./components/PagoPcComponent.vue').default);
 //Vue.component('client-component', require('./components/ClienteComponent.vue').default);
 
 /**

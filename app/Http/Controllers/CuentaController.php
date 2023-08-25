@@ -41,12 +41,20 @@ class CuentaController extends Controller
         $nombre_cuenta=$request->get('nombre_cuenta');
         $descripcion=$request->get('descripcion');        
         $precio_unitario=$request->get('precio_unitario');        
-        $clasificador_cuenta_id=$request->get('clasificador_cuenta_id');        
+        $rubro_id=$request->get('rubro_id');  
+        $unidad_id=$request->get('unidad_id');    
+        $tipo_cuenta=$request->get('tipo_cuenta');    
+        $stock=$request->get('stock');        
         $cuenta->numero_cuenta=$numero_cuenta;
         $cuenta->nombre_cuenta=$nombre_cuenta;
         $cuenta->descripcion=$descripcion;
         $cuenta->precio_unitario=$precio_unitario;
-        $cuenta->cuenta_clasificador_id=$clasificador_cuenta_id;
+        $cuenta->rubro_id=$rubro_id;
+        $cuenta->unidad_id=$unidad_id;
+        $cuenta->tipo_cuenta=$tipo_cuenta;
+        $cuenta->stock=$stock;
+
+      
 
         $cuenta_aux=Cuenta::where('numero_cuenta','=',$numero_cuenta)->first();
         if($cuenta_aux==null){
@@ -96,4 +104,9 @@ class CuentaController extends Controller
     public function ajaxClasificadorPorUnidad($id){
         return CuentaClasificador::where('unidad_id','=',$id)->get();
     }
+    public function ajaxCuente($numero_cuenta){
+        $cuenta=Cuenta::where("numero_cuenta",'=',$numero_cuenta)->first();
+    
+        return $cuenta;     
+   }
 }

@@ -28,7 +28,7 @@ class RubroController extends Controller
         $rubro->numero_identificador=$numero_identificador;
         $rubro->descripcion=$descripcion;    
         $rubro_aux=Rubro::where('numero_identificador','=',$numero_identificador)->first();
-        if($crubro_aux==null){
+        if($rubro_aux==null){
             $rubro->save();        
             return redirect()->route('rubro.index');
         }else{          
