@@ -13,17 +13,25 @@
             <div class="table-responsive">
                 <table class="table table-striped table-bordered table-condensed table-hover">
                     <thead>
-                    <th>Numero de Cuenta</th>
-                    <th>Nombre de Cuenta</th>
-                    <th>Clasificador de</th>                   
+                    <th>Numero de Cuenta del Producto</th>
+                    <th>Nombre del Producto</th>
+                    <th style="text-align: center;">Unidad del Producto</th>  
+                    <th style="text-align: center;">Precio del Producto</th> 
+                    <th style="text-align: center;">Tipo de Clasificacion del Producto</th>    
                     <th>Opciones</th>
                     </thead>
                     @foreach($lcuentas as $cuenta)
                     <tr>
                         <td>{{$cuenta->numero_cuenta}}</td>
                         <td>{{$cuenta->nombre_cuenta}}</td>
-                        <td>{{$cuenta->descripcion}}</td>                    
-                        <td>
+                        <td style="text-align: center;">{{$cuenta->unidad}}</td>           
+                        <td  style="text-align: center;" >{{$cuenta->precio_unitario}}</td>
+                        @if (($cuenta->tipo_cuenta)==1)                    
+                        <td style="text-align: center;">Es producto</td>
+                        @else                              
+                        <td style="text-align: center;">No es producto</td>                             
+                        @endif                  
+                        <td>  
                         <a href="{{route('cuenta.show',$cuenta->id)}}"><button class="btn btn-primary">Detalle</button></a>                      
                         <a href="{{route('cuenta.edit',$cuenta->id)}}" ><button class="btn btn-primary">Editar</button></a>                        
                     </tr>                  

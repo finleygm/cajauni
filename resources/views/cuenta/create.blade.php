@@ -22,24 +22,30 @@
         <div class="card-body">
 
           <div class="form-group">
-            <label for="inumero_cuenta">Numero de Cuenta</label>
-            <input type="text" class="form-control" id="inumero_cuenta" placeholder="Numero de Cuenta" name="numero_cuenta" value="{{old('numero_cuenta',)}}">
+            <label for="inumero_cuenta">Numero de Cuenta del Producto</label>
+            <input type="text" class="form-control" id="inumero_cuenta" placeholder="Indique el numero de cuenta de su producto a registrar" name="numero_cuenta" value="{{old('numero_cuenta',)}}">
           </div>
           <div class="form-group">
-            <label for="inombre_cuenta">Nombre de Cuenta</label>
-            <input type="text" class="form-control" id="inombre_cuenta" placeholder="Nombre de cuenta" name="nombre_cuenta" value="{{old('nombre_cuenta')}}">
+            <label for="inombre_cuenta">Nombre del Producto</label>
+            <input type="text" class="form-control" id="inombre_cuenta" placeholder="Indique el nombre del producto" name="nombre_cuenta" value="{{old('nombre_cuenta')}}">
           </div>
+          
           <div class="form-group">
-            <label for="iprecio_unitario">Precio Unitario</label>
-            <input type="text" class="form-control" id="iprecio_unitario" placeholder="Precio Unitario" name="precio_unitario" value="{{old('precio_unitario')}}">
-          </div>
-          <div class="form-group">
-            <label for="idescripcion">Descripción</label>
-            <input type="text" class="form-control" id="idescripcion" placeholder="Descripcion" name="descripcion" value="{{old('descripcion')}}">
+            <label for="unidade">Unidad</label>
+            <input type="text" class="form-control" id="unidad" placeholder="Describa que tipo de unidad de producto ingresara" name="unidad" value="{{old('unidad')}}">
           </div>
 
           <div class="form-group">
-            <label for="rubro_id">Nombre de Rubro</label>
+            <label for="iprecio_unitario">Precio Unitario</label>
+            <input type="text" class="form-control" id="iprecio_unitario" placeholder="Indique el precio del producto" name="precio_unitario" value="{{old('precio_unitario')}}">
+          </div>
+          <div class="form-group">
+            <label for="idescripcion">Descripción</label>
+            <input type="text" class="form-control" id="idescripcion" placeholder="Descrpcion del producto{opcional}" name="descripcion" value="{{old('descripcion')}}">
+          </div>
+
+          <div class="form-group">
+            <label for="rubro_id">Nombre de Rubro/Partidas Ingreso</label>
             <Select class="form-control" id="rubro_id" name="rubro_id">
               <option>vacio</option>
             </select>
@@ -66,9 +72,6 @@
             </label>
           </div>
           </div>
-
-
-
 
           <div class="form-group">
             <label for="idescripcion">Stock</label>

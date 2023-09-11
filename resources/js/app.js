@@ -30,6 +30,7 @@ Vue.component('pago-component', require('./components/PagoComponent.vue').defaul
 
 
 Vue.component('pago-prod-component', require('./components/PagoPcComponent.vue').default);
+Vue.component('prod-cuenta-component', require('./components/ProductCuentaComponent.vue').default);
 //Vue.component('client-component', require('./components/ClienteComponent.vue').default);
 
 /**

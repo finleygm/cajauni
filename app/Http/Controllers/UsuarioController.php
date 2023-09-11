@@ -29,11 +29,10 @@ class UsuarioController extends Controller
 
 
 
-    public function edit($id){
-        // $usuario=User::findOrFail($id);
-        // return view('usuario.edit',[
-        //   "usuario"=>$usuario          
-        // ]);
+    public function edit($id){ 
+     $usuario=User::find($id);
+        return view('auth.edit',compact('usuario'));
+       
     } 
     public function update(Request $request, $id){
         // $usuario=Usuario::findOrFail($id);      

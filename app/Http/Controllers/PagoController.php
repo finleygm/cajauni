@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Pago;
-use App\Cuenta;
+use App\ClasificadoPago;
+use App\Cliente;
 use App\PagoDetalle;
 use Illuminate\Support\Facades\Redirect;
 use DB;
-
+use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 //instalacion
 //composer require phpoffice/phpword
@@ -25,7 +27,10 @@ memory_limit = -1 //otra opción
 use \PhpOffice\PhpWord\Shared\Converter;
 use \PhpOffice\PhpWord\Style\Font;
 use \PhpOffice\PhpWord\Style\Language;
-use Illuminate\Support\Facades\Storage;;
+use Illuminate\Support\Facades\Storage;
+use NunoMaduro\Collision\Contracts\Writer;
+
+;
 
 class PagoController extends Controller
 {
@@ -77,22 +82,54 @@ class PagoController extends Controller
     //     return response()->json(['error'=>0,'resultado'=>$resultado]);
     // }
 
+
+    public function buscarSerieT($valor){
+        $pagocat=Pago::where('categoria',$valor)->orderBy('id','desc')->first();
+        return $pagocat->serie;
+    }
+
+
+
     public function pagar(Request $request){
+        
         $pago_r=$request->pago;
         $pago=new Pago();        
         $pago->cliente_id=$pago_r["cliente_id"];               
         $pago->total=$pago_r["total"];
         $pago->lugar=$pago_r["lugar"];
-        $pago->serie=Pago::max('serie')+1;
-        $pago->cuenta_clasificador_id=$pago_r["cuenta_clasificador_id"];
+        if($pago_r["sector"]=='Externa'){
+           $serie=$this->buscarSerieT(Auth::user()->categoria);
+           $pago->serie=$serie+1;
+           $pago->nro_recibo=$pago_r['serie'];
+           $pago->sector=$pago_r['sector'];
+        }else{
+            if($pago_r["sector"]=='Interna'){
+                   // $pago->serie=Pago::max('serie')+1;
+             $serie=$this->buscarSerieT(Auth::user()->categoria);
+             $pago->serie=$serie+1;
+             $pago->sector=$pago_r['sector'];
+             $pago->nro_recibo=0;
+         }else{
+            if($pago_r["sector"]==null){
+                $serie=$this->buscarSerieT(Auth::user()->categoria);
+                $pago->serie=$serie+1;
+                $pago->sector='Interna';
+                $pago->nro_recibo=0;
+            }
+         }
+        }
         $pago->fecha_pago= \DateTime::createFromFormat('d/m/Y', $pago_r["fecha_pago"]);
+        $pago->categoria=$request->propsTipocuenta;
         $pago->id=null;
         $pago->user_id=Auth::user()->id;
+        $clasi_pago=ClasificadoPago::where("concepto",'=',$request->pago_clasi['concepto'])->first(); 
+        $pago->clasificador_pago_id=$clasi_pago->id;
         DB::beginTransaction();
         $error=0;
         try {
-            $pago->save();                        
+            $pago->save();   
             $listado_pago=$request->lista_pago_detalle;
+
             foreach($listado_pago as $pago_detalle_r){
                 $pago_detalle=new PagoDetalle();
                 $pago_detalle->pago_id=$pago->id;
@@ -102,7 +139,7 @@ class PagoController extends Controller
                 $pago_detalle->cuenta_id=$pago_detalle_r["cuenta_id"];  
                 $pago_detalle->descripcion=$pago_detalle_r["descripcion"];  
                 //$pago_detalle->descripcion=$pago_detalle->cuenta->nombre_cuenta;
-                $pago_detalle->save();                  
+                 $pago_detalle->save();    
             }  
             DB::commit();
             $success = true;
@@ -116,7 +153,8 @@ class PagoController extends Controller
         return response()->json(['error'=>$error,'pago'=>$pago]);
     }
     public function show($id){
-        $pago=Pago::findOrFail($id);        
+        $pago=Pago::findOrFail($id); 
+           
         return view("pago.show",[      
           "pago"=>$pago      
       ]);
@@ -472,5 +510,293 @@ class PagoController extends Controller
             break;
         }
         return $mes;
+    }
+
+    public function getDocument($id){
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+        $pago=Pago::findOrFail($id);  
+        $cliente=Cliente::findOrFail($pago->cliente_id);  
+        $clasi_pago=ClasificadoPago::find($pago->clasificador_pago_id); 
+        $pagodet=PagoDetalle::where('pago_id','=',$pago->id)->get();
+   
+      // dd($pagodet);
+
+        $section = $phpWord->addSection(
+         array('paperSize' => 'Letter',
+          'marginTop' => Converter::cmToTwip(2), 
+          'marginLeft' => Converter::cmToTwip(4), 
+          'marginRight' => Converter::cmToTwip(2), 
+          'marginBottom' => Converter::cmToTwip(1),           
+             )
+         );
+
+         $phpWord->getSettings()->setThemeFontLang(new Language(Language::ES_ES));
+           
+        $imagenStyle = array(
+            'width'=>153,
+            'height'=>74,
+            'positioning' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
+            'posHorizontal' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
+            'posVertical' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
+            'marginLeft' => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(-0.97)),
+            'marginTop' => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(0.26)),
+            'wrappingStyle' => 'infront',
+        );
+
+         $paraTituloAl = 
+         array(
+               'alineacion1'=> array(
+               'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::RIGHT, //ALINEACION    
+                ),
+                'alineacion2' =>array(
+                    'indent' =>(7.49),
+                ), 
+                'alineacion3' =>array(
+                    'indent' =>(9),
+                ), 
+                'alineacion4' =>array(
+                    'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, //ALINEACION 
+                    'spaceAfter'=>'0', 
+                ),  
+                
+                'alineacion5' =>array(
+                    'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::LEFT, //ALINEACION 
+                   
+                ),   
+                'alineacion6' =>array(
+                    'indent' =>(7),     
+                ),  
+             
+
+
+         );
+         $paraTituloLetra=
+         array(
+            
+            'estilo1' => array(
+            'underline' => 'single', //subrayado 
+            'bold'=> false,   //Texto en negrita
+            'size'=>12,          //Tamaño de letra
+            'name'=>'Cambria',   //stilo de letra
+            'color'=>'#00b0f0'      //
+            ),
+            'estilo2' => array(
+           // 'underline' => 'single', //subrayado 
+            'bold'=> true,   //Texto en negrita
+            'size'=>14,          //Tamaño de letra
+            'name'=>'Cambria',   //stilo de letra
+            'color'=>'#00b0f0'    
+             ),
+             'estilo3' => array(
+                // 'underline' => 'single', //subrayado 
+                 'bold'=> true,   //Texto en negrita
+                 'size'=>12,          //Tamaño de letra
+                 'name'=>'Agency FB',   //stilo de letra
+                 'color'=>'	#FF0000'    
+                  ), 
+                  
+            'estilo4' => array(
+                    // 'underline' => 'single', //subrayado 
+              //'bold'=> true,   //Texto en negrita
+              'size'=>10, 
+              'allCaps' =>true,         //Mayuscula letra
+              'name'=>'Bahnschrift SemiBold',   //stilo de letra
+              'color'=>'black'    //color letra
+             ),        
+             'estilo5' => array(
+                 
+               'allCaps' =>false,         //Mayuscula letra
+               'name'=>'Times New Roman',   //stilo de letra
+               'color'=>'black'    //color letra
+              ),
+              'estilo6' => array(
+              //   'alignment'=>'center',
+        
+              'size'=>8, 
+              'allCaps' =>false,         //Mayuscula letra
+                'name'=>'Cambria',   //stilo de letra
+                'color'=>'black'    //color letra
+               ),
+               'estilo7' => array(
+                //   'alignment'=>'center',
+                'bold' => true,
+                'size'=>8, 
+                'allCaps' =>false,         //Mayuscula letra
+                  'name'=>'Cambria',   //stilo de letra
+                  'color'=>'black'    //color letra
+                 ),
+   
+
+         );
+  
+         $section->addImage(storage_path('unibol_logo.png'),$imagenStyle);
+         if($pago->categoria==1){
+         $section->addText("UNIDAD DE PRESUPUESTO Y TESORERIA\n",$paraTituloLetra['estilo1'],$paraTituloAl['alineacion1']);
+        }else{
+            $section->addText("UNIDAD DE COMERCIALIZACION\n",$paraTituloLetra['estilo1'],$paraTituloAl['alineacion6']);
+        }
+        
+         $section->addText("RECIBO DE INGRESO\n",$paraTituloLetra['estilo2'],$paraTituloAl['alineacion2']);
+         $section->addText($pago->getNumeroSerieStr(),$paraTituloLetra['estilo3'],$paraTituloAl['alineacion3']);
+
+        $tabla = $section->addTable();
+        // Establece el estilo de borde de la tabla en "none" (sin bordes)
+       // $tabla->getStyle()->setBorderSize();
+
+        // fila 1 
+        $row = $tabla->addRow();
+        $cell = $row->addCell(2000); // Ancho de celda en twips
+        $cell->addText('Lugar',$paraTituloLetra['estilo5'],null);  
+        $cell1 = $row->addCell(2000); // Ancho de celda en twips
+        $cell1->addText(': '.$pago->lugar,$paraTituloLetra['estilo4'],null);
+        //fila 2
+        $row = $tabla->addRow();
+        $cell = $row->addCell(2000); // Ancho de celda en twips
+        $cell->addText('Fecha',$paraTituloLetra['estilo5'],null);
+        $cell1 = $row->addCell(2000);
+        $cell1->addText(': '.$pago->fecha_pago,$paraTituloLetra['estilo4'],null);
+        //fila 3
+        $row = $tabla->addRow();
+        $cell = $row->addCell(2000); // Ancho de celda en twips
+        $cell->addText('Recibe de',$paraTituloLetra['estilo5'],null);  
+        $cell1 = $row->addCell(7000); // Ancho de celda en twips
+        $cell1->addText(': '.$cliente->nombres.' '.$cliente->apellidos,$paraTituloLetra['estilo4'],null);
+       
+        if($pago->nro_recibo!=0){
+        $row = $tabla->addRow();
+        $cell = $row->addCell(2000); // Ancho de celda en twips
+        $cell->addText('Nro. de recibe ',$paraTituloLetra['estilo5'],null);
+        $cell1 = $row->addCell(2000);
+        $cell1->addText(': '.$pago->nro_recibo,$paraTituloLetra['estilo4'],null);
+         }
+        
+
+        //fila 4
+        $row = $tabla->addRow();
+        $cell = $row->addCell(2000); // Ancho de celda en twips
+        $cell->addText('Por Concepto ',$paraTituloLetra['estilo5'],null);
+        $cell1 = $row->addCell(2000);
+        if($clasi_pago!=null){
+        $cell1->addText(': '.$clasi_pago->concepto,$paraTituloLetra['estilo4'],null);
+         }
+
+
+      //   $section->addText($pago->lugar,$paraTituloLetra['estilo1'],$paraTituloAl['alineacion1']);
+       
+      //   $section->addText("RECIBO DE INGRESO\n",$paraTituloLetra['estilo2'],$paraTituloAl['alineacion2']);
+     //    $section->addText("00018",$paraTituloLetra['estilo3'],$paraTituloAl['alineacion3']);
+
+
+         $tabla_centrada=array('align' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+         $cellStyleInvisible=[
+            'gridSpan' => 1,
+            'valign'=>'center',
+            'borderLeftStyle' => 'double',
+            'borderTopStyle' => 'double',            
+            'borderBottomStyle' => 'double',
+            'borderRightStyle' => 'double',
+
+            'borderLeftSize' => '3',
+            'borderTopSize' => '3',
+            'borderBottomSize' => '3',
+            'borderRightSize' => '3'
+        ];
+      
+        $cellStyleInvisible1=[
+            'gridSpan' => 1,
+            'valign'=>'center',
+            'borderLeftStyle' => 'double',//borde simple solo izquierda
+            'borderLeftSize' => '4',
+            'borderTopSize' => '4',
+            'borderBottomSize' => '4',
+            'borderRightSize' => '4'
+        ];
+        $cellStyleInvisible3=[
+            'gridSpan' => 1,
+            'valign'=>'center',
+            'borderRightStyle' => 'double',// borde doble solo derecha
+            'borderLeftSize' => '4',
+            'borderTopSize' => '4',
+            'borderBottomSize' => '4',
+            'borderRightSize' => '4'
+        ];
+
+        $cellStyleInvisible2=[
+           'gridSpan' => 1,
+           'align' => 'left', 
+           'valign'=>'center',
+            'borderLeftSize' => '4',
+            'borderTopSize' => '4',
+            'borderBottomSize' => '4',
+            'borderRightSize' => '4'
+        ];
+
+        $cellStyleInvisible_ancho=[
+            'gridSpan' => 3,
+            'align' => 'left', 
+            'valign'=>'center',
+            'borderLeftStyle' => 'double',
+            'borderTopStyle' => 'double',            
+            'borderBottomStyle' => 'double',
+            'borderRightStyle' => 'double',
+
+            'borderLeftSize' => '2',
+            'borderTopSize' => '2',
+            'borderBottomSize' => '2',
+            'borderRightSize' => '2'
+        ];
+         $section->addText("");
+       
+        $table = $section->addTable($tabla_centrada);   
+         $table->addRow(Converter::cmToTwip(0.74));
+         $table->addCell(2000,$cellStyleInvisible)->addText("CANTIDAD",$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
+         $table->addCell(9000,$cellStyleInvisible)->addText("DESCRIPCIÓN",$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
+         $table->addCell(2000,$cellStyleInvisible)->addText("VALOR UNITARIO(BS)",$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
+         $table->addCell(2000,$cellStyleInvisible)->addText("VALOR \n TOTAL(BS)",$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
+  
+         foreach($pagodet as $detalle_pago){
+
+         $table->addRow(Converter::cmToTwip(0.74));
+         $table->addCell(2000,$cellStyleInvisible1)->addText($detalle_pago->cantidad,$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
+         $table->addCell(9000,$cellStyleInvisible2)->addText($detalle_pago->descripcion,$paraTituloLetra['estilo6'],array(  'spaceAfter'=>'0', ));
+         $table->addCell(2000,$cellStyleInvisible2)->addText($detalle_pago->precio_unitario,$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
+         $table->addCell(2000,$cellStyleInvisible3)->addText($detalle_pago->precio_unitario,$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
+         }
+         $table->addRow(Converter::cmToTwip(0.74));
+         $table->addCell(13000,$cellStyleInvisible_ancho)->addText("TOTAL EN BOLIVIANOS",$paraTituloLetra['estilo7'],array(  'spaceAfter'=>'0', ));
+         $table->addCell(2000,$cellStyleInvisible)->addText($pago->total,$paraTituloLetra['estilo7'],$paraTituloAl['alineacion4']);
+
+
+         $section->addText("\n");
+         $section->addText("\n");
+         $section->addText("\n");
+         $tabla2 = $section->addTable();
+  
+         // fila 1 
+         $row = $tabla2->addRow();
+         $cell = $row->addCell(6000); // Ancho de celda en twips
+         $cell->addText('RECIBE CONFORME');  
+         $cell1 = $row->addCell(2000); // Ancho de celda en twips
+         $cell1->addText('',$paraTituloLetra['estilo4'],null);
+         $cell2 = $row->addCell(6000); // Ancho de celda en twips
+         $cell2->addText('ENTREGA CONFORME',null,$paraTituloAl['alineacion1']);
+      
+
+       
+
+
+
+
+         $nombre_completo='test';    
+         $objWriter1 = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+         
+         try { 
+          $objWriter1->save(storage_path($nombre_completo.".docx"));
+ 
+        } catch (Exception $e) { 
+        }
+     
+        return response()->download(storage_path($nombre_completo.".docx"));
+   
     }
 }

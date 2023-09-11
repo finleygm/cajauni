@@ -95,7 +95,7 @@ class CuentaProdClasificadorController extends Controller
         $cuentaProdClasificador->cuenta_clasificador_id=$cuenta_clasificador_guardar->id;
         $cuentaProdClasificador->cuenta_id=$cuenta->id;
         $cuentaProdClasificador->save();
-         dd($cuentaProdClasificador);
+      //   dd($cuentaProdClasificador);
 
         $cuenta_asociada=(object)[];
         $cuenta_asociada->error=0;

@@ -5,24 +5,23 @@
          
         <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">DATOS DE CLASIFICADOR</h3>
+                <h3 class="card-title">DATOS DE USUARIO</h3>
               </div>
               <!-- /.card-header -->              
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-4">
-                      <label for="codigo_clasificador">Codigo del Clasificador</label>
+                      <label for="email">Correo</label>
                       <div class="form-group">                     
                         <div class="input-group">
-                          <input type="text" class="form-control" id="numero_clasificador" placeholder="" name="numero_clasificador" value="" :readonly="(pid_clasificador!=undefined)" v-model="clasificador.numero_clasificador">
-                          <button type="button" id="button-pagar" class="btn btn-primary" @click="buscarDatos">Buscar</button>
-                          </div>
+                          <input type="text" class="form-control" id="email" placeholder="" name="email" value="" :readonly="(pid_clasificador!=undefined)" v-model="email">                         
+                        </div>
                       </div>                                            
                   </div> 
                   <div class="col-md-8">
                     <div class="form-group">
-                          <label for="descripcion">Descripcion</label>                         
-                          <input type="text" class="form-control" id="descripcion" placeholder="" name="descripcion" value=""  v-model="clasificador.descripcion">
+                          <label for="name">Nombre De Usuario</label>                         
+                          <input type="text" class="form-control" id="name" placeholder="" name="name" value=""  v-model="name">
                       </div>  
                   </div>
                 </div>
@@ -34,7 +33,7 @@
         </div>
         <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">Productos registrados</h3>
+                <h3 class="card-title">Selecione los productos que permiten su venta al usuario</h3>
               </div>
               <!-- /.card-header -->              
               <div class="card-body">    
@@ -54,8 +53,9 @@
               </div>
                 <!-- /.card-body -->
               <div class="card-footer">
-                  <button type="button" id="button-pagar" class="btn btn-primary" @click="agregarCuenta">Agregar</button>
-              </div>                       
+                  <button type="button" id="button-pagar" class="btn btn-primary" @click="agregarProdCuenta">Permitir</button> 
+                  <button type="button" id="button-pagar" class="btn btn-primary" @click="">Permitir Todo</button>
+              </div> 
         </div>
         <div class="card card-primary">
               <div class="card-header">
@@ -66,19 +66,20 @@
                 <table class="table table-hover table-bordered">
                             <thead>
                             <tr>                        
-                                    <th scope="col">Numero de Cuento</th>
+                                    <th scope="col">Numero de Cuenta</th>
                                     <th scope="col">Nombre de Cuenta</th>                                    
                                     <th scope="col">Tipo de Producto</th>
-                                    <th scope="col">Stock</th>
+                                    <th scope="col">Precio Por Unidad</th>
                                     <th scope="col">OPCIONES</th>
                             </tr>                  
                             </thead>
                             <tbody id="detalles">
-                              <tr  v-for="(cuenta1,key) in lista_cuenta_clasificador"  v-bind:key="cuenta1.id"> 
+                              <tr  v-for="(cuenta1,key) in lista_productos_usuarios"  v-bind:key="cuenta1.id"> 
                                 <td>{{cuenta1.numero_cuenta}}</td>
                                 <td>{{cuenta1.nombre_cuenta}}</td>
-                                <td>{{cuenta1.tipo_cuenta}}</td>
-                                <td>{{cuenta1.stock}}</td>
+                                <td v-if="(cuenta1.tipo_cuenta==2)">No es producto</td>
+                                <td v-if="(cuenta1.tipo_cuenta==1)">Es producto</td>
+                                <td>{{cuenta1.precio_unitario}}</td>
                                 <td><button class="btn btn-danger btn-sm" type="button"  @click="eliminarCuentaClasificador(cuenta1,key)">Eliminar</button></td>                            
                            
                                </tr>
@@ -98,11 +99,11 @@
 <script>
   import Modal from './ClienteComponent.vue';
     export default {
-      name: 'AppPago',
+      name: 'ProductComp',
         components: {
           Modal,
         },
-        props: ['pid_clasificador'],
+        props: ['id_user','email','name'],
         data(){
             return {
               // isModalVisible:false,
@@ -120,6 +121,9 @@
                     //   numero_identificador:1,                      
                     //   descripcion:'descripcion'
                     // }
+                ],
+                lista_productos_usuarios:[
+
                 ]
                 ,
                 lista_cuenta:[{
@@ -151,21 +155,31 @@
                   stock:0,
                   descripcion:''
                 }, 
+
+                producto_usuarios:{
+                  id:-1,
+                  cuenta_id:0,
+                  user_id:0
+
+                },
                 
                 numero_clasificador:6,
               
-            
+                correo:'',
+                nombre:'',
                 numero_cuenta:1,
                 nombre_cuenta:"",
                 descripcion:"",
                 numero_clasificador:0,
 
                 productCuenta:{  
-                     id:0,
+
+                    cuenta_id:-1,
                     numero_cuenta:1,
-                    nombre_cuenta:'nombre_cuenta',
-                    descripcion:'descripcion',
-                    precio_unitario:0
+                    nombre_cuenta:'',
+                    tipo_cuenta:1,
+                    precio_unitario:0,
+                    user_id:-1,
                 },
                 clasificador:{
                   id:-1,
@@ -180,6 +194,55 @@
             console.log('Component mounted.')
         },        
         methods:{
+
+          agregarProdCuenta(){               
+            
+            const cuenta={
+
+              id:this.cuenta_selecionada.id,
+              numero_cuenta:this.cuenta_selecionada.numero_cuenta,
+              nombre_cuenta:this.cuenta_selecionada.nombre_cuenta,
+              tipo_cuenta:this.cuenta_selecionada.tipo_cuenta,
+              precio_unitario:this.cuenta_selecionada.precio_unitario
+                        
+            };
+                                             
+            this.lista_productos_usuarios.push(cuenta);
+            console.log("cuenta_agregada");
+            let cuenta_asociada1={
+              prod_users:{
+                id:this.id_user,
+                correo:this.email,
+                nombre:this.name,
+              },
+              cuenta:{
+                id:this.cuenta_selecionada.id,
+                numero_cuenta:this.cuenta_selecionada.numero_cuenta,
+                nombre_cuenta:this.cuenta_selecionada.nombre_cuenta,
+                precio_unitario:this.cuenta_selecionada.precio_unitario,
+                tipo_cuenta:this.cuenta_selecionada.tipo_cuenta,
+              }
+            }
+            axios.post('/permisos/register',cuenta_asociada1).then(res=>{
+                const error=res.data.error;
+                let cuenta_asociada=res.data.cuenta_asociada;
+               
+                if(error==0){
+                  //  alert('Se realizo el pago exitosamente se con Nº DE SERIE '+cuenta_asociada);
+                  console.log(res.data);
+                  this.productCuenta.cuenta_id=cuenta_asociada.cuenta_id;
+                  this.productCuenta.numero_cuenta=cuenta_asociada.numero_cuenta;
+                  this.productCuenta.nombre_cuenta=cuenta_asociada.nombre_cuenta;
+                  this.productCuenta.tipo_cuenta=cuenta_asociada.tipo_cuenta;
+                  this.productCuenta.id=cuenta_asociada.id;
+                }else if(error==2){
+                   // alert('Ya Registro la Materia, No se puede registrar 2 veces en la misma gestion');
+                }
+            });
+            
+        },
+
+
           
           agregarCuenta(){               
             
@@ -420,11 +483,44 @@
                 });                                      
             },
 
+            
+            buscarPermisos(){                
+                axios.get(`/permisos/user/${this.id_user}`)
+                .then(res=>{
+                    console.log("no _ingreso");
+                       // this.clasificador=res.data;    
 
+                        // this.cuenta_clasificador_id=this.cuenta_clasificador.id;  
+                        // this.numero_clasificador=this.cuenta_clasificador.numero_clasificador;                                           
+                        // this.clasificador.descripcion=this.cuenta_clasificador.descripcion;
+                        // this.lista_cuenta['nombre_cuenta']=this.cuenta_clasificador.nombre_cuenta;
 
+                //         lista_cuenta:[{
+                //     id:0,
+                //     numero_cuenta:1,
+                //     nombre_cuenta:'nombre_cuenta',
+                //     descripcion:'descripcion',
+                //     precio_unitario:0
 
+                // }], 
+             let _lista_cuentas=res.data;
+                this.lista_productos_usuarios=[];
+                _lista_cuentas.forEach(cuenta => {
+                  let _cuenta={//cuenta asociada           
+                    numero_cuenta:cuenta.numero_cuenta,
+                    nombre_cuenta:cuenta.nombre_cuenta,
+                    precio_unitario:cuenta.precio_unitario,
+                    tipo_cuenta:cuenta.tipo_cuenta
 
+                  }
+                  this.lista_productos_usuarios.push(_cuenta)
+                });
 
+                        console.log(this.cuenta_clasificador);
+                        console.log(this.nombre_cuenta);
+                      
+                });                                      
+            },
 
 
             cargarCuente(){                
@@ -492,6 +588,8 @@
           this.actualizarHoy();
           // this.cargarCuente();
           this.cargarCuenta();
+
+          this.buscarPermisos();
 
            this.total=0;
            this.id_clasificador=-1;

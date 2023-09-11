@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
 class Pago extends Model
 {
     //
@@ -17,15 +16,21 @@ class Pago extends Model
         'lugar', 
         'total',
         'user_id',
-        'cuenta_clasificador_id'     
+        'sector',
+        'categoria',
+        'nro_recibo',
+        'clasificador_pago_id'
     ];    
     public function detalle_pago()
     {        
-        return $this->hasMany(PagoDetalle::class,'pago_id');//pago_id
+       return $this->hasMany(PagoDetalle::class,'pago_id');//pago_id
     }
+
     public function cliente(){
         return $this->belongsTo(Cliente::class);
     }
+
+
     public function cuenta_clasificador(){
         return $this->belongsTo(CuentaClasificador::class);
     }
@@ -50,6 +55,10 @@ class Pago extends Model
     }
     public function user(){
         return $this->belongsTo(User::class);
+    }
+
+    public function clasificador_pago(){
+        return $this->belongsTo(ClasificadoPago::class);
     }
     // public function getTotalStr(){        
     // }

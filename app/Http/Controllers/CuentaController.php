@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Cuenta;
 use App\CuentaClasificador;
-
+use App\ProductoUsuario;
 
 class CuentaController extends Controller
 {
@@ -44,7 +44,8 @@ class CuentaController extends Controller
         $rubro_id=$request->get('rubro_id');  
         $unidad_id=$request->get('unidad_id');    
         $tipo_cuenta=$request->get('tipo_cuenta');    
-        $stock=$request->get('stock');        
+        $stock=$request->get('stock');      
+        $unidad=$request->get('unidad');          
         $cuenta->numero_cuenta=$numero_cuenta;
         $cuenta->nombre_cuenta=$nombre_cuenta;
         $cuenta->descripcion=$descripcion;
@@ -53,12 +54,13 @@ class CuentaController extends Controller
         $cuenta->unidad_id=$unidad_id;
         $cuenta->tipo_cuenta=$tipo_cuenta;
         $cuenta->stock=$stock;
+        $cuenta->unidad=$unidad;
 
       
 
         $cuenta_aux=Cuenta::where('numero_cuenta','=',$numero_cuenta)->first();
         if($cuenta_aux==null){
-            $cuenta->save();        
+          $cuenta->save();        
             return redirect()->route('cuenta.index');
         }else{          
             return Redirect::back()->withInput()->withErrors(['Numero de Cuenta ya existente']);          
@@ -107,6 +109,22 @@ class CuentaController extends Controller
     public function ajaxCuente($numero_cuenta){
         $cuenta=Cuenta::where("numero_cuenta",'=',$numero_cuenta)->first();
     
-        return $cuenta;     
-   }
+        return $cuenta;    
+    }
+    public function cargarBydUser($user_id){
+  //  $cuenta=ProductoUsuario::where("user_id",'=',$user_id)->get();
+
+    $cuenta=ProductoUsuario::join('cuenta','cuenta.id','productousuario.cuenta_id')                                    
+    ->where('productousuario.user_id','=',$user_id)
+    ->select(
+        'cuenta.id',
+        'cuenta.numero_cuenta',
+        'cuenta.nombre_cuenta',
+        'cuenta.tipo_cuenta',
+        'cuenta.precio_unitario',                                       
+    )
+    ->get(); 
+
+    return $cuenta;     
+}
 }

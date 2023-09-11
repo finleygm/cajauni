@@ -2079,13 +2079,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'AppPago',
   components: {
     Modal: _ClienteComponent_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
-  props: ['tipo_cuenta'],
+  props: ['tipo_cuenta', 'id_user'],
   data: function data() {
     return {
       isModalVisible: false,
@@ -2123,7 +2158,7 @@ __webpack_require__.r(__webpack_exports__);
         //     total:50
         // }
       ],
-      unidad_selecionada: {
+      unidad_selecionado: {
         id: 0,
         descripcion: '',
         rubro_id: 0
@@ -2136,12 +2171,21 @@ __webpack_require__.r(__webpack_exports__);
         id: 0,
         precio_unitario: 50
       },
-      precio_unitario: 50,
+      clasificacion: [],
+      lista_clasificador_pago: [],
+      lista_sector: {
+        id: 0,
+        descripcion: 'Interna'
+      },
+      cambiar: true,
+      concepto: '',
+      precio_unitario: 0,
       cantidad: 1,
       monto: 0,
       total: 0,
       fecha_pago: '12/04/2021',
       nombres_apellidos: "",
+      numero_recibo: 0,
       ci: "6304332",
       cliente_id: -1,
       id_pago: -1,
@@ -2153,7 +2197,8 @@ __webpack_require__.r(__webpack_exports__);
         serie: -1,
         cliente_id: 1,
         fecha_pago: '12/04/2021',
-        total: 0
+        total: 0,
+        sector: ''
       },
       pago_detalle: {
         id: -1,
@@ -2161,6 +2206,10 @@ __webpack_require__.r(__webpack_exports__);
         descripcion: "",
         pago_id: 0,
         cuenta_id: 0
+      },
+      clasificador_pago: {
+        id: -1,
+        concepto: ''
       }
     };
   },
@@ -2168,6 +2217,28 @@ __webpack_require__.r(__webpack_exports__);
     console.log('Component mounted.');
   },
   methods: {
+    clasificadorcar: function clasificadorcar() {
+      var _this = this;
+
+      var vara = [{
+        id: 1,
+        descripcion: 'Externa'
+      }, {
+        id: 2,
+        descripcion: 'Interna'
+      }];
+
+      if (Object.keys(this.clasificacion).length == 0) {
+        vara.forEach(function (cuenta) {
+          var _cuenta = {
+            id: cuenta.id,
+            descripcion: cuenta.descripcion
+          };
+
+          _this.clasificacion.push(_cuenta);
+        });
+      }
+    },
     // agregarPago2(){               
     //     const pago1={
     //         id:-1,
@@ -2237,16 +2308,22 @@ __webpack_require__.r(__webpack_exports__);
 
       var pago1 = {
         id: -1,
-        serie: -1,
+        serie: this.numero_recibo,
         cliente_id: this.cliente_id,
         lugar: this.lugar,
         fecha_pago: this.fecha_pago,
         total: this.total,
-        cuenta_clasificador_id: this.cuenta_clasificador_selecionado.id
+        sector: this.lista_sector.descripcion
+      };
+      var clasipago = {
+        id: -1,
+        concepto: this.clasificador_pago.concepto
       };
       var pago_info = {
+        pago_clasi: clasipago,
         pago: pago1,
-        lista_pago_detalle: this.lista_pagos
+        lista_pago_detalle: this.lista_pagos,
+        propsTipocuenta: this.tipo_cuenta
       };
       axios.post('/ajax/Pagar', pago_info).then(function (res) {
         var error = res.data.error;
@@ -2277,21 +2354,50 @@ __webpack_require__.r(__webpack_exports__);
         // });
       }
     },
+    registrarClasificadorPago: function registrarClasificadorPago() {
+      var _this2 = this;
+
+      var val = {
+        id: this.id,
+        concepto: this.conceptreg
+      };
+      axios.post('/clasipago/registro', val).then(function (res) {
+        _this2.lista_clasificador_pago = res.data.listado_clasificador;
+        _this2.clasificador_pago = res.data.pago_class;
+        _this2.cambiar = true;
+        console.log(res.data);
+      });
+    },
     cargarCuenta: function cargarCuenta() {
-      var _this = this;
+      var _this3 = this;
 
       axios.get("/ajax/Cuenta").then(function (res) {
-        _this.lista_cuenta = res.data; //  console.log(res.data );
+        _this3.lista_cuenta = res.data; //  console.log(res.data );
+      });
+    },
+    cargarclasiPago: function cargarclasiPago() {
+      var _this4 = this;
+
+      axios.get("/ajax/clasiPago").then(function (res) {
+        _this4.lista_clasificador_pago = res.data;
+        console.log(res.data);
+      });
+    },
+    cargarCuentaByd: function cargarCuentaByd() {
+      var _this5 = this;
+
+      axios.get("/cuentaByd/".concat(this.id_user)).then(function (res) {
+        _this5.lista_cuenta = res.data; //  console.log(res.data );
       });
     },
     cargarCuentaPorClasificador: function cargarCuentaPorClasificador(id) {
-      var _this2 = this;
+      var _this6 = this;
 
       axios.get("/ajax/cuentaPorClasificador/".concat(id)).then(function (res) {
-        _this2.lista_cuenta = res.data;
+        _this6.lista_cuenta = res.data;
 
-        if (_this2.lista_cuenta.length == 0) {
-          _this2.cuenta_selecionada = {
+        if (_this6.lista_cuenta.length == 0) {
+          _this6.cuenta_selecionada = {
             id: -1,
             descripcion: ""
           };
@@ -2300,13 +2406,13 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     cargarClasificadorPorUnidad: function cargarClasificadorPorUnidad(id) {
-      var _this3 = this;
+      var _this7 = this;
 
       axios.get("/ajax/clasificadorPorUnidad/".concat(id)).then(function (res) {
-        _this3.lista_cuenta_clasificador = res.data;
+        _this7.lista_cuenta_clasificador = res.data;
 
-        if (_this3.lista_cuenta_clasificador.length == 0) {
-          _this3.cuenta_clasificador_selecionado = {
+        if (_this7.lista_cuenta_clasificador.length == 0) {
+          _this7.cuenta_clasificador_selecionado = {
             id: -1,
             descripcion: ""
           };
@@ -2315,33 +2421,36 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     cargarClasificadorCuenta: function cargarClasificadorCuenta() {
-      var _this4 = this;
+      var _this8 = this;
 
       axios.get("/ajax/ajaxCuentaClasificador").then(function (res) {
-        _this4.lista_cuenta_clasificador = res.data; //  console.log(res.data );
+        _this8.lista_cuenta_clasificador = res.data; //  console.log(res.data );
       });
     },
     cargarUnidad: function cargarUnidad() {
-      var _this5 = this;
+      var _this9 = this;
 
       axios.get("ajax/ajaxUnidad").then(function (res) {
-        _this5.lista_unidad = res.data;
+        _this9.lista_unidad = res.data;
         console.log("Datos " + res.data);
       });
     },
     cargarCliente: function cargarCliente() {
-      var _this6 = this;
+      var _this10 = this;
 
       axios.get("/ajax/Cliente/".concat(this.ci)).then(function (res) {
         console.log("no _ingreso");
-        _this6.cliente = res.data;
-        _this6.cliente_id = _this6.cliente.id;
-        _this6.nombres_apellidos = _this6.cliente.nombres + " " + _this6.cliente.apellidos;
-        console.log(_this6.cliente);
+        _this10.cliente = res.data;
+        _this10.cliente_id = _this10.cliente.id;
+        _this10.nombres_apellidos = _this10.cliente.nombres + " " + _this10.cliente.apellidos;
+        console.log(_this10.cliente);
       });
     },
     cambiar_precio: function cambiar_precio() {
       this.precio_unitario = this.cuenta_selecionada.precio_unitario;
+    },
+    cambiarCuadro: function cambiarCuadro() {
+      this.cambiar = false;
     },
     getFormatFecha: function getFormatFecha(today) {
       var dd = today.getDate();
@@ -2390,7 +2499,11 @@ __webpack_require__.r(__webpack_exports__);
     //this.cargarClasificadorCuenta();
     this.cargarUnidad();
     this.actualizarHoy();
-    this.total = 0; //   $('select').chosen({no_results_text:"Not found"});
+    this.cargarclasiPago();
+    this.total = 0; //this.cargarCuenta();
+
+    this.cargarCuentaByd();
+    this.clasificadorcar(); //   $('select').chosen({no_results_text:"Not found"});
   }
 });
 
@@ -2876,6 +2989,589 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.actualizarHoy(); // this.cargarCuente();
 
     this.cargarCuenta();
+    this.total = 0;
+    this.id_clasificador = -1;
+
+    if (this.pid_clasificador != undefined) {
+      this.buscarDatosById(this.pid_clasificador);
+    }
+
+    console.log(this.pid_clasificador != '');
+    console.log(this.pid_clasificador); //   $('select').chosen({no_results_text:"Not found"});
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ProductCuentaComponent.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ProductCuentaComponent.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ClienteComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ClienteComponent.vue */ "./resources/js/components/ClienteComponent.vue");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'ProductComp',
+  components: {
+    Modal: _ClienteComponent_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  props: ['id_user', 'email', 'name'],
+  data: function data() {
+    var _ref;
+
+    return _ref = {
+      // isModalVisible:false,
+      lista_cuenta_clasificador: [// {
+        //   id:0,
+        //   numero_identificador:1,                      
+        //   descripcion:'descripcion'
+        // }
+      ],
+      lista_datos_obtenidos: [// {
+        //   id:0,
+        //   numero_identificador:1,                      
+        //   descripcion:'descripcion'
+        // }
+      ],
+      lista_productos_usuarios: [],
+      lista_cuenta: [{
+        id: 0,
+        numero_cuenta: 1,
+        nombre_cuenta: 'nombre_cuenta',
+        descripcion: 'descripcion',
+        precio_unitario: 0
+      }],
+      cuenta_clasificador_selecionado: {
+        id: 0,
+        descripcion: ''
+      },
+      cuenta_selecionada: {
+        id: 0,
+        numero_cuenta: 0,
+        nombre_cuenta: 0,
+        stock: 0,
+        tipo_cuenta: 0,
+        precio_unitario: 50
+      },
+      datos_obtenidos: {
+        numero_cuenta: 0,
+        nombre_cuenta: '',
+        tipo_cuenta: '',
+        stock: 0,
+        descripcion: ''
+      },
+      producto_usuarios: {
+        id: -1,
+        cuenta_id: 0,
+        user_id: 0
+      },
+      numero_clasificador: 6,
+      correo: '',
+      nombre: '',
+      numero_cuenta: 1,
+      nombre_cuenta: "",
+      descripcion: ""
+    }, _defineProperty(_ref, "numero_clasificador", 0), _defineProperty(_ref, "productCuenta", {
+      cuenta_id: -1,
+      numero_cuenta: 1,
+      nombre_cuenta: '',
+      tipo_cuenta: 1,
+      precio_unitario: 0,
+      user_id: -1
+    }), _defineProperty(_ref, "clasificador", {
+      id: -1,
+      numero_clasificador: 0,
+      descripcion: ""
+    }), _defineProperty(_ref, "id_clasificador", 0), _ref;
+  },
+  mounted: function mounted() {
+    console.log('Component mounted.');
+  },
+  methods: {
+    agregarProdCuenta: function agregarProdCuenta() {
+      var _this = this;
+
+      var cuenta = {
+        id: this.cuenta_selecionada.id,
+        numero_cuenta: this.cuenta_selecionada.numero_cuenta,
+        nombre_cuenta: this.cuenta_selecionada.nombre_cuenta,
+        tipo_cuenta: this.cuenta_selecionada.tipo_cuenta,
+        precio_unitario: this.cuenta_selecionada.precio_unitario
+      };
+      this.lista_productos_usuarios.push(cuenta);
+      console.log("cuenta_agregada");
+      var cuenta_asociada1 = {
+        prod_users: {
+          id: this.id_user,
+          correo: this.email,
+          nombre: this.name
+        },
+        cuenta: {
+          id: this.cuenta_selecionada.id,
+          numero_cuenta: this.cuenta_selecionada.numero_cuenta,
+          nombre_cuenta: this.cuenta_selecionada.nombre_cuenta,
+          precio_unitario: this.cuenta_selecionada.precio_unitario,
+          tipo_cuenta: this.cuenta_selecionada.tipo_cuenta
+        }
+      };
+      axios.post('/permisos/register', cuenta_asociada1).then(function (res) {
+        var error = res.data.error;
+        var cuenta_asociada = res.data.cuenta_asociada;
+
+        if (error == 0) {
+          //  alert('Se realizo el pago exitosamente se con Nº DE SERIE '+cuenta_asociada);
+          console.log(res.data);
+          _this.productCuenta.cuenta_id = cuenta_asociada.cuenta_id;
+          _this.productCuenta.numero_cuenta = cuenta_asociada.numero_cuenta;
+          _this.productCuenta.nombre_cuenta = cuenta_asociada.nombre_cuenta;
+          _this.productCuenta.tipo_cuenta = cuenta_asociada.tipo_cuenta;
+          _this.productCuenta.id = cuenta_asociada.id;
+        } else if (error == 2) {// alert('Ya Registro la Materia, No se puede registrar 2 veces en la misma gestion');
+        }
+      });
+    },
+    agregarCuenta: function agregarCuenta() {
+      var _this2 = this;
+
+      var cuenta = {
+        id: this.cuenta_selecionada.id,
+        numero_cuenta: this.cuenta_selecionada.numero_cuenta,
+        nombre_cuenta: this.cuenta_selecionada.nombre_cuenta,
+        stock: this.cuenta_selecionada.stock,
+        tipo_cuenta: this.cuenta_selecionada.tipo_cuenta,
+        precio_unitario: this.cuenta_selecionada.precio_unitario
+      };
+      this.lista_cuenta_clasificador.push(cuenta);
+      console.log("cuenta_agregada");
+      var cuenta_asociada1 = {
+        cuenta_clasificador: {
+          id: this.clasificador.id,
+          numero_clasificador: this.clasificador.numero_clasificador,
+          descripcion: this.clasificador.descripcion
+        },
+        cuenta: {
+          id: this.cuenta_selecionada.id,
+          numero_cuenta: this.cuenta_selecionada.numero_cuenta
+        }
+      };
+      axios.post('/ajax/ajaxAsociarCuenta', cuenta_asociada1).then(function (res) {
+        var error = res.data.error;
+        var cuenta_asociada = res.data.cuenta_asociada;
+
+        if (error == 0) {
+          //  alert('Se realizo el pago exitosamente se con Nº DE SERIE '+cuenta_asociada);
+          console.log(res.data);
+          _this2.cuenta_clasificador_selecionado.id = cuenta_asociada.cuenta_clasificador_id;
+          _this2.cuenta_clasificador_selecionado.numero_clasificador = cuenta_asociada.numero_clasificador;
+          _this2.cuenta_clasificador_selecionado.descripcion = cuenta_asociada.descripcion;
+        } else if (error == 2) {// alert('Ya Registro la Materia, No se puede registrar 2 veces en la misma gestion');
+        }
+      });
+    },
+    pagar: function pagar() {
+      this.cargarCliente();
+
+      if (this.cliente_id == -1) {
+        alert("No se puede Realizar el pago por que no seleccion un usuario existente, debe registrar primero el usuario");
+        return;
+      }
+
+      var pago1 = {
+        id: -1,
+        serie: -1,
+        cliente_id: this.cliente_id,
+        lugar: this.lugar,
+        fecha_pago: this.fecha_pago,
+        total: this.total,
+        cuenta_clasificador_id: this.cuenta_clasificador_selecionado.id
+      };
+      var pago_info = {
+        pago: pago1,
+        lista_pago_detalle: this.lista_pagos
+      };
+      axios.post('/ajax/Pagar', pago_info).then(function (res) {
+        var error = res.data.error;
+        var pago = res.data.pago; //0 no error
+        //2 ya existe
+
+        console.log("Ingreso");
+        console.log(res.data);
+        $("#ver").html(res.data);
+
+        if (error == 0) {
+          // const resultado1=res.data.resultado;                                                
+          // var pago_detalle=resultado1.pago_detalle;
+          // var pago=resultado1.pago;                             
+          // this.lista_pagos.push(pago_detalle);
+          // console.log("pago");
+          alert('Se realizo el pago exitosamente se con Nº DE SERIE ' + pago.serie);
+          window.location.href = "/Pago/" + pago.id;
+        } else if (error == 2) {// alert('Ya Registro la Materia, No se puede registrar 2 veces en la misma gestion');
+        }
+      });
+    },
+    eliminarPago: function eliminarPago(materia, index) {
+      var confirmacion = confirm("Se va a eliminar esta materia y se perderan\n las notas registrada a esta notas ".concat(materia.nombre));
+
+      if (confirmacion) {// axios.delete(`/ajax/ajaxRegistrarMateriasAvanzada/${materia.id}`).then(()=>{
+        //     this.lista_registros_materias.splice(index, 1);
+        // });
+      }
+    },
+    eliminarCuentaClasificador: function eliminarCuentaClasificador(cuenta1, index) {
+      var _this3 = this;
+
+      var confirmacion = confirm("Se va a eliminar este detalle y se perderan\n el clasificador ".concat(cuenta1.nombre_cuenta));
+
+      if (confirmacion) {
+        axios["delete"]("/cuenta_prod_clasificador/eliminar/".concat(cuenta1.id)).then(function (res) {
+          _this3.lista_cuenta_clasificador.splice(index, 1);
+
+          if (res.data.error == 0) {
+            _this3.clasificador.numero_clasificador = '';
+            _this3.clasificador.descripcion = '';
+            alert('Se elimino correctamente ');
+          }
+        });
+      }
+    },
+    cargarCuenta: function cargarCuenta() {
+      var _this4 = this;
+
+      axios.get("/ajax/Cuenta").then(function (res) {
+        _this4.lista_cuenta = res.data; //  console.log(res.data );
+      });
+    },
+    cargarCuentaPorClasificador: function cargarCuentaPorClasificador(id) {
+      var _this5 = this;
+
+      axios.get("/ajax/cuentaPorClasificador/".concat(id)).then(function (res) {
+        _this5.lista_cuenta = res.data;
+
+        if (_this5.lista_cuenta.length == 0) {
+          _this5.cuenta_selecionada = {
+            id: -1,
+            descripcion: ""
+          };
+        } //console.log(this.lista_cuenta);
+
+      });
+    },
+    cargarClasificadorPorUnidad: function cargarClasificadorPorUnidad(id) {
+      var _this6 = this;
+
+      axios.get("/ajax/clasificadorPorUnidad/".concat(id)).then(function (res) {
+        _this6.lista_cuenta_clasificador = res.data;
+
+        if (_this6.lista_cuenta_clasificador.length == 0) {
+          _this6.cuenta_clasificador_selecionado = {
+            id: -1,
+            descripcion: ""
+          };
+        } //console.log(this.lista_cuenta);
+
+      });
+    },
+    cargarClasificadorCuenta: function cargarClasificadorCuenta() {
+      var _this7 = this;
+
+      axios.get("/ajax/ajaxCuentaClasificador").then(function (res) {
+        _this7.lista_cuenta_clasificador = res.data; //  console.log(res.data );
+      });
+    },
+    cargarUnidad: function cargarUnidad() {
+      var _this8 = this;
+
+      axios.get("ajax/ajaxUnidad").then(function (res) {
+        _this8.lista_unidad = res.data;
+        console.log("Datos " + res.data);
+      });
+    },
+    cargarCliente: function cargarCliente() {
+      var _this9 = this;
+
+      axios.get("/ajax/Cliente/".concat(this.ci)).then(function (res) {
+        console.log("no _ingreso");
+        _this9.cliente = res.data;
+        _this9.cliente_id = _this9.cliente.id;
+        _this9.nombres_apellidos = _this9.cliente.nombres + " " + _this9.cliente.apellidos;
+        console.log(_this9.cliente);
+      });
+    },
+    buscarDatosById: function buscarDatosById(id) {
+      var _this10 = this;
+
+      axios.get("/ajax/CuentaClasificadorById/".concat(id)).then(function (res) {
+        console.log("no _ingreso");
+        _this10.clasificador = res.data.cuenta_clasificador;
+        var _lista_cuentas = res.data.listado_cuentas;
+        _this10.lista_cuenta_clasificador = [];
+
+        _lista_cuentas.forEach(function (cuenta) {
+          var _cuenta = {
+            //cuenta asociada                    
+            id: cuenta.id_cuenta_clasificador,
+            numero_cuenta: cuenta.numero_cuenta,
+            nombre_cuenta: cuenta.nombre_cuenta,
+            descripcion: cuenta.descripcion,
+            precio_unitario: cuenta.precio_unitario,
+            stock: cuenta.stock,
+            tipo_cuenta: cuenta.tipo_cuenta
+          };
+
+          _this10.lista_cuenta_clasificador.push(_cuenta);
+        });
+
+        console.log(_this10.cuenta_clasificador);
+        console.log(_this10.nombre_cuenta);
+      });
+    },
+    buscarDatos: function buscarDatos() {
+      var _this11 = this;
+
+      axios.get("/ajax/CuentaClasificador/".concat(this.clasificador.numero_clasificador)).then(function (res) {
+        console.log("no _ingreso");
+        _this11.clasificador = res.data.cuenta_clasificador; // this.cuenta_clasificador_id=this.cuenta_clasificador.id;  
+        // this.numero_clasificador=this.cuenta_clasificador.numero_clasificador;                                           
+        // this.clasificador.descripcion=this.cuenta_clasificador.descripcion;
+        // this.lista_cuenta['nombre_cuenta']=this.cuenta_clasificador.nombre_cuenta;
+        //         lista_cuenta:[{
+        //     id:0,
+        //     numero_cuenta:1,
+        //     nombre_cuenta:'nombre_cuenta',
+        //     descripcion:'descripcion',
+        //     precio_unitario:0
+        // }], 
+
+        var _lista_cuentas = res.data.listado_cuentas;
+        _this11.lista_cuenta_clasificador = [];
+
+        _lista_cuentas.forEach(function (cuenta) {
+          var _cuenta = {
+            //cuenta asociada                    
+            id: cuenta.id_cuenta_clasificador,
+            numero_cuenta: cuenta.numero_cuenta,
+            nombre_cuenta: cuenta.nombre_cuenta,
+            descripcion: cuenta.descripcion,
+            precio_unitario: cuenta.precio_unitario,
+            stock: cuenta.stock,
+            tipo_cuenta: cuenta.tipo_cuenta
+          };
+
+          _this11.lista_cuenta_clasificador.push(_cuenta);
+        });
+
+        console.log(_this11.cuenta_clasificador);
+        console.log(_this11.nombre_cuenta);
+      });
+    },
+    buscarPermisos: function buscarPermisos() {
+      var _this12 = this;
+
+      axios.get("/permisos/user/".concat(this.id_user)).then(function (res) {
+        console.log("no _ingreso"); // this.clasificador=res.data;    
+        // this.cuenta_clasificador_id=this.cuenta_clasificador.id;  
+        // this.numero_clasificador=this.cuenta_clasificador.numero_clasificador;                                           
+        // this.clasificador.descripcion=this.cuenta_clasificador.descripcion;
+        // this.lista_cuenta['nombre_cuenta']=this.cuenta_clasificador.nombre_cuenta;
+        //         lista_cuenta:[{
+        //     id:0,
+        //     numero_cuenta:1,
+        //     nombre_cuenta:'nombre_cuenta',
+        //     descripcion:'descripcion',
+        //     precio_unitario:0
+        // }], 
+
+        var _lista_cuentas = res.data;
+        _this12.lista_productos_usuarios = [];
+
+        _lista_cuentas.forEach(function (cuenta) {
+          var _cuenta = {
+            //cuenta asociada           
+            numero_cuenta: cuenta.numero_cuenta,
+            nombre_cuenta: cuenta.nombre_cuenta,
+            precio_unitario: cuenta.precio_unitario,
+            tipo_cuenta: cuenta.tipo_cuenta
+          };
+
+          _this12.lista_productos_usuarios.push(_cuenta);
+        });
+
+        console.log(_this12.cuenta_clasificador);
+        console.log(_this12.nombre_cuenta);
+      });
+    },
+    cargarCuente: function cargarCuente() {
+      var _this13 = this;
+
+      axios.get("/ajax/Cuente/".concat(this.clasificador.numero_clasificador)).then(function (res) {
+        console.log("no _ingreso"); //console.log(res);
+
+        _this13.cuenta = res.data;
+        _this13.cuenta_id = _this13.cuenta.id;
+        _this13.nombre_cuenta = _this13.cuenta.nombre_cuenta;
+        console.log(_this13.cuenta);
+        console.log(_this13.nombre_cuenta);
+      });
+    },
+    cambiar_precio: function cambiar_precio() {
+      this.precio_unitario = this.cuenta_selecionada.precio_unitario;
+    },
+    getFormatFecha: function getFormatFecha(today) {
+      var dd = today.getDate();
+      var mm = today.getMonth() + 1;
+      var yyyy = today.getFullYear();
+
+      if (dd < 10) {
+        dd = '0' + dd;
+      }
+
+      if (mm < 10) {
+        mm = '0' + mm;
+      }
+
+      return dd + '/' + mm + '/' + yyyy;
+    },
+    actualizarHoy: function actualizarHoy() {
+      this.fecha_pago = this.getFormatFecha(new Date());
+    },
+    abriModal: function abriModal(event) {
+      event.preventDefault();
+      this.isModalVisible = true;
+    },
+    closeModal: function closeModal() {
+      this.isModalVisible = false;
+    },
+    guardar: function guardar(datos) {
+      var error = datos.error;
+      console.log("ingresa por aqui =>");
+
+      if (error == 0) {
+        this.cliente = datos.cliente;
+        this.ci = this.cliente.ci;
+        this.cliente_id = this.cliente.id;
+        this.nombres_apellidos = this.cliente.nombres + " " + this.cliente.apellidos;
+      }
+    }
+  },
+  computed: {
+    sub_total: function sub_total() {
+      this.monto = this.cantidad * this.precio_unitario;
+      return this.monto + "";
+    }
+  },
+  created: function created() {
+    // this.cargarCuenta();
+    //this.cargarClasificadorCuenta();
+    this.cargarUnidad();
+    this.actualizarHoy(); // this.cargarCuente();
+
+    this.cargarCuenta();
+    this.buscarPermisos();
     this.total = 0;
     this.id_clasificador = -1;
 
@@ -40579,7 +41275,6 @@ var render = function() {
         }
       },
       [
-        _vm._v("\n     @csrf \n    "),
         _c("div", { staticClass: "card card-primary" }, [
           _vm._m(0),
           _vm._v(" "),
@@ -40791,9 +41486,41 @@ var render = function() {
               ]),
               _vm._v(" "),
               _vm.tipo_cuenta == 2
+                ? _c(
+                    "div",
+                    { staticClass: "col-md-4" },
+                    [
+                      _c("label", { attrs: { for: "numero_recib" } }, [
+                        _vm._v("Seleccionar")
+                      ]),
+                      _c("br"),
+                      _vm._v(" "),
+                      _c("chosen-select", {
+                        attrs: {
+                          placeholder: "Venta Externa-Interna",
+                          label: "descripcion",
+                          "track-by": "id",
+                          options: _vm.clasificacion,
+                          id: "id_clasificacion"
+                        },
+                        on: { close: _vm.clasificadorcar },
+                        model: {
+                          value: _vm.lista_sector,
+                          callback: function($$v) {
+                            _vm.lista_sector = $$v
+                          },
+                          expression: "lista_sector"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.tipo_cuenta == 2
                 ? _c("div", { staticClass: "col-md-4" }, [
-                    _c("label", { attrs: { for: "ifecha_pago" } }, [
-                      _vm._v("NRO DE VOLETO")
+                    _c("label", { attrs: { for: "numero_recib" } }, [
+                      _vm._v("Numero")
                     ]),
                     _c("br"),
                     _vm._v(" "),
@@ -40803,43 +41530,126 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.fecha_pago,
-                            expression: "fecha_pago"
+                            value: _vm.numero_recibo,
+                            expression: "numero_recibo"
                           }
                         ],
                         staticClass: "form-control",
                         attrs: {
                           type: "text",
-                          id: "ifecha_pago",
-                          placeholder: "dia/mes/año",
-                          name: "fecha_pago",
-                          value: "20/04/2021"
+                          id: "numero_recib",
+                          placeholder: "Nº Recibo",
+                          readonly: _vm.lista_sector.descripcion == "Interna",
+                          name: "numero_recib",
+                          value: ""
                         },
-                        domProps: { value: _vm.fecha_pago },
+                        domProps: { value: _vm.numero_recibo },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
                               return
                             }
-                            _vm.fecha_pago = $event.target.value
+                            _vm.numero_recibo = $event.target.value
                           }
                         }
-                      }),
-                      _vm._v(" "),
-                      _c("div", { staticClass: "input-group-append" }, [
+                      })
+                    ])
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.cambiar
+                ? _c("div", { staticClass: "col-md-4" }, [
+                    _c("label", { attrs: { for: "concept" } }, [
+                      _vm._v("CONCEPTO DE COBRO")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "input-group" }, [
+                      _c("div", { staticClass: "col-md-12" }, [
                         _c(
-                          "button",
-                          {
-                            staticClass: "input-group-text",
-                            attrs: { type: "button" },
-                            on: { click: _vm.actualizarHoy }
-                          },
-                          [_vm._v("Hoy")]
+                          "div",
+                          { staticClass: "input-group-append" },
+                          [
+                            _c("chosen-select", {
+                              attrs: {
+                                placeholder: "Seleccionar un concepto de cobro",
+                                label: "concepto",
+                                "track-by": "id",
+                                options: _vm.lista_clasificador_pago,
+                                id: "concept"
+                              },
+                              model: {
+                                value: _vm.clasificador_pago,
+                                callback: function($$v) {
+                                  _vm.clasificador_pago = $$v
+                                },
+                                expression: "clasificador_pago"
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-primary",
+                                attrs: {
+                                  type: "button",
+                                  id: "button-registrar"
+                                },
+                                on: { click: _vm.cambiarCuadro }
+                              },
+                              [_vm._v("+")]
+                            )
+                          ],
+                          1
                         )
                       ])
                     ])
                   ])
-                : _vm._e()
+                : _c("div", { staticClass: "col-md-4" }, [
+                    _c("label", { attrs: { for: "concepto" } }, [
+                      _vm._v("Concepto de cobro")
+                    ]),
+                    _c("br"),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "input-group" }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.conceptreg,
+                            expression: "conceptreg"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: {
+                          type: "text",
+                          id: "concepto",
+                          placeholder: "Describa concepto de cobro",
+                          name: "concepto",
+                          value: ""
+                        },
+                        domProps: { value: _vm.conceptreg },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.conceptreg = $event.target.value
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary",
+                          attrs: { type: "button", id: "button-pagar" },
+                          on: { click: _vm.registrarClasificadorPago }
+                        },
+                        [_vm._v("Registrar")]
+                      )
+                    ])
+                  ])
             ])
           ]),
           _vm._v(" "),
@@ -40851,80 +41661,6 @@ var render = function() {
           _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
             _c("div", { staticClass: "row" }, [
-              _c("div", { staticClass: "col-md-3" }, [
-                _c(
-                  "div",
-                  { staticClass: "col-md-12" },
-                  [
-                    _c("label", { attrs: { for: "iclasificador_cuenta" } }, [
-                      _vm._v("UNIDAD ADM")
-                    ]),
-                    _vm._v(" "),
-                    _c("chosen-select", {
-                      attrs: {
-                        placeholder: "Clasficador de cuenta",
-                        label: "descripcion",
-                        "track-by": "id",
-                        options: _vm.lista_unidad,
-                        id: "icuenta_clasificador"
-                      },
-                      on: {
-                        close: function($event) {
-                          return _vm.cargarClasificadorPorUnidad(
-                            _vm.unidad_selecionado.id
-                          )
-                        }
-                      },
-                      model: {
-                        value: _vm.unidad_selecionado,
-                        callback: function($$v) {
-                          _vm.unidad_selecionado = $$v
-                        },
-                        expression: "unidad_selecionado"
-                      }
-                    })
-                  ],
-                  1
-                )
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "col-md-3" }, [
-                _c(
-                  "div",
-                  { staticClass: "col-md-12" },
-                  [
-                    _c("label", { attrs: { for: "iclasificador_cuenta" } }, [
-                      _vm._v("CLASIFICADOR CUENTA")
-                    ]),
-                    _vm._v(" "),
-                    _c("chosen-select", {
-                      attrs: {
-                        placeholder: "Clasficador de cuenta",
-                        label: "descripcion",
-                        "track-by": "id",
-                        options: _vm.lista_cuenta_clasificador,
-                        id: "icuenta_clasificador"
-                      },
-                      on: {
-                        close: function($event) {
-                          return _vm.cargarCuentaPorClasificador(
-                            _vm.cuenta_clasificador_selecionado.id
-                          )
-                        }
-                      },
-                      model: {
-                        value: _vm.cuenta_clasificador_selecionado,
-                        callback: function($$v) {
-                          _vm.cuenta_clasificador_selecionado = $$v
-                        },
-                        expression: "cuenta_clasificador_selecionado"
-                      }
-                    })
-                  ],
-                  1
-                )
-              ]),
-              _vm._v(" "),
               _c("div", { staticClass: "col-md-3" }, [
                 _c("label", { attrs: { for: "ci" } }, [_vm._v("CUENTA")]),
                 _vm._v(" "),
@@ -40956,7 +41692,7 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "form-group col-md-1" }, [
+              _c("div", { staticClass: "form-group col-md-2" }, [
                 _c("label", { attrs: { for: "monto" } }, [
                   _vm._v("PRECIO UNI. ")
                 ]),
@@ -40989,7 +41725,7 @@ var render = function() {
                 })
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "form-group col-md-1" }, [
+              _c("div", { staticClass: "form-group col-md-2" }, [
                 _c("label", { attrs: { for: "monto" } }, [_vm._v("CANTIDAD")]),
                 _vm._v(" "),
                 _c("input", {
@@ -41020,7 +41756,7 @@ var render = function() {
                 })
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "form-group col-md-1" }, [
+              _c("div", { staticClass: "form-group col-md-2" }, [
                 _c("label", { attrs: { for: "monto" } }, [_vm._v("MONTO")]),
                 _vm._v(" "),
                 _c("input", {
@@ -41070,43 +41806,45 @@ var render = function() {
           _vm._m(2),
           _vm._v(" "),
           _c("div", { staticClass: "card-body" }, [
-            _c("table", { staticClass: "table table-hover table-bordered" }, [
-              _vm._m(3),
-              _vm._v(" "),
-              _c(
-                "tbody",
-                { attrs: { id: "pagos_detalles" } },
-                _vm._l(_vm.lista_pagos, function(pago1, key) {
-                  return _c("tr", { key: pago1.id }, [
-                    _c("td", [_vm._v(_vm._s(pago1.cantidad))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(pago1.descripcion))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(pago1.precio_unitario))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(pago1.monto))]),
-                    _vm._v(" "),
-                    _c("td", [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-danger btn-sm",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              return _vm.eliminarPago(_vm.pago, key)
+            _c("div", { staticClass: "table-responsive" }, [
+              _c("table", { staticClass: "table table-hover table-bordered" }, [
+                _vm._m(3),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  { attrs: { id: "pagos_detalles" } },
+                  _vm._l(_vm.lista_pagos, function(pago1, key) {
+                    return _c("tr", { key: pago1.id }, [
+                      _c("td", [_vm._v(_vm._s(pago1.cantidad))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(pago1.descripcion))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(pago1.precio_unitario))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(pago1.monto))]),
+                      _vm._v(" "),
+                      _c("td", [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger btn-sm",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.eliminarPago(_vm.pago, key)
+                              }
                             }
-                          }
-                        },
-                        [_vm._v("Eliminar")]
-                      )
+                          },
+                          [_vm._v("Eliminar")]
+                        )
+                      ])
                     ])
-                  ])
-                }),
-                0
-              ),
-              _vm._v(" "),
-              _c("div", { staticClass: "row", attrs: { id: "ver" } })
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "row", attrs: { id: "ver" } })
+              ])
             ])
           ]),
           _vm._v(" "),
@@ -41454,6 +42192,292 @@ var staticRenderFns = [
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Tipo de Producto")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Stock")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("OPCIONES")])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ProductCuentaComponent.vue?vue&type=template&id=7e9a2c5e&":
+/*!*************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ProductCuentaComponent.vue?vue&type=template&id=7e9a2c5e& ***!
+  \*************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "col-md-12" }, [
+    _c(
+      "form",
+      {
+        attrs: { action: "", method: "POST", mid: "form-cuenta" },
+        on: {
+          submit: function($event) {
+            $event.preventDefault()
+          }
+        }
+      },
+      [
+        _c("div", { staticClass: "card card-primary" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-body" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-md-4" }, [
+                _c("label", { attrs: { for: "email" } }, [_vm._v("Correo")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "form-group" }, [
+                  _c("div", { staticClass: "input-group" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.email,
+                          expression: "email"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        type: "text",
+                        id: "email",
+                        placeholder: "",
+                        name: "email",
+                        value: "",
+                        readonly: _vm.pid_clasificador != undefined
+                      },
+                      domProps: { value: _vm.email },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.email = $event.target.value
+                        }
+                      }
+                    })
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-8" }, [
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "name" } }, [
+                    _vm._v("Nombre De Usuario")
+                  ]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.name,
+                        expression: "name"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      id: "name",
+                      placeholder: "",
+                      name: "name",
+                      value: ""
+                    },
+                    domProps: { value: _vm.name },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.name = $event.target.value
+                      }
+                    }
+                  })
+                ])
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-footer" })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card card-primary" }, [
+          _vm._m(1),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-body" }, [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-md-3" }, [
+                _c(
+                  "div",
+                  { staticClass: "col-md-12" },
+                  [
+                    _c("label", { attrs: { for: "iclasificador_cuenta" } }, [
+                      _vm._v("Productos")
+                    ]),
+                    _vm._v(" "),
+                    _c("chosen-select", {
+                      attrs: {
+                        placeholder: "Productos",
+                        label: "nombre_cuenta",
+                        "track-by": "id",
+                        options: _vm.lista_cuenta,
+                        id: "cuenta_id"
+                      },
+                      on: {
+                        close: function($event) {
+                          return _vm.cargarCuenta()
+                        }
+                      },
+                      model: {
+                        value: _vm.cuenta_selecionada,
+                        callback: function($$v) {
+                          _vm.cuenta_selecionada = $$v
+                        },
+                        expression: "cuenta_selecionada"
+                      }
+                    })
+                  ],
+                  1
+                )
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-footer" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                attrs: { type: "button", id: "button-pagar" },
+                on: { click: _vm.agregarProdCuenta }
+              },
+              [_vm._v("Permitir")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                attrs: { type: "button", id: "button-pagar" },
+                on: { click: function($event) {} }
+              },
+              [_vm._v("Permitir Todo")]
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card card-primary" }, [
+          _vm._m(2),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-body" }, [
+            _c("table", { staticClass: "table table-hover table-bordered" }, [
+              _vm._m(3),
+              _vm._v(" "),
+              _c(
+                "tbody",
+                { attrs: { id: "detalles" } },
+                _vm._l(_vm.lista_productos_usuarios, function(cuenta1, key) {
+                  return _c("tr", { key: cuenta1.id }, [
+                    _c("td", [_vm._v(_vm._s(cuenta1.numero_cuenta))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(cuenta1.nombre_cuenta))]),
+                    _vm._v(" "),
+                    cuenta1.tipo_cuenta == 2
+                      ? _c("td", [_vm._v("No es producto")])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    cuenta1.tipo_cuenta == 1
+                      ? _c("td", [_vm._v("Es producto")])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(cuenta1.precio_unitario))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-danger btn-sm",
+                          attrs: { type: "button" },
+                          on: {
+                            click: function($event) {
+                              return _vm.eliminarCuentaClasificador(
+                                cuenta1,
+                                key
+                              )
+                            }
+                          }
+                        },
+                        [_vm._v("Eliminar")]
+                      )
+                    ])
+                  ])
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "row", attrs: { id: "ver" } })
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-footer" })
+        ])
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticClass: "card-title" }, [_vm._v("DATOS DE USUARIO")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticClass: "card-title" }, [
+        _vm._v("Selecione los productos que permiten su venta al usuario")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _c("h3", { staticClass: "card-title" }, [_vm._v("Productos/Cuentas")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Numero de Cuenta")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Nombre de Cuenta")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Tipo de Producto")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Precio Por Unidad")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("OPCIONES")])
       ])
@@ -54622,7 +55646,8 @@ Vue.component('example-component', __webpack_require__(/*! ./components/ExampleC
 
 Vue.component('chosen-select', __webpack_require__(/*! vue-multiselect/src/Multiselect.vue */ "./node_modules/vue-multiselect/src/Multiselect.vue")["default"]);
 Vue.component('pago-component', __webpack_require__(/*! ./components/PagoComponent.vue */ "./resources/js/components/PagoComponent.vue")["default"]);
-Vue.component('pago-prod-component', __webpack_require__(/*! ./components/PagoPcComponent.vue */ "./resources/js/components/PagoPcComponent.vue")["default"]); //Vue.component('client-component', require('./components/ClienteComponent.vue').default);
+Vue.component('pago-prod-component', __webpack_require__(/*! ./components/PagoPcComponent.vue */ "./resources/js/components/PagoPcComponent.vue")["default"]);
+Vue.component('prod-cuenta-component', __webpack_require__(/*! ./components/ProductCuentaComponent.vue */ "./resources/js/components/ProductCuentaComponent.vue")["default"]); //Vue.component('client-component', require('./components/ClienteComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -54990,6 +56015,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/ProductCuentaComponent.vue":
+/*!************************************************************!*\
+  !*** ./resources/js/components/ProductCuentaComponent.vue ***!
+  \************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ProductCuentaComponent_vue_vue_type_template_id_7e9a2c5e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProductCuentaComponent.vue?vue&type=template&id=7e9a2c5e& */ "./resources/js/components/ProductCuentaComponent.vue?vue&type=template&id=7e9a2c5e&");
+/* harmony import */ var _ProductCuentaComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ProductCuentaComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/ProductCuentaComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _ProductCuentaComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ProductCuentaComponent_vue_vue_type_template_id_7e9a2c5e___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _ProductCuentaComponent_vue_vue_type_template_id_7e9a2c5e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/ProductCuentaComponent.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/ProductCuentaComponent.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/ProductCuentaComponent.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ProductCuentaComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./ProductCuentaComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ProductCuentaComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ProductCuentaComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/ProductCuentaComponent.vue?vue&type=template&id=7e9a2c5e&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/components/ProductCuentaComponent.vue?vue&type=template&id=7e9a2c5e& ***!
+  \*******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ProductCuentaComponent_vue_vue_type_template_id_7e9a2c5e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./ProductCuentaComponent.vue?vue&type=template&id=7e9a2c5e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ProductCuentaComponent.vue?vue&type=template&id=7e9a2c5e&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ProductCuentaComponent_vue_vue_type_template_id_7e9a2c5e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ProductCuentaComponent_vue_vue_type_template_id_7e9a2c5e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/sass/app.scss":
 /*!*********************************!*\
   !*** ./resources/sass/app.scss ***!
@@ -55008,8 +56102,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\xampp\htdocs\cajauni-master2\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\xampp\htdocs\cajauni-master2\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\xampp\htdocs\cajauni-master\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\xampp\htdocs\cajauni-master\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

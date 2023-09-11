@@ -16,29 +16,34 @@
                   <li class="list-group-item">
                     <b>LUGAR Y FECHA </b> <a class="float-right">{{$pago->lugar." , ".$pago->getFechaPagoStr()}}</a>
                   </li>
+                  @if($pago->sector === 'Externa')
+                  <li class="list-group-item">
+                    <b>NRO DE BOLETO</b> <a class="float-right">{{$pago->nro_recibo}}</a>
+                  </li>
+                  @endif
                   <li class="list-group-item">
                     <b>NOMBRE DE DEPOSITANTE</b> <a class="float-right">{{$pago->cliente->nombres." ".$pago->cliente->apellidos}}</a>
                   </li>
                   <li class="list-group-item">
                     <b>CARNET DE INDENTIDAD</b> <a class="float-right">{{$pago->cliente->ci." ".$pago->cliente->ci_expedido}}</a>
                   </li>
-                  <li class="list-group-item">
-                    <b>PAGO POR CONCEPTO</b> <a class="float-right">{{$pago->cuenta_clasificador->descripcion}}</a>
-                  </li>
-                  <li class="list-group-item">
+
+                     <li class="list-group-item">
                     <b>USUARIO DE SISTEMA</b> <a class="float-right">{{$pago->user->email}}</a>
                   </li>
+                
                   <li class="list-group-item">
                     <b>TOTAL </b> <a class="float-right">{{$pago->total}}</a>
                   </li>
                 </ul>
-                <div class="col-sm-12"><table id="example2" class="table table-bordered table-hover dataTable dtr-inline" role="grid" aria-describedby="example2_info">
+                <div class="col-sm-12"><div class="table-responsive" > <table id="example2" class="table table-bordered table-hover dataTable dtr-inline" role="grid" aria-describedby="example2_info">
                   <thead>
                   <tr role="row">
                     <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Rendering engine: activate to sort column ascending">Cantidad</th>
                     <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1"  aria-label="Browser: activate to sort column ascending">Descripcion Pago</th>
                     <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Valor Unitario</th>
-                    <th class="sorting sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column descending" aria-sort="ascending">Valor total</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Platform(s): activate to sort column ascending">Unidad</th>
+                   <th class="sorting sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column descending" aria-sort="ascending">Valor total</th>
                     
                  </tr>
                   </thead>
@@ -49,6 +54,7 @@
                     <td class="dtr-control" tabindex="0">{{$pago_detalle->cantidad}}</td>
                     <td>{{$pago_detalle->descripcion}}</td>
                     <td class="">{{$pago_detalle->precio_unitario}}</td>
+                    <td> {{$pago_detalle->cuenta->unidad}}  </td>             
                     <td class="sorting_1">{{number_format($pago_detalle->monto, 2, '.', ',')}}</td>
                     
                   </tr>
@@ -57,12 +63,12 @@
                   <tfoot>
                   <tr>
                     <th rowspan="1" colspan="1">TOTAL BS.</th>
-                    <th rowspan="1" colspan="2">{{$pago->getTotalALiteral()}}</th>                    
+                    <th rowspan="1" colspan="3">{{$pago->getTotalALiteral()}}</th>                    
                     <th rowspan="1" colspan="1">{{number_format($pago->total, 2, '.', ',')}}</th>
                   </tr>
                   </tfoot>
-                </table></div>
-                <a href="{{route('pago.getBoleta',$pago->id)}}" class="btn btn-primary btn-block"><b>IMPRIMIR</b></a>
+                </table></div></div>
+                <a href="{{route('pago.getDocument',$pago->id)}}" class="btn btn-primary btn-block"><b>IMPRIMIR</b></a>
               </div>
             </div>              
         </div>

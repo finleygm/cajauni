@@ -1,0 +1,39 @@
+[26-Aug-2023 19:16:31 UTC] PHP Warning:  require(C:\xampp\htdocs\cajauni-master/vendor/autoload.php): failed to open stream: No such file or directory in C:\xampp\htdocs\cajauni-master\artisan on line 18
+[26-Aug-2023 19:16:31 UTC] PHP Stack trace:
+[26-Aug-2023 19:16:31 UTC] PHP   1. {main}() C:\xampp\htdocs\cajauni-master\artisan:0
+[26-Aug-2023 19:16:31 UTC] PHP Fatal error:  require(): Failed opening required 'C:\xampp\htdocs\cajauni-master/vendor/autoload.php' (include_path='.;C:\php\pear') in C:\xampp\htdocs\cajauni-master\artisan on line 18
+[26-Aug-2023 19:16:31 UTC] PHP Stack trace:
+[26-Aug-2023 19:16:31 UTC] PHP   1. {main}() C:\xampp\htdocs\cajauni-master\artisan:0
+[26-Aug-2023 19:24:42 UTC] PHP Warning:  require(C:\xampp\htdocs\cajauni-master/vendor/autoload.php): failed to open stream: No such file or directory in C:\xampp\htdocs\cajauni-master\artisan on line 18
+[26-Aug-2023 19:24:42 UTC] PHP Stack trace:
+[26-Aug-2023 19:24:42 UTC] PHP   1. {main}() C:\xampp\htdocs\cajauni-master\artisan:0
+[26-Aug-2023 19:24:42 UTC] PHP Fatal error:  require(): Failed opening required 'C:\xampp\htdocs\cajauni-master/vendor/autoload.php' (include_path='.;C:\php\pear') in C:\xampp\htdocs\cajauni-master\artisan on line 18
+[26-Aug-2023 19:24:42 UTC] PHP Stack trace:
+[26-Aug-2023 19:24:42 UTC] PHP   1. {main}() C:\xampp\htdocs\cajauni-master\artisan:0
+[26-Aug-2023 19:27:50 UTC] PHP Fatal error:  Uncaught Error: Class 'Illuminate\Foundation\Application' not found in C:\xampp\htdocs\cajauni-master\bootstrap\app.php:14
+Stack trace:
+#0 C:\xampp\htdocs\cajauni-master\artisan(20): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\cajauni-master\bootstrap\app.php on line 14
+[26-Aug-2023 19:28:08 UTC] PHP Fatal error:  Uncaught Error: Class 'Illuminate\Foundation\Application' not found in C:\xampp\htdocs\cajauni-master\bootstrap\app.php:14
+Stack trace:
+#0 C:\xampp\htdocs\cajauni-master\artisan(20): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\cajauni-master\bootstrap\app.php on line 14
+[26-Aug-2023 19:28:27 UTC] PHP Fatal error:  Uncaught Error: Class 'Illuminate\Foundation\Application' not found in C:\xampp\htdocs\cajauni-master\bootstrap\app.php:14
+Stack trace:
+#0 C:\xampp\htdocs\cajauni-master\artisan(20): require_once()
+#1 {main}
+  thrown in C:\xampp\htdocs\cajauni-master\bootstrap\app.php on line 14
+[26-Aug-2023 19:32:00 UTC] PHP Warning:  require(C:\xampp\htdocs\cajauni-master/vendor/autoload.php): failed to open stream: No such file or directory in C:\xampp\htdocs\cajauni-master\artisan on line 18
+[26-Aug-2023 19:32:00 UTC] PHP Stack trace:
+[26-Aug-2023 19:32:00 UTC] PHP   1. {main}() C:\xampp\htdocs\cajauni-master\artisan:0
+[26-Aug-2023 19:32:00 UTC] PHP Fatal error:  require(): Failed opening required 'C:\xampp\htdocs\cajauni-master/vendor/autoload.php' (include_path='.;C:\php\pear') in C:\xampp\htdocs\cajauni-master\artisan on line 18
+[26-Aug-2023 19:32:00 UTC] PHP Stack trace:
+[26-Aug-2023 19:32:00 UTC] PHP   1. {main}() C:\xampp\htdocs\cajauni-master\artisan:0
+[26-Aug-2023 19:33:27 UTC] PHP Warning:  require(C:\xampp\htdocs\cajauni-master/vendor/autoload.php): failed to open stream: No such file or directory in C:\xampp\htdocs\cajauni-master\artisan on line 18
+[26-Aug-2023 19:33:27 UTC] PHP Stack trace:
+[26-Aug-2023 19:33:27 UTC] PHP   1. {main}() C:\xampp\htdocs\cajauni-master\artisan:0
+[26-Aug-2023 19:33:27 UTC] PHP Fatal error:  require(): Failed opening required 'C:\xampp\htdocs\cajauni-master/vendor/autoload.php' (include_path='.;C:\php\pear') in C:\xampp\htdocs\cajauni-master\artisan on line 18
+[26-Aug-2023 19:33:27 UTC] PHP Stack trace:
+[26-Aug-2023 19:33:27 UTC] PHP   1. {main}() C:\xampp\htdocs\cajauni-master\artisan:0

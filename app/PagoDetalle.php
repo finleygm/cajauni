@@ -25,4 +25,6 @@ class PagoDetalle extends Model
     public function pago(){
         return $this->belongsTo(Pago::class);
     }
+   
+
 }

@@ -1,7 +1,7 @@
 <template>
     <div class="col-md-12">        
       <form  action="" v-cloakmethod="POST"  mid="form-cuenta" @submit.prevent>
-         @csrf 
+   
         <div class="card card-primary">
               <div class="card-header">
                 <h3 class="card-title">DATOS DE PAGOS</h3>
@@ -49,15 +49,48 @@
                     </div>        
                   </div>
                   
-                  <div class="col-md-4" v-if="tipo_cuenta==2">
-                      <label for="ifecha_pago">NRO DE VOLETO</label><br/>
+                    <div class="col-md-4" v-if="tipo_cuenta == 2">
+                        <label for="numero_recib">Seleccionar</label><br/>
+                            <chosen-select v-model="lista_sector" placeholder="Venta Externa-Interna" label="descripcion" 
+                                           track-by="id" :options="clasificacion" id="id_clasificacion"
+                                           @close=clasificadorcar>
+                            </chosen-select>   
+                    </div>
+                  <div class="col-md-4"  v-if="tipo_cuenta == 2">
+                      <label for="numero_recib">Numero</label><br/>
                     <div class="input-group">
-                      <input type="text" class="form-control" id="ifecha_pago" placeholder="dia/mes/año" v-model="fecha_pago" name="fecha_pago"  value="20/04/2021" >
-                        <div class="input-group-append">                            
-                            <button type="button" class="input-group-text" @click="actualizarHoy" >Hoy</button>
-                        </div>
+                      <input type="text" class="form-control" id="numero_recib" placeholder="Nº Recibo" :readonly="(lista_sector.descripcion=='Interna')" v-model="numero_recibo" name="numero_recib"  value="" >                       
                     </div>        
                   </div>
+
+
+                     <div class="col-md-4" v-if="cambiar">
+                        <label for="concept">CONCEPTO DE COBRO</label>
+                        <div class="input-group">                                              
+                          <div class="col-md-12" >
+                               <div class="input-group-append">
+                                  <chosen-select v-model="clasificador_pago" placeholder="Seleccionar un concepto de cobro" label="concepto" 
+                                    track-by="id" :options="lista_clasificador_pago" id="concept">
+                             </chosen-select> 
+                          
+                             <button type="button" id="button-registrar" class="btn btn-primary" @click="cambiarCuadro">+</button>
+                 
+                          </div>
+                          </div>                          
+                        </div>                                          
+                      </div> 
+
+                <div class="col-md-4" v-else="cambiar">
+                      <label for="concepto">Concepto de cobro</label><br/>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="concepto" placeholder="Describa concepto de cobro" v-model="conceptreg" name="concepto"  value="" >                       
+                      <button type="button" id="button-pagar" class="btn btn-primary" @click="registrarClasificadorPago">Registrar</button>
+                    </div>        
+                  </div>
+
+               
+
+
                 </div>                                                                    
               </div>
                 <!-- /.card-body -->
@@ -71,7 +104,7 @@
               <!-- /.card-header -->              
               <div class="card-body">    
                 <div class="row">
-                      <div class="col-md-3">                                                                  
+                    <!--  <div class="col-md-3">                                                                  
                           <div class="col-md-12" >
                             <label for="iclasificador_cuenta">UNIDAD ADM</label>
                               <chosen-select v-model="unidad_selecionado" placeholder="Clasficador de cuenta" label="descripcion" 
@@ -88,7 +121,7 @@
                                     @close="cargarCuentaPorClasificador(cuenta_clasificador_selecionado.id)">
                              </chosen-select> 
                           </div>                                                  
-                      </div>
+                      </div>-->
                       <div class="col-md-3">
                         <label for="ci">CUENTA</label>
                         <div class="input-group">                                              
@@ -100,15 +133,15 @@
                           </div>                          
                         </div>                                          
                       </div> 
-                    <div class="form-group col-md-1">
+                    <div class="form-group col-md-2">
                       <label for="monto">PRECIO UNI. </label>
                       <input type="text" class="form-control" id="precio_unitario" placeholder="precio unitario" name="precio_unitario" v-model="precio_unitario"  >
                     </div>   
-                    <div class="form-group col-md-1">
+                    <div class="form-group col-md-2">
                       <label for="monto">CANTIDAD</label>
                       <input type="text" class="form-control" id="cantidad" placeholder="cantidad" name="cantidad" v-model="cantidad" >
                     </div>     
-                    <div class="form-group col-md-1">
+                    <div class="form-group col-md-2">
                       <label for="monto">MONTO</label>
                       <input type="text" class="form-control" id="monto" placeholder="monto" name="monto"  v-model="sub_total" >
                     </div>                                   
@@ -124,7 +157,8 @@
                 <h3 class="card-title">DETALLE DE PAGO</h3>
               </div>
               <!-- /.card-header -->              
-              <div class="card-body">    
+              <div class="card-body">            
+                <div class="table-responsive">    
                 <table class="table table-hover table-bordered">
                             <thead>
                             <tr>                        
@@ -146,7 +180,8 @@
                             </tbody>
                             <div class="row" id="ver">
                               </div>
-               </table>                                                                            
+               </table>  
+               </div>                                                                          
              </div>
                 <!-- /.card-body -->
               <div class="card-footer">
@@ -162,9 +197,8 @@
       name: 'AppPago',
         components: {
           Modal,
-
         },
-        props: ['tipo_cuenta'],
+        props: ['tipo_cuenta','id_user'],
         data(){
             return {
               isModalVisible:false,
@@ -209,7 +243,7 @@
                 //     total:50
                 // }
                 ],
-                unidad_selecionada:{
+                unidad_selecionado:{
                   id:0,
                   descripcion:'',
                   rubro_id:0
@@ -223,24 +257,40 @@
                   id:0,
                   precio_unitario:50
                 },  
-                precio_unitario:50,
+
+                clasificacion:[],  
+
+                lista_clasificador_pago:[],   
+
+                lista_sector:{
+                  id:0,
+                  descripcion:'Interna'
+                },  
+
+                cambiar:true,
+                concepto:'',             
+                precio_unitario:0,
                 cantidad:1,
                 monto:0,
                 total:0,
                 fecha_pago:'12/04/2021',
                 nombres_apellidos:"",
+                numero_recibo:0,
                 ci:"6304332",
                 cliente_id:-1,
                 id_pago:-1,
                 id_pago_detalle:1,
                 numero:12,
                 lugar:"IVO",
+
                 pago:{
                   id:-1,
                   serie:-1,
                   cliente_id:1,
                   fecha_pago:'12/04/2021',
-                  total:0
+                  total:0,
+                  sector:'',
+
                 },
                 pago_detalle:{
                   id:-1,
@@ -248,7 +298,14 @@
                   descripcion:"",
                   pago_id:0,
                   cuenta_id:0                  
+                },
+
+                clasificador_pago:{
+                  id:-1,
+                  concepto:''              
+
                 }
+                
                 
             }
         },
@@ -256,6 +313,30 @@
             console.log('Component mounted.')
         },        
         methods:{
+
+          clasificadorcar(){
+            const vara=[{
+                id:1,
+                descripcion:'Externa'
+            },
+            {
+                id:2,
+                descripcion:'Interna'
+            }];
+
+            if(Object.keys(this.clasificacion).length==0){
+
+              vara.forEach(cuenta => {
+                  let _cuenta={                    
+                    id:cuenta.id,
+                    descripcion:cuenta.descripcion
+                  }
+                  this.clasificacion.push(_cuenta)
+                });
+            }
+            
+          },
+
             // agregarPago2(){               
             //     const pago1={
             //         id:-1,
@@ -306,7 +387,8 @@
                     precio_unitario:this.precio_unitario,
                     cantidad:this.cantidad,
                     descripcion:this.cuenta_selecionada.nombre_cuenta,
-                    monto:this.monto,                    
+                    monto:this.monto,                  
+            
                 };
                 this.total+=this.monto;
                 // const pago_info={
@@ -316,6 +398,7 @@
                 this.lista_pagos.push(detalle_pago);
                 console.log("pago");
             },
+
             pagar(){   
               this.cargarCliente();
               if(this.cliente_id==-1){
@@ -324,16 +407,21 @@
               }
                 const pago1={
                                   id:-1,
-                                  serie:-1,
+                                  serie:this.numero_recibo,
                                   cliente_id:this.cliente_id,
                                   lugar:this.lugar,
                                   fecha_pago:this.fecha_pago,
                                   total:this.total,
-                                  cuenta_clasificador_id:this.cuenta_clasificador_selecionado.id
+                                  sector:this.lista_sector.descripcion,
+                };const clasipago={
+                                  id:-1,
+                                  concepto:this.clasificador_pago.concepto,
                 };
                 const pago_info={
+                  pago_clasi:clasipago,
                   pago:pago1,
-                  lista_pago_detalle:this.lista_pagos
+                  lista_pago_detalle:this.lista_pagos,
+                  propsTipocuenta:this.tipo_cuenta
                 };       
                 axios.post('/ajax/Pagar',pago_info).then(res=>{
                     const error=res.data.error;
@@ -364,8 +452,40 @@
                     // });
                 }
             },
+
+            registrarClasificadorPago(){
+
+              const val={
+                  id:this.id,
+                  concepto:this.conceptreg
+              }
+ 
+              axios.post('/clasipago/registro',val).then(res=>{
+                this.lista_clasificador_pago=res.data.listado_clasificador;
+                this.clasificador_pago=res.data.pago_class;      
+                this.cambiar=true;            
+                   console.log(res.data);
+              });
+              },
+             
+
+
             cargarCuenta(){
                 axios.get(`/ajax/Cuenta`).then(
+                    res=>{
+                        this.lista_cuenta=res.data;
+                      //  console.log(res.data );
+                });
+            },
+            cargarclasiPago(){
+                axios.get(`/ajax/clasiPago`).then(
+                    res=>{
+                        this.lista_clasificador_pago=res.data;
+                   console.log(res.data );
+                });
+            },
+            cargarCuentaByd(){
+                axios.get(`/cuentaByd/${this.id_user}`).then(
                     res=>{
                         this.lista_cuenta=res.data;
                       //  console.log(res.data );
@@ -418,6 +538,12 @@
             cambiar_precio(){
               this.precio_unitario=this.cuenta_selecionada.precio_unitario;
             },
+            cambiarCuadro(){
+              this.cambiar=false;
+            },
+
+
+
              getFormatFecha(today){                   
                   var dd = today.getDate();
                   var mm = today.getMonth()+1; 
@@ -465,7 +591,12 @@
           //this.cargarClasificadorCuenta();
           this.cargarUnidad();
           this.actualizarHoy();
+          this.cargarclasiPago();
            this.total=0;
+           //this.cargarCuenta();
+           this.cargarCuentaByd();
+           this.clasificadorcar();
+        
          //   $('select').chosen({no_results_text:"Not found"});
         }
     }    
