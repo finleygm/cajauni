@@ -14,4 +14,8 @@ class ProductoUsuario extends Model
     ];
  
      
+    public function cuenta(){
+        return $this->belongsTo(Cuenta::class);
+    }
+   
 }

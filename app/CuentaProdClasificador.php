@@ -14,5 +14,11 @@ class CuentaProdClasificador extends Model
         'descripcion'
     ];
  
-     
+    public function cuenta(){
+        return $this->belongsTo(Cuenta::class);
+    }
+    public function cuenta_clasificador(){
+        return $this->belongsTo(CuentaClasificador::class);
+    }
+   
 }

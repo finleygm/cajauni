@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use PhpOffice\PhpWord\Shared\Waterfall;
 use Illuminate\Http\Request;
 use App\Pago;
 use App\ClasificadoPago;
@@ -629,7 +630,26 @@ class PagoController extends Controller
 
          );
   
-         $section->addImage(storage_path('unibol_logo.png'),$imagenStyle);
+         
+        
+       
+          $header = $section->addHeader();
+            // Configura un estilo de fuente para el texto de la marca de agua
+            $fontStyle = array(
+                'name' => 'Arial',
+                'size' => 60,        // Tamaño de fuente
+                'color' => 'FF0000',   // Color del texto (formato hexadecimal)
+                );
+                // Agrega el texto como marca de agua
+                $header->addText('ANULADO', $fontStyle, array(
+                    'marginTop' => 200, // Margen superior
+                    'marginLeft' => 55, // Margen izquierdo
+                    'angle' => 45,      // Ángulo de inclinación del texto
+                ));
+
+        
+        $section->addImage(storage_path('unibol_logo.png'),$imagenStyle);
+
          if($pago->categoria==1){
          $section->addText("UNIDAD DE PRESUPUESTO Y TESORERIA\n",$paraTituloLetra['estilo1'],$paraTituloAl['alineacion1']);
         }else{
@@ -782,9 +802,34 @@ class PagoController extends Controller
          $cell2->addText('ENTREGA CONFORME',null,$paraTituloAl['alineacion1']);
       
 
-       
+        $shape1= $section->addShape(
+            'curve',
+            array(
+                'points'    => '1,100 200,1 1,50 200,50',
+                'connector' => 'elbow',
+                'outline'   => array(
+                    'color'      => '#66cc00',
+                    'weight'     => 2,
+                    'dash'       => 'dash',
+                    'startArrow' => 'diamond',
+                    'endArrow'   => 'block',
+                ),
+            )
+        );
+      
+        //dd($shape1);
+        // Agregar una tabla dentro de la forma para contener el texto
+      
+      
+        
+        // Agregar la forma al documento
+        
+      //*  $section->addElement($shape);
+  //      $textRun5 = $shape1->addTextRun();
+  //$shape1->createTextRun();
+//$textRun5->addText('Text inside the shape', ['bold' => true]);
 
-
+//$shape1->addText('ENTREGA CONFORME',null,$paraTituloAl['alineacion1']);
 
 
          $nombre_completo='test';    

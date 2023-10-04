@@ -31,9 +31,6 @@ class Pago extends Model
     }
 
 
-    public function cuenta_clasificador(){
-        return $this->belongsTo(CuentaClasificador::class);
-    }
     public function getFechaPagoStr(){
         if($this->fecha_pago!=null)
             return \DateTime::createFromFormat('Y-m-d',$this->fecha_pago)->format('d/m/Y');

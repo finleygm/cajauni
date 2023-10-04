@@ -41,7 +41,7 @@
           </div>
           <div class="form-group">
             <label for="idescripcion">Descripción</label>
-            <input type="text" class="form-control" id="idescripcion" placeholder="Descrpcion del producto{opcional}" name="descripcion" value="{{old('descripcion')}}">
+            <input type="text" class="form-control" id="idescripcion" placeholder="Descrpcion del producto {opcional}" name="descripcion" value="{{old('descripcion')}}">
           </div>
 
           <div class="form-group">

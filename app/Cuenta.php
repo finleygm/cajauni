@@ -19,10 +19,16 @@ class Cuenta extends Model
         'unidad_id',
         'tipo_cuenta',
         'stock',
-        'unidad',
     ];    
     public function cuenta_clasificador(){
         return $this->belongsTo(CuentaClasificador::class);
     } 
+
+    public function rubro(){
+        return $this->belongsTo(Rubro::class);
+    }  
     
+    public function unidad_ent(){
+        return $this->belongsTo(Unidad::class,'unidad_id');
+    } 
 }

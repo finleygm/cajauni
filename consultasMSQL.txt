@@ -30,7 +30,7 @@ group by rubro.id;
 
 
 
-cuenta clasificador
+clasificador
 ------------------
 select `rubro`.`numero_identificador`, `rubro`.`descripcion` as `rubro_descripcion`, cuenta_clasificador.numero_clasificador, cuenta_clasificador.descripcion, 
 sum(pago_detalle.precio_unitario) as monto_consolidado 
@@ -44,7 +44,7 @@ left join `cuenta_clasificador` on `cuenta_clasificador`.`id` = `cuenta_producto
 where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2021-05-31'
 group by `cuenta_clasificador`.`id`, `rubro`.`numero_identificador`, `rubro_descripcion`, cuenta_clasificador.numero_clasificador, cuenta_clasificador.descripcion;
 
-unidad rubro
+unidad rubro estracto
 ----------
 select `unidad`.`descripcion`, `rubro`.`descripcion` as `rubro_descripcion`,
 sum(pago_detalle.precio_unitario) as monto_consolidado 
@@ -55,5 +55,239 @@ left join `unidad` on `unidad`.`id` = `cuenta`.`unidad_id`
 left join `rubro` on `rubro`.`id` = `cuenta`.`rubro_id`
 where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2023-08-31'
 group by `unidad`.`id`, `rubro_descripcion`;
+---
+
+select rubro.descripcion, `unidad`.`descripcion`, 
+sum(pago_detalle.precio_unitario) as monto_consolidado 
+from `pago_detalle` 
+left join `pago` on `pago`.`id` = `pago_detalle`.`pago_id`
+left join `cuenta` on `cuenta`.`id` = `pago_detalle`.`cuenta_id`
+left join `unidad` on `unidad`.`id` = `cuenta`.`unidad_id`
+left join `rubro` on `rubro`.`id` = `cuenta`.`rubro_id`
+where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2023-08-31'
+group by `unidad`.`id`, rubro.descripcion;
+
+
+
+
+
+todos de unidad* rubro*
+---------------------------------
+SELECT unidad.*, rubro.*
+FROM unidad
+JOIN rubro ON rubro.id = unidad.id;
+
+unidad pago
+------------
+select `unidad`.`descripcion`,
+sum(pago_detalle.precio_unitario) as monto_consolidado 
+from `pago_detalle` 
+left join `pago` on `pago`.`id` = `pago_detalle`.`pago_id`
+left join `cuenta` on `cuenta`.`id` = `pago_detalle`.`cuenta_id`
+left join `unidad` on `unidad`.`id` = `cuenta`.`unidad_id`
+where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2023-08-31'
+group by `unidad`.`id`;
+
+extracto de pago por 
+unidad clasificador pago cliente
+-----------------------
+
+select `unidad`.`descripcion` as unidadDescripcion ,cuenta_clasificador.descripcion as cuentaClasificadorDescripcin, pago.fecha_pago, pago.total
+from `pago_detalle` 
+left join `pago` on `pago`.`id` = `pago_detalle`.`pago_id`
+left join `cuenta` on `cuenta`.`id` = `pago_detalle`.`cuenta_id`
+left join `unidad` on `unidad`.`id` = `cuenta`.`unidad_id`
+left join `cuenta_producto_clasificador` on `cuenta_producto_clasificador`.`cuenta_id` = `cuenta`.`id`
+left join `cuenta_clasificador` on `cuenta_clasificador`.`id` = `cuenta_producto_clasificador`.`cuenta_clasificador_id`
+where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2023-08-31';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+select `unidad`.`descripcion`,cuenta_clasificador.descripcion,
+sum(pago_detalle.precio_unitario) as monto_consolidado 
+from `pago_detalle` 
+left join `pago` on `pago`.`id` = `pago_detalle`.`pago_id`
+left join `cuenta` on `cuenta`.`id` = `pago_detalle`.`cuenta_id`
+left join `unidad` on `unidad`.`id` = `cuenta`.`unidad_id`
+left join `cuenta_producto_clasificador` on `cuenta_producto_clasificador`.`cuenta_id` = `cuenta`.`id`
+left join `cuenta_clasificador` on `cuenta_clasificador`.`id` = `cuenta_producto_clasificador`.`cuenta_clasificador_id`
+where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2023-08-31'
+group by `unidad`.`id`,cuenta_clasificador.id;
+
+
+unidad rubro clasificador
+------------------------
+select `rubro`.`descripcion`,unidad.descripcion,cuenta_clasificador.descripcion
+from `cuenta`
+left join `unidad` on `unidad`.`id` = `cuenta`.`unidad_id`
+left join `rubro` on `cuenta`.`rubro_id` = `rubro`.`id`
+left join `cuenta_producto_clasificador` on `cuenta_producto_clasificador`.`cuenta_id` = `cuenta`.`id`
+left join `cuenta_clasificador` on `cuenta_clasificador`.`id` = `cuenta_producto_clasificador`.`cuenta_clasificador_id`
+group by rubro.id,`rubro`.`descripcion`,unidad.descripcion,cuenta_clasificador.descripcion;
+
+ 
+extracto con Rubro -Cuenta clasificador, cliente y pago
+
+select `rubro`.`numero_identificador`, `rubro`.`descripcion` as `rubro_descripcion`, cuenta_clasificador.numero_clasificador, cuenta_clasificador.descripcion, pago.total , cliente.ci, cliente.nombres, cliente.apellidos 
+from `pago_detalle` 
+left join `pago` on `pago`.`id` = `pago_detalle`.`pago_id`
+left join `cliente` on `cliente`.`id` = `pago`.`cliente_id`
+left join `cuenta` on `cuenta`.`id` = `pago_detalle`.`cuenta_id`
+left join `rubro` on `rubro`.`id` = `cuenta`.`rubro_id`
+left join `cuenta_producto_clasificador` on `cuenta_producto_clasificador`.`cuenta_id` = `cuenta`.`id`
+left join `cuenta_clasificador` on `cuenta_clasificador`.`id` = `cuenta_producto_clasificador`.`cuenta_clasificador_id`
+where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2021-05-31';
+
+
+consolidado de pago por rubro cuenta clasificador unidad --- quiere decir que sumara la columna precio unitario
+---------------------------------------------------------------
+select `rubro`.`numero_identificador`, `rubro`.`descripcion` as `rubro_descripcion`,unidad.descripcion, cuenta_clasificador.numero_clasificador, cuenta_clasificador.descripcion, 
+pago_detalle.monto
+from `pago_detalle` 
+left join `pago` on `pago`.`id` = `pago_detalle`.`pago_id`
+left join `cliente` on `cliente`.`id` = `pago`.`cliente_id`
+left join `cuenta` on `cuenta`.`id` = `pago_detalle`.`cuenta_id`
+left join `rubro` on `rubro`.`id` = `cuenta`.`rubro_id`
+left join `unidad` on `unidad`.`id` = `cuenta`.`unidad_id`
+left join `cuenta_producto_clasificador` on `cuenta_producto_clasificador`.`cuenta_id` = `cuenta`.`id`
+left join `cuenta_clasificador` on `cuenta_clasificador`.`id` = `cuenta_producto_clasificador`.`cuenta_clasificador_id`
+where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2021-05-31'
+GROUP by `rubro`.`numero_identificador`, `rubro_descripcion`, cuenta_clasificador.numero_clasificador, cuenta_clasificador.descripcion, unidad.descripcion,pago_detalle.monto;
+-------------------------------
+terminado hacer
+
+
+
+
+REPORTE RUBRO CUENTA CLASIFICADOR PAGO Y CLIENTE 
+
+
+select 
+`rubro`.`numero_identificador`, `rubro`.`descripcion` as `rubro_descripcion`,
+    GROUP_CONCAT( cuenta_clasificador.descripcion) AS descripcionClasificador
+, pago_detalle.id as id_pago_detalle
+, pago_detalle.precio_unitario*pago_detalle.cantidad as subtotal
+, pago.categoria,pago.serie
+, cliente.ci, cliente.nombres, cliente.apellidos 
+from `pago_detalle` 
+INNER join `pago` on `pago`.`id` = `pago_detalle`.`pago_id`
+ inner join `cuenta` on `cuenta`.`id` = `pago_detalle`.`cuenta_id`
+ inner join `cliente` on `cliente`.`id` = `pago`.`cliente_id`
+ inner join `rubro` on `rubro`.`id` = `cuenta`.`rubro_id`
+ inner join `cuenta_producto_clasificador` on `cuenta_producto_clasificador`.`cuenta_id` = `cuenta`.`id`
+ inner join `cuenta_clasificador` on `cuenta_clasificador`.`id` = `cuenta_producto_clasificador`.`cuenta_clasificador_id`
+where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2023-08-31'
+GROUP by `rubro`.`numero_identificador`, `rubro_descripcion`,  id_pago_detalle, subtotal, pago.categoria,pago.serie
+, cliente.ci, cliente.nombres, cliente.apellidos 
+ORDER by  pago.categoria asc, pago.serie asc; 
+
+---------------------------
+Terminado
+
+
+
+
+ESTRRACTO GENERAL POR PAGO
+----------------------------------
+SELECT 
+GROUP_CONCAT(DISTINCT rubro.descripcion) as rubro_descripcion, 
+GROUP_CONCAT(DISTINCT unidad.descripcion) as unidad_descripcion, 
+GROUP_CONCAT(DISTINCT cuenta_clasificador.descripcion SEPARATOR '\n') as cuenta_clasificador_descripcion,
+GROUP_CONCAT(DISTINCT cuenta.nombre_cuenta) AS producto,
+GROUP_CONCAT(DISTINCT pago.serie) AS serie,
+GROUP_CONCAT(DISTINCT pago.fecha_pago) AS fecha_pago ,
+sum(pago_detalle.precio_unitario*pago_detalle.cantidad) as monto
+from `pago_detalle` 
+left join `pago` on `pago`.`id` = `pago_detalle`.`pago_id`
+left join `cuenta` on `cuenta`.`id` = `pago_detalle`.`cuenta_id`
+left join `unidad` on `unidad`.`id` = `cuenta`.`unidad_id`
+left join `rubro` on `rubro`.`id` = `cuenta`.`rubro_id`
+left join `cuenta_producto_clasificador` on `cuenta_producto_clasificador`.`cuenta_id` = `cuenta`.`id`
+left join `cuenta_clasificador` on `cuenta_clasificador`.`id` = `cuenta_producto_clasificador`.`cuenta_clasificador_id`
+where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2021-05-31'
+GROUP by pago.id;
+
+
+estracto por producto vendido
+-------------------------------------
+
+SELECT 
+GROUP_CONCAT(DISTINCT rubro.descripcion) as rubro_descripcion, 
+GROUP_CONCAT(DISTINCT unidad.descripcion) as unidad_descripcion, 
+GROUP_CONCAT(DISTINCT cuenta_clasificador.descripcion SEPARATOR '\n') as cuenta_clasificador_descripcion,
+GROUP_CONCAT(DISTINCT cuenta.nombre_cuenta) AS producto,
+GROUP_CONCAT(DISTINCT pago.serie) AS serie,
+GROUP_CONCAT(DISTINCT pago.fecha_pago) AS fecha_pago ,
+GROUP_CONCAT(DISTINCT pago_detalle.descripcion) as pago_detalle_descripcion, 
+pago_detalle.cantidad,
+pago_detalle.precio_unitario,
+pago_detalle.monto
+from `pago_detalle` 
+left join `pago` on `pago`.`id` = `pago_detalle`.`pago_id`
+left join `cuenta` on `cuenta`.`id` = `pago_detalle`.`cuenta_id`
+left join `unidad` on `unidad`.`id` = `cuenta`.`unidad_id`
+left join `rubro` on `rubro`.`id` = `cuenta`.`rubro_id`
+left join `cuenta_producto_clasificador` on `cuenta_producto_clasificador`.`cuenta_id` = `cuenta`.`id`
+left join `cuenta_clasificador` on `cuenta_clasificador`.`id` = `cuenta_producto_clasificador`.`cuenta_clasificador_id`
+where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2021-05-31'
+GROUP by pago_detalle.id;
+
+
+
+
+
+
+
+SELECT
+extracto de pago por boleta 
+
+IF(pago.categoria=1,'TESORERIA','COMERCIALIZACION') AS categoria,
+GROUP_CONCAT(DISTINCT pago.serie) AS serie,
+GROUP_CONCAT(DISTINCT rubro.descripcion) as rubro_descripcion, 
+GROUP_CONCAT(DISTINCT unidad.descripcion SEPARATOR '\n') as unidad_descripcion,
+users.name,
+GROUP_CONCAT(DISTINCT pago.fecha_pago) AS fecha_pago ,
+sum(pago_detalle.precio_unitario*pago_detalle.cantidad) as monto, pago.total
+from `pago_detalle` 
+left join `pago` on `pago`.`id` = `pago_detalle`.`pago_id`
+left join `cuenta` on `cuenta`.`id` = `pago_detalle`.`cuenta_id`
+left join `unidad` on `unidad`.`id` = `cuenta`.`unidad_id`
+left join `rubro` on `rubro`.`id` = `cuenta`.`rubro_id`
+INNER join users on users.id= pago.user_id
+where `fecha_pago` >= '2021-04-01' and `fecha_pago` <= '2021-05-31'
+
+GROUP by pago.id ORDER BY pago.categoria asc, serie ASC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

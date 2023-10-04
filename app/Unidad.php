@@ -11,10 +11,9 @@ class Unidad extends Model
     public $timestamps=false;
     protected $fillable=[                
         'numero_unidad',
-        'descripcion',
-        'rubro_id',        
+        'descripcion',   
+        'tipo_unidad',
+        'unidad_id',
     ];  
-    public function rubro(){
-        return $this->belongsTo(Rubro::class);
-    } 
+   
 }

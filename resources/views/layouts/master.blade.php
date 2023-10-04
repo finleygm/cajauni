@@ -269,7 +269,13 @@ Preloader
               </a>
               <ul class="nav nav-treeview">
                 <li class="nav-item">
-                  <a href="{{route('reportes.reportes_rubro')}}" class="nav-link">
+                  <a href="{{route('reportes')}}" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Generar Reportes</p>
+                  </a>
+                </li>
+              <!--   <li class="nav-item">
+                <a href="{{route('reportes.reportes_rubro')}}" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Consolidado por Rubro</p>
                   </a>
@@ -286,7 +292,7 @@ Preloader
                     <p>Extracto</p>
                   </a>
                 </li>
-
+            -->
 
               </ul>
             </li>
