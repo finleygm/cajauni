@@ -36,6 +36,7 @@ class CuentaController extends Controller
         return view('cuenta.create');
     }
     public function store(Request $request){
+        
         $cuenta=new Cuenta();      
         $numero_cuenta=$request->get('numero_cuenta');
         $nombre_cuenta=$request->get('nombre_cuenta');
@@ -53,11 +54,13 @@ class CuentaController extends Controller
         $cuenta->rubro_id=$rubro_id;
         $cuenta->unidad_id=$unidad_id;
         $cuenta->tipo_cuenta=$tipo_cuenta;
-        $cuenta->stock=$stock;
         $cuenta->unidad=$unidad;
-
       
-
+        if($cuenta->stock!=null){
+           $cuenta->stock=$stock;
+        }else{
+           $cuenta->stock=0;  
+        }
         $cuenta_aux=Cuenta::where('numero_cuenta','=',$numero_cuenta)->first();
         if($cuenta_aux==null){
           $cuenta->save();        
@@ -73,20 +76,43 @@ class CuentaController extends Controller
         ]);
     } 
     public function update(Request $request, $id){
-        $cuenta=Cuenta::findOrFail($id);      
-        $numero_cuenta=$request->get('numero_cuenta');
-        $nombre_cuenta=$request->get('nombre_cuenta');
-        $descripcion=$request->get('descripcion');    
-        $precio_unitario=$request->get('precio_unitario');   
-        $clasificador_cuenta_id=$request->get('clasificador_cuenta_id');                    
+        $cuenta=Cuenta::findOrFail($id);  
+     //   dd($request);    
+        $numero_cuenta=$request->get('numero_cuenta');//
+        $nombre_cuenta=$request->get('nombre_cuenta');//
+        $descripcion=$request->get('descripcion');       // 
+        $precio_unitario=$request->get('precio_unitario');  //      
+        $rubro_id=$request->get('rubro_id');  //
+        $unidad_id=$request->get('unidad_id');    //
+        $tipo_cuenta=$request->get('tipo_cuenta');  //  
+        $stock=$request->get('stock');      //
+        $unidad=$request->get('unidad'); //    
         if($cuenta!=null){
+            if($cuenta->tipo_cuenta==2){
+            //    dd('llegue');
             $cuenta->numero_cuenta=$numero_cuenta;
             $cuenta->nombre_cuenta=$nombre_cuenta;
             $cuenta->descripcion=$descripcion;
             $cuenta->precio_unitario=$precio_unitario;
-            $cuenta->cuenta_clasificador_id=$clasificador_cuenta_id;//esta invertido 
+            $cuenta->rubro_id=$rubro_id;
+            $cuenta->unidad_id=$unidad_id;
+            $cuenta->unidad=$unidad;//esta invertido 
             $cuenta->update();        
-            return redirect()->route('cuenta.index');
+            return redirect()->route('cuenta.index'); 
+          }else{
+         //   dd('mierd');
+            $cuenta->numero_cuenta=$numero_cuenta;
+            $cuenta->nombre_cuenta=$nombre_cuenta;
+            $cuenta->descripcion=$descripcion;
+            $cuenta->precio_unitario=$precio_unitario;
+            $cuenta->rubro_id=$rubro_id;
+            $cuenta->unidad_id=$unidad_id;
+            $cuenta->tipo_cuenta=$tipo_cuenta;
+            $cuenta->stock=$stock;
+            $cuenta->unidad=$unidad;//esta invertido 
+            $cuenta->update();        
+            return redirect()->route('cuenta.index'); 
+          }
         }else{          
           return Redirect::back()->withInput()->withErrors(['No existe tal cuenta']);          
         }

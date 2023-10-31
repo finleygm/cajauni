@@ -19,7 +19,8 @@ class Pago extends Model
         'sector',
         'categoria',
         'nro_recibo',
-        'clasificador_pago_id'
+        'clasificador_pago_id',
+        'estado_pago'
     ];    
     public function detalle_pago()
     {        

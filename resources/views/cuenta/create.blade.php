@@ -23,36 +23,36 @@
 
           <div class="form-group">
             <label for="inumero_cuenta">Numero de Cuenta del Producto</label>
-            <input type="text" class="form-control" id="inumero_cuenta" placeholder="Indique el numero de cuenta de su producto a registrar" name="numero_cuenta" value="{{old('numero_cuenta',)}}">
+            <input type="text" class="form-control" id="inumero_cuenta" required placeholder="Indique el numero de cuenta de su producto a registrar" name="numero_cuenta" value="{{old('numero_cuenta',)}}">
           </div>
           <div class="form-group">
             <label for="inombre_cuenta">Nombre del Producto</label>
-            <input type="text" class="form-control" id="inombre_cuenta" placeholder="Indique el nombre del producto" name="nombre_cuenta" value="{{old('nombre_cuenta')}}">
+            <input type="text" class="form-control" id="inombre_cuenta" required placeholder="Indique el nombre del producto" name="nombre_cuenta" value="{{old('nombre_cuenta')}}">
           </div>
           
           <div class="form-group">
             <label for="unidade">Unidad</label>
-            <input type="text" class="form-control" id="unidad" placeholder="Describa que tipo de unidad de producto ingresara" name="unidad" value="{{old('unidad')}}">
+            <input type="text" class="form-control" id="unidad" required placeholder="Describa que tipo de unidad de producto ingresara" name="unidad" value="{{old('unidad')}}">
           </div>
 
           <div class="form-group">
             <label for="iprecio_unitario">Precio Unitario</label>
-            <input type="text" class="form-control" id="iprecio_unitario" placeholder="Indique el precio del producto" name="precio_unitario" value="{{old('precio_unitario')}}">
+            <input type="text" class="form-control" id="iprecio_unitario" required placeholder="Indique el precio del producto" name="precio_unitario" value="{{old('precio_unitario')}}">
           </div>
           <div class="form-group">
             <label for="idescripcion">Descripción</label>
-            <input type="text" class="form-control" id="idescripcion" placeholder="Descrpcion del producto {opcional}" name="descripcion" value="{{old('descripcion')}}">
+            <input type="text" class="form-control" id="idescripcion" required placeholder="Descrpcion del producto {opcional}" name="descripcion" value="{{old('descripcion')}}">
           </div>
 
           <div class="form-group">
             <label for="rubro_id">Nombre de Rubro/Partidas Ingreso</label>
-            <Select class="form-control" id="rubro_id" name="rubro_id">
+            <Select class="form-control" required id="rubro_id" name="rubro_id">
               <option>vacio</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="unidad_id"> Nombre de la Unidad</label>
-            <Select class="form-control" id="unidad_id" name="unidad_id">
+            <label for="unidad_id">Unidad recaudadora</label>
+            <Select class="form-control" required id="unidad_id" name="unidad_id">
               <option>vacio</option>
             </select>
           </div>
@@ -60,13 +60,13 @@
           <div class="form-group">
             <label for="rubro_id">Tipo de cuenta</label>
           <div class="form-check">
-            <input class="form-check-input" value="1" type="radio" name="tipo_cuenta" id="tipo_cuenta_produc">
+            <input class="form-check-input" value="1" type="radio" checked name="tipo_cuenta" id="tipo_cuenta_produc">
             <label class="form-check-label" for="tipo_cuenta_produc">
               Cuenta para producto
             </label>
           </div>
           <div class="form-check">
-            <input class="form-check-input" value="0" type="radio" name="tipo_cuenta" id="tipo_cuenta_noproduc" checked >
+            <input class="form-check-input" value="2" type="radio" name="tipo_cuenta" id="tipo_cuenta_noproduc" >
             <label class="form-check-label" for="tipo_cuenta_noproduc">
              No es cuenta de producto
             </label>
@@ -75,7 +75,7 @@
 
           <div class="form-group">
             <label for="idescripcion">Stock</label>
-            <input type="text" class="form-control" id="stock" placeholder="Stock" name="stock" value="{{old('stock')}}">
+            <input type="text" class="form-control" required id="stock" placeholder="Stock" name="stock" value="{{old('stock')}}">
           </div>
 
 
@@ -152,7 +152,6 @@
         }
       });
     }
-
 
 
 

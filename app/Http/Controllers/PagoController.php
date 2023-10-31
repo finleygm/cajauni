@@ -1,13 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
-
+//require_once "vendor/autoload.php";
 use PhpOffice\PhpWord\Shared\Waterfall;
 use Illuminate\Http\Request;
 use App\Pago;
 use App\ClasificadoPago;
 use App\Cliente;
+use App\Cuenta;
 use App\PagoDetalle;
+use App\User;
 use Illuminate\Support\Facades\Redirect;
 use DB;
 use Exception;
@@ -35,11 +37,11 @@ use NunoMaduro\Collision\Contracts\Writer;
 
 class PagoController extends Controller
 {
-    public function index(Request $request){
-        if($request)
-        {
+    public function index(){
+        // if($request)
+        // {
                        
-        }  
+        // }  
         $lpagos=Pago::orderBy('id','desc')->paginate(15);        
         return view('pago.index',["lpagos"=>$lpagos]);            
     }
@@ -88,13 +90,19 @@ class PagoController extends Controller
         $pagocat=Pago::where('categoria',$valor)->orderBy('id','desc')->first();
         return $pagocat->serie;
     }
+    
 
-
+    public function buscarCuenta($id){
+        $idcuenta=Cuenta::where('id',$id)->first();
+       //
+        return $idcuenta->stock;
+    }
 
     public function pagar(Request $request){
         
         $pago_r=$request->pago;
-        $pago=new Pago();        
+        $pago=new Pago(); 
+       
         $pago->cliente_id=$pago_r["cliente_id"];               
         $pago->total=$pago_r["total"];
         $pago->lugar=$pago_r["lugar"];
@@ -125,12 +133,14 @@ class PagoController extends Controller
         $pago->user_id=Auth::user()->id;
         $clasi_pago=ClasificadoPago::where("concepto",'=',$request->pago_clasi['concepto'])->first(); 
         $pago->clasificador_pago_id=$clasi_pago->id;
+        $pago->estado_pago='Activo';
+        $pago->justificacion='';
         DB::beginTransaction();
         $error=0;
         try {
             $pago->save();   
             $listado_pago=$request->lista_pago_detalle;
-
+            $lSin_cupo=[];
             foreach($listado_pago as $pago_detalle_r){
                 $pago_detalle=new PagoDetalle();
                 $pago_detalle->pago_id=$pago->id;
@@ -140,11 +150,30 @@ class PagoController extends Controller
                 $pago_detalle->cuenta_id=$pago_detalle_r["cuenta_id"];  
                 $pago_detalle->descripcion=$pago_detalle_r["descripcion"];  
                 //$pago_detalle->descripcion=$pago_detalle->cuenta->nombre_cuenta;
-                 $pago_detalle->save();    
+
+                 $cal=$this->buscarCuenta($pago_detalle_r["cuenta_id"]);
+
+                 if($pago->categoria!=1){
+                    if ($cal > 0) {
+                        $resultado = $cal - $pago_detalle_r["cantidad"];
+                        $pago_detalle->cuenta->stock = $resultado;
+                        $pago_detalle->cuenta->update();
+                        $pago_detalle->save();
+                    } else {
+                        array_push($lSin_cupo, $pago_detalle->cuenta->nombre_cuenta);
+                    }
+                }else{
+
+                $pago_detalle->save();
+                }
+
             }  
             DB::commit();
             $success = true;
             $error=0;
+            if(count($lSin_cupo)>0){
+                return response()->json(['error'=>2,'lSincupo'=>$lSin_cupo]);
+            }
         }catch (\Exception $e) {
             $success = false;
             DB::rollback();     
@@ -152,6 +181,7 @@ class PagoController extends Controller
             throw $e;
         }
         return response()->json(['error'=>$error,'pago'=>$pago]);
+      
     }
     public function show($id){
         $pago=Pago::findOrFail($id); 
@@ -160,6 +190,37 @@ class PagoController extends Controller
           "pago"=>$pago      
       ]);
     }
+    public function anular(Request $request){
+    //  dd($request);
+        $id=$request->id;
+        $pago=Pago::findOrFail($id); 
+    //    dd('ingreso');
+        if($pago==null){
+           return response()->json(['error'=>1,'error_msg'=>'No existe el id']);
+        }
+        if($pago->estado_pago!='Anulado'){
+            $pagocuenta=DB::table('pago_detalle')
+            ->where('pago_id','=',$id)
+            ->get();
+    
+            foreach($pagocuenta as $cuent){
+                $cuenta1=Cuenta::findOrFail($cuent->cuenta_id);
+                $cuenta1->stock=$cuenta1->stock+$cuent->cantidad;
+                $cuenta1->update();
+            }
+            $pago->estado_pago='Anulado';
+            $pago->justificacion=$request->justifica;
+            $pago->update();
+            return   response()->json(['error'=>0,'error_msg'=>'Anulacion exitosa']);
+        }
+        return  response()->json(['error'=>2,'error_msg'=>'No se puede anular 2 veces']);
+    
+    }
+
+
+
+
+
     public function getBoleta($id){
         $pago=Pago::findOrFail($id);        
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
@@ -515,7 +576,8 @@ class PagoController extends Controller
 
     public function getDocument($id){
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
-        $pago=Pago::findOrFail($id);  
+        $pago=Pago::findOrFail($id); 
+        $usuario=User::findOrFail($pago->user_id);
         $cliente=Cliente::findOrFail($pago->cliente_id);  
         $clasi_pago=ClasificadoPago::find($pago->clasificador_pago_id); 
         $pagodet=PagoDetalle::where('pago_id','=',$pago->id)->get();
@@ -631,22 +693,21 @@ class PagoController extends Controller
          );
   
          
-        
+        if($pago->estado_pago=='Anulado'){
        
           $header = $section->addHeader();
             // Configura un estilo de fuente para el texto de la marca de agua
             $fontStyle = array(
-                'name' => 'Arial',
-                'size' => 60,        // Tamaño de fuente
+                'name' => 'Chiller',
+                'size' => 75,        // Tamaño de fuente
                 'color' => 'FF0000',   // Color del texto (formato hexadecimal)
                 );
                 // Agrega el texto como marca de agua
                 $header->addText('ANULADO', $fontStyle, array(
-                    'marginTop' => 200, // Margen superior
-                    'marginLeft' => 55, // Margen izquierdo
-                    'angle' => 45,      // Ángulo de inclinación del texto
+                    'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, //ALINEACION  
+                    'angle' => 45    // Ángulo de inclinación del texto
                 ));
-
+        }
         
         $section->addImage(storage_path('unibol_logo.png'),$imagenStyle);
 
@@ -801,36 +862,15 @@ class PagoController extends Controller
          $cell2 = $row->addCell(6000); // Ancho de celda en twips
          $cell2->addText('ENTREGA CONFORME',null,$paraTituloAl['alineacion1']);
       
+         $section->addText("\n");
 
-        $shape1= $section->addShape(
-            'curve',
-            array(
-                'points'    => '1,100 200,1 1,50 200,50',
-                'connector' => 'elbow',
-                'outline'   => array(
-                    'color'      => '#66cc00',
-                    'weight'     => 2,
-                    'dash'       => 'dash',
-                    'startArrow' => 'diamond',
-                    'endArrow'   => 'block',
-                ),
-            )
-        );
-      
-        //dd($shape1);
-        // Agregar una tabla dentro de la forma para contener el texto
-      
-      
-        
-        // Agregar la forma al documento
-        
-      //*  $section->addElement($shape);
-  //      $textRun5 = $shape1->addTextRun();
-  //$shape1->createTextRun();
-//$textRun5->addText('Text inside the shape', ['bold' => true]);
+         $section->addText('usuario '.$usuario->email,[ //Texto en negrita
+         'size'=>8,          //Tamaño de letra
+         'name'=>'Agency FB',   //stilo de letra
+         'color'=>'	#0000FF'],$paraTituloAl['alineacion1']);
 
-//$shape1->addText('ENTREGA CONFORME',null,$paraTituloAl['alineacion1']);
-
+         $phpWord->getProtection()->setEditing('forms');
+         $phpWord->getProtection()->setPassword('123456');
 
          $nombre_completo='test';    
          $objWriter1 = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');

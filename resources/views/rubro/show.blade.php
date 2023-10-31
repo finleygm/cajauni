@@ -17,7 +17,7 @@
                   </li>
                  
                 </ul>
-                <a href="#" class="btn btn-primary btn-block"><b>Aceptar</b></a>
+                <a href="{{route('rubro.index')}}" class="btn btn-primary btn-block">Volver</a>
               </div>
             </div>              
         </div>

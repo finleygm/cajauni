@@ -56,7 +56,7 @@
           </table>
         </div>
 
-        <a href="{{route('reportes.ajaxGetExtracto',['fecha_ini'=>$fecha_ini,'fecha_fin'=>$fecha_fin, 'extracto_general'=>'extracto_general' ])}}" class="btn btn-primary btn-block"><b>IMPRIMIR</b></a>
+        <a href="{{route('reportes.ajaxGetExtracto',['fecha_ini'=>$fecha_ini,'fecha_fin'=>$fecha_fin, 'extracto_boleta'=>'extracto_boleta' ])}}" class="btn btn-primary btn-block"><b>IMPRIMIR</b></a>
 
 
       </div>

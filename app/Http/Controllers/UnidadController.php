@@ -19,13 +19,16 @@ class UnidadController extends Controller
         return view('unidad.create');
     }
     public function store(Request $request){
-        $unidad=new Unidad();      
+        $unidad=new Unidad();   
+       // dd($request);
         $numero_unidad=$request->get('numero_unidad');
         $descripcion=$request->get('descripcion');  
-        $rubro_id=$request->get('rubro_id');                               
+        $tipo_unidad=$request->get('tipo_unidad');    
+        $unidad_id=$request->get('unidad_id');   
         $unidad->numero_unidad=$numero_unidad;
         $unidad->descripcion=$descripcion;    
-        $unidad->rubro_id=$rubro_id;
+        $unidad->tipo_unidad=$tipo_unidad;  
+        $unidad->unidad_id=$unidad_id;
         $unidad_aux=Unidad::where('numero_unidad','=',$numero_unidad)->first();
         if($unidad_aux==null){
             $unidad->save();        
@@ -42,13 +45,18 @@ class UnidadController extends Controller
     } 
     public function update(Request $request, $id){
         $unidad=Unidad::findOrFail($id);
+       // dd($request);
         $numero_unidad=$request->get('numero_unidad');
         $descripcion=$request->get('descripcion');                                 
-        $rubro_id=$request->get('rubro_id');                                                 
+        $tipo_unidad=$request->get('tipo_unidad');                                   
+        $unidad_id=$request->get('unidad_id');   
+      //  $unidadPru=Unidad::findOrFail($unidad_id);
+                                                     
         if($unidad!=null){
             $unidad->numero_unidad=$numero_unidad;
             $unidad->descripcion=$descripcion;
-            $unidad->rubro_id=$rubro_id;
+            $unidad->tipo_unidad=$tipo_unidad;
+            $unidad->unidad_id=$unidad_id;
             $unidad->update();        
             return redirect()->route('unidad.index');
         }else{          

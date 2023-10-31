@@ -11,14 +11,17 @@
                 <div class="row">
                   <div class="col-md-4">
                       <label for="ci">CARNET DE IDENTIDAD</label>
-                      <div class="input-group">
-                              <input type="text" class="form-control" id="ci"
+                      <div class="input-group" id="prueb" data-toggle="tooltip" data-html="true" data-placement="top"  title="
+                               <P> Preciona enter si ya registraste antes al usuario, para buscarlo</P>
+                                ">
+                              <input type="text" class="form-control red-tooltip" id="ci"
                                  name="ci" v-on:keyup.enter.prevent="cargarCliente" 
                                 v-model="ci"   
-                                data-toggle="tooltip" 
-                                data-placement="top" title="Escribe numero de registro y presiona enter"
-                              >
-                          <div class="input-group-append">
+                                 >
+                             
+                          <div class="input-group-append"  data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Preciona para agregar nuevo usuario</p>
+                                ">
                             <Modal  v-show="isModalVisible" @close="closeModal" id="val4" @guardar="guardar"/>
                           <a href="#" @click="abriModal"><span class="input-group-text">+</span></a>
                             
@@ -34,12 +37,16 @@
                 </div>
                 <div class="row">
                   <div class="col-md-4">
-                      <div class="form-group">
+                      <div class="form-group"  data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Ingresa el lugar de donde estas registrando el pago</p>
+                                ">
                           <label for="lugar">LUGAR</label>                         
                           <input type="text" class="form-control" id="lugar" placeholder="LUGAR" name="lugar" value="IVO" v-model="lugar">
                       </div>                                          
                   </div> 
-                  <div class="col-md-8">
+                  <div class="col-md-8" data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Ingresa la fecha del pago</p>
+                                ">
                       <label for="ifecha_pago">FECHA EMISION</label><br/>
                     <div class="input-group">
                       <input type="text" class="form-control" id="ifecha_pago" placeholder="dia/mes/año" v-model="fecha_pago" name="fecha_pago"  value="20/04/2021" >
@@ -49,14 +56,19 @@
                     </div>        
                   </div>
                   
-                    <div class="col-md-4" v-if="tipo_cuenta == 2">
+                    <div class="col-md-4" v-if="tipo_cuenta == 2"  data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Selecione si la venta sera 
+                                          'Interna o Externa'</p>
+                                ">
                         <label for="numero_recib">Seleccionar</label><br/>
                             <chosen-select v-model="lista_sector" placeholder="Venta Externa-Interna" label="descripcion" 
                                            track-by="id" :options="clasificacion" id="id_clasificacion"
                                            @close=clasificadorcar>
                             </chosen-select>   
                     </div>
-                  <div class="col-md-4"  v-if="tipo_cuenta == 2">
+                  <div class="col-md-4"  v-if="tipo_cuenta == 2"  data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Ingrese numero de recibo si la venta es externa</p>
+                                ">
                       <label for="numero_recib">Numero</label><br/>
                     <div class="input-group">
                       <input type="text" class="form-control" id="numero_recib" placeholder="Nº Recibo" :readonly="(lista_sector.descripcion=='Interna')" v-model="numero_recibo" name="numero_recib"  value="" >                       
@@ -68,22 +80,28 @@
                         <label for="concept">CONCEPTO DE COBRO</label>
                         <div class="input-group">                                              
                           <div class="col-md-12" >
-                               <div class="input-group-append">
+                               <div id="tooltip_concept" class="input-group-append" data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Selecciona concepto cobro</p>
+                                " >
                                   <chosen-select v-model="clasificador_pago" placeholder="Seleccionar un concepto de cobro" label="concepto" 
                                     track-by="id" :options="lista_clasificador_pago" id="concept">
                              </chosen-select> 
                           
-                             <button type="button" id="button-registrar" class="btn btn-primary" @click="cambiarCuadro">+</button>
+                             <button type="button" id="button-registrar" data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Presiona si el concepto no aparece en la lista para agregar uno nuevo</p>
+                                "  class="btn btn-primary" @click="cambiarCuadro">+</button>
                  
                           </div>
                           </div>                          
                         </div>                                          
                       </div> 
 
-                <div class="col-md-4" v-else="cambiar">
+                  <div class="col-md-4" v-else="cambiar" >
                       <label for="concepto">Concepto de cobro</label><br/>
-                    <div class="input-group">
-                      <input type="text" class="form-control" id="concepto" placeholder="Describa concepto de cobro" v-model="conceptreg" name="concepto"  value="" >                       
+                    <div class="input-group" >
+                      <input type="text" class="form-control" id="concepto" data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Ingresa el nombre del nuevo concepto de cobro</p>
+                                "  placeholder="Describa concepto de cobro" v-model="conceptreg" name="concepto"  value="" >                       
                       <button type="button" id="button-pagar" class="btn btn-primary" @click="registrarClasificadorPago">Registrar</button>
                     </div>        
                   </div>
@@ -125,7 +143,9 @@
                       <div class="col-md-3">
                         <label for="ci">CUENTA</label>
                         <div class="input-group">                                              
-                          <div class="col-md-12" >
+                          <div class="col-md-12" data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Selecciona la cuenta-producto que vas a vender</p>
+                                   ">
                               <chosen-select v-model="cuenta_selecionada" placeholder="cuenta" label="nombre_cuenta" 
                                     track-by="id" :options="lista_cuenta" id="cuenta"
                                     @close="cambiar_precio">
@@ -133,23 +153,31 @@
                           </div>                          
                         </div>                                          
                       </div> 
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-2" data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Edita el precio solo si es necesario</p>
+                                   ">
                       <label for="monto">PRECIO UNI. </label>
                       <input type="text" class="form-control" id="precio_unitario" placeholder="precio unitario" name="precio_unitario" v-model="precio_unitario"  >
                     </div>   
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-2" data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Indica la cantidad que vas a vender</p>
+                                   ">
                       <label for="monto">CANTIDAD</label>
                       <input type="text" class="form-control" id="cantidad" placeholder="cantidad" name="cantidad" v-model="cantidad" >
                     </div>     
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-2" data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Te muestra el monto total tu venta</p>
+                                   ">
                       <label for="monto">MONTO</label>
-                      <input type="text" class="form-control" id="monto" placeholder="monto" name="monto"  v-model="sub_total" >
+                      <input type="text" class="form-control" id="monto" disabled placeholder="monto" name="monto"  v-model="sub_total" >
                     </div>                                   
                 </div>                                                                            
               </div>
                 <!-- /.card-body -->
               <div class="card-footer">
-                  <button type="button" id="button-pagar" class="btn btn-primary" @click="agregarPago">Agregar</button>
+                  <button type="button" id="button-pagar"  data-toggle="tooltip" data-html="true" title="
+                                    <p style='font-size:20px'>Agregaras al detalle para posterior pago</p>
+                                   " class="btn btn-primary" @click="agregarPago">Agregar</button>
               </div>                       
         </div>
         <div class="card card-primary">
@@ -175,7 +203,7 @@
                                 <td>{{pago1.descripcion}}</td>
                                 <td>{{pago1.precio_unitario}}</td>
                                 <td>{{pago1.monto}}</td>
-                                <td><button class="btn btn-danger btn-sm" type="button"  @click="eliminarPago(pago,key)">Eliminar</button>  </td>                            
+                                <td><button class="btn btn-danger btn-sm" type="button"  @click="eliminarPago(pago1,key)">Eliminar</button>  </td>                            
                               </tr>
                             </tbody>
                             <div class="row" id="ver">
@@ -201,6 +229,7 @@
         props: ['tipo_cuenta','id_user'],
         data(){
             return {
+
               isModalVisible:false,
               lista_unidad:[
                     {
@@ -304,13 +333,18 @@
                   id:-1,
                   concepto:''              
 
-                }
+                },
+                
+                tooltip_concept_cobro:true,
                 
                 
             }
         },
         mounted() {
             console.log('Component mounted.')
+
+    // Establecer showElement en true una vez que el componente se haya montado y el elemento se haya renderizado.
+      
         },        
         methods:{
 
@@ -429,9 +463,10 @@
                     //0 no error
                     //2 ya existe
                     console.log("Ingreso");
-                    console.log(res.data);
+                    console.log(error);
                     $("#ver").html(res.data);
                     if(error==0){
+                      console.log('error');
                         // const resultado1=res.data.resultado;                                                
                         // var pago_detalle=resultado1.pago_detalle;
                         // var pago=resultado1.pago;                             
@@ -439,16 +474,24 @@
                         // console.log("pago");
                         alert('Se realizo el pago exitosamente se con Nº DE SERIE '+pago.serie);
                         window.location.href = "/Pago/"+pago.id;
-                    }else if(error==2){
+                    }else if(error==2){                
+                      let msg_s="Sin stock:";
+                      const lSinCupo=res.data.lSincupo;
+                      lSinCupo.forEach((ele)=>{
+                          // console.log(ele);
+                          msg_s=msg_s+'\n'+ele;
+                      });
+                      alert(msg_s);
+
                        // alert('Ya Registro la Materia, No se puede registrar 2 veces en la misma gestion');
                     }
                 });
             },
-            eliminarPago(materia, index){
-                const confirmacion = confirm(`Se va a eliminar esta materia y se perderan\n las notas registrada a esta notas ${materia.nombre}`);
+            eliminarPago(pago, index){
+                const confirmacion = confirm(`Se eliminara el pago "${pago.descripcion}". ¿Esta seguro de hacerlo?`);
                 if(confirmacion){
                     // axios.delete(`/ajax/ajaxRegistrarMateriasAvanzada/${materia.id}`).then(()=>{
-                    //     this.lista_registros_materias.splice(index, 1);
+                      this.lista_pagos.splice(index, 1);
                     // });
                 }
             },
@@ -529,17 +572,34 @@
                 axios.get(`/ajax/Cliente/${this.ci}`)
                 .then(res=>{
                     console.log("no _ingreso");
-                        this.cliente=res.data;    
-                        this.cliente_id=this.cliente.id;                                            
-                        this.nombres_apellidos=this.cliente.nombres+" "+this.cliente.apellidos;
+                         this.cliente=res.data;  
+                         this.cliente_id=this.cliente.id;                                            
+                         if(this.cliente_id==undefined){
+                            this.cliente_id=-1;
+                         }else{
+                           this.nombres_apellidos=this.cliente.nombres+" "+this.cliente.apellidos;
                         console.log(this.cliente);
+                         }
+
+                        
+                      
                 });                                      
             },
             cambiar_precio(){
               this.precio_unitario=this.cuenta_selecionada.precio_unitario;
             },
             cambiarCuadro(){
+          
               this.cambiar=false;
+              $('#tooltip_concept').tooltip('hide');
+              $('#button-registrar').tooltip('hide');
+              setTimeout(function(){
+                $('[data-toggle="tooltip"]').tooltip()
+            //     $('#concepto').tooltip('show');
+              }, 0);
+                      
+             
+
             },
 
 
@@ -586,7 +646,8 @@
                 return this.monto+"";
             }
         },
-        created(){           
+        created(){        
+          $('[data-toggle="tooltip"]').tooltip();   
           // this.cargarCuenta();
           //this.cargarClasificadorCuenta();
           this.cargarUnidad();
@@ -601,7 +662,20 @@
         }
     }    
 </script>
-<!--<style scoped>
- @import '../../../node_modules/vue-multiselect/dist/vue-multiselect.min.css';
+<style>
+/* .bs-tooltip-top {
+  border-top-color: #f00 !important;
+ 
+  background-color: #f00;
+} */
+
+.tooltip-inner {
+    background-color: #0bf8b1;
+   /* box-shadow: 0px 0px 4px rgb(233, 199, 5);*/
+    opacity: 1 !important;
+    border-radius: 20%;
+    color: black;
+    font-weight: bold;
+}
+
  </style>
- -->

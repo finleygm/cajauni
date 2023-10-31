@@ -42,11 +42,12 @@ class RubroController extends Controller
         ]);
     } 
     public function update(Request $request, $id){
+        //dd($request);
         $rubro=Rubro::findOrFail($id);
         $numero_identificador=$request->get('numero_identificador');
         $descripcion=$request->get('descripcion');                         
         if($rubro!=null){
-            $rubro->numero_clasificador=$numero_identificador;
+            $rubro->numero_identificador=$numero_identificador;
             $rubro->descripcion=$descripcion;
             $rubro->update();        
             return redirect()->route('rubro.index');

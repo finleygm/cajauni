@@ -4,12 +4,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sistema Tesoreria</title>
+  <title>Sistema Tesoreria/Comercializacion</title>
+  <link rel="icon" href="{{asset('/storage/uploads/icon19.png')}}">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.css">
 
   <link rel="stylesheet" href="{{asset('css/app.css')}}">
   <link rel="stylesheet" href="{{ asset('js/chosen.css') }}"">  
+  <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
 </head>
 <body class=" hold-transition sidebar-mini layout-fixed">
 
@@ -156,10 +158,10 @@ Preloader
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    <aside class="main-sidebar sidebar-dark-secundary elevation-4">
+    <aside class="main-sidebar sidebar-dark-secundary elevation-4" >
       <!-- Brand Logo -->
 
-      <a href="" class="brand-link">
+      <a href="{{ asset('/storage/uploads/unnamed.jpg') }}" class="brand-link">
         <!--  <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
         <img src="{{ asset('/storage/uploads/unnamed.jpg') }}" width="50" class="img-circle elevation-2" alt="User Image">
         <span class="brand-text font-weight-light">UNIBOL GUARANI</span>
@@ -171,10 +173,8 @@ Preloader
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image">
-            <img src="{{ asset('/storage/uploads/iconocasa.png') }}" class="img-circle elevation-2" alt="User Image">
-
+            <img src="{{ asset('/storage/uploads/icon16.png')}}" class="img-circle elevation-2" alt="User Image">
           </div>
-
           <div class="info">
             <a href="{{ route('home') }}" class="d-block" style="color:aquamarine;">
               <span class="brand-text font-weight-light">INICIO</span>
@@ -321,7 +321,7 @@ Preloader
 
             <li class="nav-item ">
               <a href="#" class="nav-link ">
-                <i class="nav-icon fas fa-chart-pie"></i>
+              <i class="nav-icon  fa fa-book" ></i>
                 <p>
                   CLASIFICADOR DE CUENTAS - PRODUCTOS
                   <i class="right fas fa-angle-left"></i>

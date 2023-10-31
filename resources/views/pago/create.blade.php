@@ -16,4 +16,11 @@
 
 @push('scripts')
 
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+this.function();
+</script>
 @endpush

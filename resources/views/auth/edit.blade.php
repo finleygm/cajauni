@@ -5,10 +5,10 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+                <div class="card-header">{{ __('editar') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="">
+                    <form method="POST" action="{{route('update',$usuario->id)}}">
                         @csrf
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Nombre y Apellido') }}</label>
@@ -45,7 +45,7 @@
                             <div class="col-md-6">
 
                                 <select class="form-control" name="sexo" id="sexo" required autocomplete="sexo" aria-label="Large select example" >
-                                    <option selected>Seleccionar</option>
+                                    <option value="">Seleccionar</option>
                                     <option value="Masculino">Masculino</option>
                                     <option value="Femenino">Femenino</option>
                                 </select>
@@ -66,7 +66,7 @@
                             <div class="col-md-6">
 
                                 <select class="form-control" name="cargo" id="cargo" required autocomplete="cargo" aria-label="Large select example" >
-                                    <option selected>Seleccionar</option>
+                                    <option value="">Seleccionar</option>
                                     <option value="Administrador">Administrador</option>
                                     <option value="Usuario">Usuario</option>
                                 </select>
@@ -83,12 +83,12 @@
 
                         
                         <div class="form-group row">
-                            <label for="departamento" class="col-md-4 col-form-label text-md-right">{{ __('Departamento') }}</label>
+                            <label for="are" class="col-md-4 col-form-label text-md-right">{{ __('Area') }}</label>
 
                             <div class="col-md-6">
 
-                                <select class="form-control" name="departamento" id="departamento" required autocomplete="departamento" aria-label="Large select example" >
-                                    <option selected>Seleccionar</option>
+                                <select class="form-control" name="area" id="area" required autocomplete="area" aria-label="Large select example" >
+                                    <option value="">Seleccionar</option>
                                     <option value="1">Tesoreria</option>
                                     <option value="2">Comercializacion</option>
                                 </select>

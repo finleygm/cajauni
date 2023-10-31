@@ -25,34 +25,34 @@ class UsuarioController extends Controller
     return view('auth.listaruser',compact('Usuario'));   
    } 
 
-
-
-
-
     public function edit($id){ 
      $usuario=User::find($id);
         return view('auth.edit',compact('usuario'));
        
     } 
     public function update(Request $request, $id){
-        // $usuario=Usuario::findOrFail($id);      
-        // $numero_cuenta=$request->get('numero_cuenta');
-        // $nombre_cuenta=$request->get('nombre_cuenta');
-        // $descripcion=$request->get('descripcion');    
-        // $precio_unitario=$request->get('precio_unitario');   
-        // $clasificador_cuenta_id=$request->get('clasificador_cuenta_id');                    
-        // if($usuario!=null){
-        //     $usuario->numero_cuenta=$numero_cuenta;
-        //     $usuario->nombre_cuenta=$nombre_cuenta;
-        //     $usuario->descripcion=$descripcion;
-        //     $usuario->precio_unitario=$precio_unitario;
-        //     $usuario->cuenta_clasificador_id=$clasificador_cuenta_id;//esta invertido 
-        //     $usuario->update();        
-        //     return redirect()->route('usuario.index');
-        // }else{          
-        //   return Redirect::back()->withInput()->withErrors(['No existe tal cuenta']);          
-        // }
+       // dd($request);
+        $usuario=User::findOrFail($id);      
+       // $numero_cuenta=$request->get('numero_cuenta');
+        $nombre_usuario=$request->get('name');
+        $correo=$request->get('email');    
+        $sexo=$request->get('sexo');   
+        $cargo=$request->get('cargo');     
+        $area=$request->get('area');                         
+        if($usuario!=null){
+       //     $usuario->numero_cuenta=$numero_cuenta;
+            $usuario->name=$nombre_usuario;
+            $usuario->email=$correo;
+            $usuario->sexo=$sexo;
+            $usuario->cargo=$cargo;
+            $usuario->categoria=$area;
+            $usuario->update();        
+            return redirect('usuario')->with('mensaje','Actualizado Correctamente');
+        }else{          
+          return Redirect::back()->withInput()->withErrors(['No existe tal cuenta']);          
+        }
     }
+
     public function show($id){
         $userdeta=User::findOrFail($id);        
         return view('auth.detalleuser',compact('userdeta'));

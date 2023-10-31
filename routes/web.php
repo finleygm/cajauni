@@ -27,6 +27,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
+//Route::get('/register', 'Auth\RegisterController@index')->middleware('auth');
+
 Route::get('/detalle', function () {
     return view('auth.detalleuser');
 });
@@ -42,8 +44,7 @@ Route::get('/usuario',[ UsuarioController::class,'index']) ->name('usuario.index
 Route::get('/reportes','ReportesController@index')->name('reportes')->middleware('auth');
 Route::post('/reporte','ReportesController@recoger')->name('reportes.recoger')->middleware('auth');
 
-
-
+Route::post('/update/{id}',[ UsuarioController::class,'update']) ->name('update')->middleware('auth');
 
 
 Route::delete('/cuenta_prod_clasificador/eliminar/{id}','CuentaProdClasificadorController@delete')->name('cuenta_clasificador.delete')->middleware('auth');
@@ -122,6 +123,7 @@ Route::put('/cliente/{id}', 'ClienteController@update')->name('cliente.update')-
 Route::get('/cliente/{id}', 'ClienteController@show')->name('cliente.show')->middleware('auth');
 //pago
 Route::get('/Pago/index', 'PagoController@index')->name('pago.index')->middleware('auth');
+Route::post('/PagoA', 'PagoController@anular')->name('pago.anular')->middleware('auth');
 Route::get('/Pago/{id}', 'PagoController@show')->name('pago.show')->middleware('auth');
 Route::get('/Pago', 'PagoController@create')->name('pago.create')->middleware('auth');
 Route::get('/Pago/boleta/{id}', 'PagoController@getBoleta')->name('pago.getBoleta')->middleware('auth');

@@ -5,8 +5,8 @@
     <div class="row">
       
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">               
-            <h3>Listado de Unidades</h3>
-            <a href="{{route('cuenta_clasificador.create')}}"><button class="btn btn-primary">Nuevo</button></a>             
+            <h3 style="display: inline;">Listado de Unidades
+            <a href="{{route('cuenta_clasificador.create')}}" style="display: inline;"><button class="btn btn-primary" style="display: inline;">Nuevo</button></a>  </h3>           
         </div>
     </div>
     <div class="row">

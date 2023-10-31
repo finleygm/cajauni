@@ -48,21 +48,21 @@ class ReportesController extends Controller
                 return view('reportes.reportes_extracto_boleta',['lconsolidado'=>$resul,"fecha_ini"=>$fecha_ini,"fecha_fin"=>$fecha_fin]);
             
             break; 
-            case 'Clasificador_Consolidado':
-                $resul=$this->getReportesConsolidadoClasificador($fecha_ini, $fecha_fin);
-                return view('reportes.reportes_unidad_rubro_clasificador',['lconsolidado'=>$resul,"fecha_ini"=>$fecha_ini,"fecha_fin"=>$fecha_fin]);
+            // case 'Clasificador_Consolidado':
+            //     $resul=$this->getReportesConsolidadoClasificador($fecha_ini, $fecha_fin);
+            //     return view('reportes.reportes_unidad_rubro_clasificador',['lconsolidado'=>$resul,"fecha_ini"=>$fecha_ini,"fecha_fin"=>$fecha_fin]);
             
-            break;   
+            // break;   
 
-            case 'Unidad_Clasificador_Pago':
-                $resul=$this->getReportesConsolidadoClasificador($fecha_ini, $fecha_fin);
-                return view('reportes.reportes_unidad_rubro_clasificador',['lconsolidado'=>$resul,"fecha_ini"=>$fecha_ini,"fecha_fin"=>$fecha_fin]);
-            break;
+            // case 'Unidad_Clasificador_Pago':
+            //     $resul=$this->getReportesConsolidadoClasificador($fecha_ini, $fecha_fin);
+            //     return view('reportes.reportes_unidad_rubro_clasificador',['lconsolidado'=>$resul,"fecha_ini"=>$fecha_ini,"fecha_fin"=>$fecha_fin]);
+            // break;
 
-            case 'Unidad_Rubro_clasificador_Pago':
-                $resul=$this->getReportesCuentaClasificadorPagoCliente($fecha_ini, $fecha_fin);
-                return view('reportes.reportes_rubro_cclasificador_cliente_pago',['lconsolidado'=>$resul,"fecha_ini"=>$fecha_ini,"fecha_fin"=>$fecha_fin]);
-            break;
+            // case 'Unidad_Rubro_clasificador_Pago':
+            //     $resul=$this->getReportesCuentaClasificadorPagoCliente($fecha_ini, $fecha_fin);
+            //     return view('reportes.reportes_rubro_cclasificador_cliente_pago',['lconsolidado'=>$resul,"fecha_ini"=>$fecha_ini,"fecha_fin"=>$fecha_fin]);
+            // break;
             case 'Rubro_Clasificador':
                 return $this->getReporteFromIniFinPorClasificador($request);
                 break;
@@ -119,7 +119,9 @@ class ReportesController extends Controller
                     
                  )->where('fecha_pago','>=',ReportesController::mysqlDatetoStr($fecha_ini))
                  ->where('fecha_pago','<=',ReportesController::mysqlDatetoStr($fecha_fin))
-                 ->groupby('pago_detalle.id')
+                 ->groupby('pago_detalle.id') 
+                 ->orderby('unidad_descripcion', 'asc')
+              //   ->orderby( DB::raw('CAST(serie AS UNSIGNED)'), 'desc')
                  ->get();
         return $reportes_clasificador;
     }
@@ -146,7 +148,7 @@ class ReportesController extends Controller
                  ->where('fecha_pago','<=',ReportesController::mysqlDatetoStr($fecha_fin))
                  ->groupby('pago_detalle.id')
                  ->orderby('pago.categoria', 'asc')
-                 ->orderby('serie', 'asc')
+                 ->orderby( DB::raw('CAST(serie AS UNSIGNED)'), 'desc')
                  ->get();
         return $reportes_clasificador;
     }
@@ -440,17 +442,7 @@ class ReportesController extends Controller
    //////àara 
    
    if(($request->get('extracto_general'))=="extracto_general"){
-/*
-    rubro_descripcion	
-    unidad_descripcion	
-    cuenta_clasificador_descripcion	
-    producto	
-    serie	
-    fecha_pago	
-    cantidad	
-    precio_unitario	
-    monto
-  */
+
     $RUBRO=$COL;$COL++;
     $UNIDAD=$COL;$COL++;
     $CUENTA_CLASIFICADOR=$COL;$COL++;
@@ -498,6 +490,54 @@ class ReportesController extends Controller
              $sheet->getColumnDimension( $cell->getColumn() )->setAutoSize( true );
      }
  }
+
+
+
+ if(($request->get('extracto_boleta'))=="extracto_boleta"){
+    
+    $CATEGORIA=$COL;$COL++;
+    $SERIE=$COL;$COL++;
+    $RUBRO=$COL;$COL++;
+    $UNIDAD=$COL;$COL++;
+    $USUARIO=$COL;$COL++;
+    $FECHA=$COL;$COL++;
+    $MONTO=$COL;$COL++;
+    $TOTAL=$COL;$COL++;
+
+    $sheet->setCellValueByColumnAndRow($CATEGORIA,$row,"CATEGORIA");
+    $sheet->setCellValueByColumnAndRow($SERIE,$row,"SERIE");  
+    $sheet->setCellValueByColumnAndRow($RUBRO,$row,"NOMBRE DEL RUBRO"); 
+    $sheet->setCellValueByColumnAndRow($UNIDAD,$row,"NOMBRE DE LA UNIDAD");
+    $sheet->setCellValueByColumnAndRow($USUARIO,$row,"NOMBRE DE USUARIO"); 
+    $sheet->setCellValueByColumnAndRow($FECHA,$row,"FECHA"); 
+    $sheet->setCellValueByColumnAndRow($MONTO,$row,"MONTO"); 
+    $sheet->setCellValueByColumnAndRow($TOTAL,$row,"TOTAL"); 
+   
+    foreach($extracto_pagos as $pago){
+        foreach($pago->detalle_pago as $detalle){
+            $row++;        
+            
+            $sheet->setCellValueByColumnAndRow($CATEGORIA,$row,($pago->categoria==1)?'TESORERIA':'COMERCIALIZACION');
+            $sheet->setCellValueByColumnAndRow($SERIE,$row,$pago->serie); 
+            $sheet->setCellValueByColumnAndRow($RUBRO,$row,$detalle->cuenta->rubro->descripcion); 
+            $sheet->setCellValueByColumnAndRow($UNIDAD,$row,$detalle->cuenta->unidad_ent->descripcion);  
+            $sheet->setCellValueByColumnAndRow($USUARIO,$row,$pago->user->email);
+            $sheet->setCellValueByColumnAndRow($FECHA,$row,$pago->getFechaPagoStr());      
+            $sheet->setCellValueByColumnAndRow($MONTO,$row,$detalle->monto);       
+            $sheet->setCellValueByColumnAndRow($TOTAL,$row,$pago->total); 
+        }          
+      }  
+
+     //autosize
+     $cellIterator = $sheet->getRowIterator()->current()->getCellIterator();
+     $cellIterator->setIterateOnlyExistingCells( true );
+     foreach( $cellIterator as $cell ) {
+             $sheet->getColumnDimension( $cell->getColumn() )->setAutoSize( true );
+     }
+ }
+
+
+
    //FORMATEANDO     
         $styleArray = [
             'font' => [
@@ -527,7 +567,19 @@ class ReportesController extends Controller
             ],
         ];  
        //FORMATEANDO LOS ROTULOS
+       if(($request->get('rubro'))=="rubro"){
+        $spreadsheet->getActiveSheet()->getStyle(Coordinate::stringFromColumnIndex($FECHA)."1:".Coordinate::stringFromColumnIndex($USUARIO)."1")->applyFromArray($styleArray);          
+        }
+       if(($request->get('clasificador'))=='clasificador'){
+        $spreadsheet->getActiveSheet()->getStyle(Coordinate::stringFromColumnIndex($FECHA)."1:".Coordinate::stringFromColumnIndex($USUARIO)."1")->applyFromArray($styleArray);          
+        }  
+       if(($request->get('extracto_general'))=="extracto_general"){
         $spreadsheet->getActiveSheet()->getStyle(Coordinate::stringFromColumnIndex($RUBRO)."1:".Coordinate::stringFromColumnIndex($MONTO)."1")->applyFromArray($styleArray);          
+        }
+        if(($request->get('extracto_boleta'))=="extracto_boleta"){
+            $spreadsheet->getActiveSheet()->getStyle(Coordinate::stringFromColumnIndex($CATEGORIA)."1:".Coordinate::stringFromColumnIndex($TOTAL)."1")->applyFromArray($styleArray);          
+        }
+
         //FORMATEANDO LAS LINEAS
         $highestRow = $sheet->getHighestDataRow(); // e.g. 10
         $highestColumn = $sheet->getHighestColumn(); // e.g 'F'

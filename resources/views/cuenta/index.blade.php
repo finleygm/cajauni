@@ -1,10 +1,12 @@
 @extends('layouts.master')
 @section('contenido')
+
+
     <div class="row">
       
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">               
-            <h3>Listado de cuentas<a href="venta/create">
-            <a href="{{route('cuenta.create')}}"><button class="btn btn-primary">Nuevo</button></a> 
+            <h3>Listado de cuentas
+            <a href="{{route('cuenta.create')}}"><button class="btn btn-success">Nuevo Cuenta</button></a> 
             
         </div>
     </div>
@@ -18,6 +20,7 @@
                     <th style="text-align: center;">Unidad del Producto</th>  
                     <th style="text-align: center;">Precio del Producto</th> 
                     <th style="text-align: center;">Tipo de Clasificacion del Producto</th>    
+                    <th style="text-align: center;">Cantidad/Stock</th>    
                     <th>Opciones</th>
                     </thead>
                     @foreach($lcuentas as $cuenta)
@@ -30,7 +33,8 @@
                         <td style="text-align: center;">Es producto</td>
                         @else                              
                         <td style="text-align: center;">No es producto</td>                             
-                        @endif                  
+                        @endif          
+                        <td  style="text-align: center;" >{{$cuenta->stock}}</td>
                         <td>  
                         <a href="{{route('cuenta.show',$cuenta->id)}}"><button class="btn btn-primary">Detalle</button></a>                      
                         <a href="{{route('cuenta.edit',$cuenta->id)}}" ><button class="btn btn-primary">Editar</button></a>                        

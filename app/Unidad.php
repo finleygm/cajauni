@@ -15,5 +15,9 @@ class Unidad extends Model
         'tipo_unidad',
         'unidad_id',
     ];  
+
+    public function unidad(){
+        return $this->belongsTo(Unidad::class,'unidad_id','id');
+    }
    
 }

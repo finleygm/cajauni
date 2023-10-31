@@ -2114,6 +2114,34 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'AppPago',
@@ -2210,11 +2238,12 @@ __webpack_require__.r(__webpack_exports__);
       clasificador_pago: {
         id: -1,
         concepto: ''
-      }
+      },
+      tooltip_concept_cobro: true
     };
   },
   mounted: function mounted() {
-    console.log('Component mounted.');
+    console.log('Component mounted.'); // Establecer showElement en true una vez que el componente se haya montado y el elemento se haya renderizado.
   },
   methods: {
     clasificadorcar: function clasificadorcar() {
@@ -2331,27 +2360,35 @@ __webpack_require__.r(__webpack_exports__);
         //2 ya existe
 
         console.log("Ingreso");
-        console.log(res.data);
+        console.log(error);
         $("#ver").html(res.data);
 
         if (error == 0) {
-          // const resultado1=res.data.resultado;                                                
+          console.log('error'); // const resultado1=res.data.resultado;                                                
           // var pago_detalle=resultado1.pago_detalle;
           // var pago=resultado1.pago;                             
           // this.lista_pagos.push(pago_detalle);
           // console.log("pago");
+
           alert('Se realizo el pago exitosamente se con Nº DE SERIE ' + pago.serie);
           window.location.href = "/Pago/" + pago.id;
-        } else if (error == 2) {// alert('Ya Registro la Materia, No se puede registrar 2 veces en la misma gestion');
+        } else if (error == 2) {
+          var msg_s = "Sin stock:";
+          var lSinCupo = res.data.lSincupo;
+          lSinCupo.forEach(function (ele) {
+            // console.log(ele);
+            msg_s = msg_s + '\n' + ele;
+          });
+          alert(msg_s); // alert('Ya Registro la Materia, No se puede registrar 2 veces en la misma gestion');
         }
       });
     },
-    eliminarPago: function eliminarPago(materia, index) {
-      var confirmacion = confirm("Se va a eliminar esta materia y se perderan\n las notas registrada a esta notas ".concat(materia.nombre));
+    eliminarPago: function eliminarPago(pago, index) {
+      var confirmacion = confirm("Se eliminara el pago \"".concat(pago.descripcion, "\". \xBFEsta seguro de hacerlo?"));
 
-      if (confirmacion) {// axios.delete(`/ajax/ajaxRegistrarMateriasAvanzada/${materia.id}`).then(()=>{
-        //     this.lista_registros_materias.splice(index, 1);
-        // });
+      if (confirmacion) {
+        // axios.delete(`/ajax/ajaxRegistrarMateriasAvanzada/${materia.id}`).then(()=>{
+        this.lista_pagos.splice(index, 1); // });
       }
     },
     registrarClasificadorPago: function registrarClasificadorPago() {
@@ -2442,8 +2479,13 @@ __webpack_require__.r(__webpack_exports__);
         console.log("no _ingreso");
         _this10.cliente = res.data;
         _this10.cliente_id = _this10.cliente.id;
-        _this10.nombres_apellidos = _this10.cliente.nombres + " " + _this10.cliente.apellidos;
-        console.log(_this10.cliente);
+
+        if (_this10.cliente_id == undefined) {
+          _this10.cliente_id = -1;
+        } else {
+          _this10.nombres_apellidos = _this10.cliente.nombres + " " + _this10.cliente.apellidos;
+          console.log(_this10.cliente);
+        }
       });
     },
     cambiar_precio: function cambiar_precio() {
@@ -2451,6 +2493,11 @@ __webpack_require__.r(__webpack_exports__);
     },
     cambiarCuadro: function cambiarCuadro() {
       this.cambiar = false;
+      $('#tooltip_concept').tooltip('hide');
+      $('#button-registrar').tooltip('hide');
+      setTimeout(function () {
+        $('[data-toggle="tooltip"]').tooltip(); //     $('#concepto').tooltip('show');
+      }, 0);
     },
     getFormatFecha: function getFormatFecha(today) {
       var dd = today.getDate();
@@ -2495,8 +2542,9 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    // this.cargarCuenta();
+    $('[data-toggle="tooltip"]').tooltip(); // this.cargarCuenta();
     //this.cargarClasificadorCuenta();
+
     this.cargarUnidad();
     this.actualizarHoy();
     this.cargarclasiPago();
@@ -8060,6 +8108,25 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 // module
 exports.push([module.i, "\n.modal-mask[data-v-6155990e] {\n  position: fixed;\n  z-index: 9998;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.5);\n  display: table;\n  transition: opacity 0.8s ease;\n}\n.modal-wrapper[data-v-6155990e] {\n  display: table-cell;\n  vertical-align: middle;\n}\n.modal-container[data-v-6155990e] {\n  width: 400px;\n  margin: 0px auto;\n  padding: 20px 30px;\n  padding-bottom: 40px;\n  background-color: #fff;\n  border-radius: 2px;\n  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\n  transition: all 0.3s ease;\n}\n.modal-default-button[data-v-6155990e] {\n  float: right;\n}\n\n/*\n * The following styles are auto-applied to elements with\n * transition=\"modal\" when their visibility is toggled\n * by Vue.js.\n *\n * You can easily play with the modal transition by editing\n * these styles.\n */\n.modal-enter[data-v-6155990e] {\n  opacity: 0;\n}\n.modal-leave-active[data-v-6155990e] {\n  opacity: 0;\n}\n.modal-enter .modal-container[data-v-6155990e],\n.modal-leave-active .modal-container[data-v-6155990e] {\n  transform: scale(1.1);\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PagoComponent.vue?vue&type=style&index=0&lang=css&":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/PagoComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* .bs-tooltip-top {\n  border-top-color: #f00 !important;\n \n  background-color: #f00;\n} */\n.tooltip-inner {\n    background-color: #0bf8b1;\n   /* box-shadow: 0px 0px 4px rgb(233, 199, 5);*/\n    opacity: 1 !important;\n    border-radius: 20%;\n    color: black;\n    font-weight: bold;\n}\n\n ", ""]);
 
 // exports
 
@@ -39364,6 +39431,36 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PagoComponent.vue?vue&type=style&index=0&lang=css&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/PagoComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./PagoComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PagoComponent.vue?vue&type=style&index=0&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/lib/addStyles.js":
 /*!****************************************************!*\
   !*** ./node_modules/style-loader/lib/addStyles.js ***!
@@ -41285,82 +41382,100 @@ var render = function() {
                   _vm._v("CARNET DE IDENTIDAD")
                 ]),
                 _vm._v(" "),
-                _c("div", { staticClass: "input-group" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.ci,
-                        expression: "ci"
-                      }
-                    ],
-                    staticClass: "form-control",
+                _c(
+                  "div",
+                  {
+                    staticClass: "input-group",
                     attrs: {
-                      type: "text",
-                      id: "ci",
-                      name: "ci",
+                      id: "prueb",
                       "data-toggle": "tooltip",
+                      "data-html": "true",
                       "data-placement": "top",
-                      title: "Escribe numero de registro y presiona enter"
-                    },
-                    domProps: { value: _vm.ci },
-                    on: {
-                      keyup: function($event) {
-                        if (
-                          !$event.type.indexOf("key") &&
-                          _vm._k(
-                            $event.keyCode,
-                            "enter",
-                            13,
-                            $event.key,
-                            "Enter"
-                          )
-                        ) {
-                          return null
-                        }
-                        $event.preventDefault()
-                        return _vm.cargarCliente($event)
-                      },
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.ci = $event.target.value
-                      }
+                      title:
+                        "\n                           <P> Preciona enter si ya registraste antes al usuario, para buscarlo</P>\n                            "
                     }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "input-group-append" },
-                    [
-                      _c("Modal", {
-                        directives: [
-                          {
-                            name: "show",
-                            rawName: "v-show",
-                            value: _vm.isModalVisible,
-                            expression: "isModalVisible"
+                  },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.ci,
+                          expression: "ci"
+                        }
+                      ],
+                      staticClass: "form-control red-tooltip",
+                      attrs: { type: "text", id: "ci", name: "ci" },
+                      domProps: { value: _vm.ci },
+                      on: {
+                        keyup: function($event) {
+                          if (
+                            !$event.type.indexOf("key") &&
+                            _vm._k(
+                              $event.keyCode,
+                              "enter",
+                              13,
+                              $event.key,
+                              "Enter"
+                            )
+                          ) {
+                            return null
                           }
-                        ],
-                        attrs: { id: "val4" },
-                        on: { close: _vm.closeModal, guardar: _vm.guardar }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "a",
-                        { attrs: { href: "#" }, on: { click: _vm.abriModal } },
-                        [
-                          _c("span", { staticClass: "input-group-text" }, [
-                            _vm._v("+")
-                          ])
-                        ]
-                      )
-                    ],
-                    1
-                  )
-                ])
+                          $event.preventDefault()
+                          return _vm.cargarCliente($event)
+                        },
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.ci = $event.target.value
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "input-group-append",
+                        attrs: {
+                          "data-toggle": "tooltip",
+                          "data-html": "true",
+                          title:
+                            "\n                                <p style='font-size:20px'>Preciona para agregar nuevo usuario</p>\n                            "
+                        }
+                      },
+                      [
+                        _c("Modal", {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.isModalVisible,
+                              expression: "isModalVisible"
+                            }
+                          ],
+                          attrs: { id: "val4" },
+                          on: { close: _vm.closeModal, guardar: _vm.guardar }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            attrs: { href: "#" },
+                            on: { click: _vm.abriModal }
+                          },
+                          [
+                            _c("span", { staticClass: "input-group-text" }, [
+                              _vm._v("+")
+                            ])
+                          ]
+                        )
+                      ],
+                      1
+                    )
+                  ]
+                )
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "col-md-8" }, [
@@ -41403,92 +41518,124 @@ var render = function() {
             _vm._v(" "),
             _c("div", { staticClass: "row" }, [
               _c("div", { staticClass: "col-md-4" }, [
-                _c("div", { staticClass: "form-group" }, [
-                  _c("label", { attrs: { for: "lugar" } }, [_vm._v("LUGAR")]),
-                  _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.lugar,
-                        expression: "lugar"
-                      }
-                    ],
-                    staticClass: "form-control",
+                _c(
+                  "div",
+                  {
+                    staticClass: "form-group",
                     attrs: {
-                      type: "text",
-                      id: "lugar",
-                      placeholder: "LUGAR",
-                      name: "lugar",
-                      value: "IVO"
-                    },
-                    domProps: { value: _vm.lugar },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.lugar = $event.target.value
-                      }
+                      "data-toggle": "tooltip",
+                      "data-html": "true",
+                      title:
+                        "\n                                <p style='font-size:20px'>Ingresa el lugar de donde estas registrando el pago</p>\n                            "
                     }
-                  })
-                ])
+                  },
+                  [
+                    _c("label", { attrs: { for: "lugar" } }, [_vm._v("LUGAR")]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.lugar,
+                          expression: "lugar"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        type: "text",
+                        id: "lugar",
+                        placeholder: "LUGAR",
+                        name: "lugar",
+                        value: "IVO"
+                      },
+                      domProps: { value: _vm.lugar },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.lugar = $event.target.value
+                        }
+                      }
+                    })
+                  ]
+                )
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "col-md-8" }, [
-                _c("label", { attrs: { for: "ifecha_pago" } }, [
-                  _vm._v("FECHA EMISION")
-                ]),
-                _c("br"),
-                _vm._v(" "),
-                _c("div", { staticClass: "input-group" }, [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.fecha_pago,
-                        expression: "fecha_pago"
-                      }
-                    ],
-                    staticClass: "form-control",
-                    attrs: {
-                      type: "text",
-                      id: "ifecha_pago",
-                      placeholder: "dia/mes/año",
-                      name: "fecha_pago",
-                      value: "20/04/2021"
-                    },
-                    domProps: { value: _vm.fecha_pago },
-                    on: {
-                      input: function($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.fecha_pago = $event.target.value
-                      }
-                    }
-                  }),
+              _c(
+                "div",
+                {
+                  staticClass: "col-md-8",
+                  attrs: {
+                    "data-toggle": "tooltip",
+                    "data-html": "true",
+                    title:
+                      "\n                                <p style='font-size:20px'>Ingresa la fecha del pago</p>\n                            "
+                  }
+                },
+                [
+                  _c("label", { attrs: { for: "ifecha_pago" } }, [
+                    _vm._v("FECHA EMISION")
+                  ]),
+                  _c("br"),
                   _vm._v(" "),
-                  _c("div", { staticClass: "input-group-append" }, [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "input-group-text",
-                        attrs: { type: "button" },
-                        on: { click: _vm.actualizarHoy }
+                  _c("div", { staticClass: "input-group" }, [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.fecha_pago,
+                          expression: "fecha_pago"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: {
+                        type: "text",
+                        id: "ifecha_pago",
+                        placeholder: "dia/mes/año",
+                        name: "fecha_pago",
+                        value: "20/04/2021"
                       },
-                      [_vm._v("Hoy")]
-                    )
+                      domProps: { value: _vm.fecha_pago },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.fecha_pago = $event.target.value
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "input-group-append" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "input-group-text",
+                          attrs: { type: "button" },
+                          on: { click: _vm.actualizarHoy }
+                        },
+                        [_vm._v("Hoy")]
+                      )
+                    ])
                   ])
-                ])
-              ]),
+                ]
+              ),
               _vm._v(" "),
               _vm.tipo_cuenta == 2
                 ? _c(
                     "div",
-                    { staticClass: "col-md-4" },
+                    {
+                      staticClass: "col-md-4",
+                      attrs: {
+                        "data-toggle": "tooltip",
+                        "data-html": "true",
+                        title:
+                          "\n                                <p style='font-size:20px'>Selecione si la venta sera \n                                      'Interna o Externa'</p>\n                            "
+                      }
+                    },
                     [
                       _c("label", { attrs: { for: "numero_recib" } }, [
                         _vm._v("Seleccionar")
@@ -41518,43 +41665,55 @@ var render = function() {
                 : _vm._e(),
               _vm._v(" "),
               _vm.tipo_cuenta == 2
-                ? _c("div", { staticClass: "col-md-4" }, [
-                    _c("label", { attrs: { for: "numero_recib" } }, [
-                      _vm._v("Numero")
-                    ]),
-                    _c("br"),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "input-group" }, [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.numero_recibo,
-                            expression: "numero_recibo"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: {
-                          type: "text",
-                          id: "numero_recib",
-                          placeholder: "Nº Recibo",
-                          readonly: _vm.lista_sector.descripcion == "Interna",
-                          name: "numero_recib",
-                          value: ""
-                        },
-                        domProps: { value: _vm.numero_recibo },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
+                ? _c(
+                    "div",
+                    {
+                      staticClass: "col-md-4",
+                      attrs: {
+                        "data-toggle": "tooltip",
+                        "data-html": "true",
+                        title:
+                          "\n                                <p style='font-size:20px'>Ingrese numero de recibo si la venta es externa</p>\n                            "
+                      }
+                    },
+                    [
+                      _c("label", { attrs: { for: "numero_recib" } }, [
+                        _vm._v("Numero")
+                      ]),
+                      _c("br"),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "input-group" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.numero_recibo,
+                              expression: "numero_recibo"
                             }
-                            _vm.numero_recibo = $event.target.value
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "text",
+                            id: "numero_recib",
+                            placeholder: "Nº Recibo",
+                            readonly: _vm.lista_sector.descripcion == "Interna",
+                            name: "numero_recib",
+                            value: ""
+                          },
+                          domProps: { value: _vm.numero_recibo },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.numero_recibo = $event.target.value
+                            }
                           }
-                        }
-                      })
-                    ])
-                  ])
+                        })
+                      ])
+                    ]
+                  )
                 : _vm._e(),
               _vm._v(" "),
               _vm.cambiar
@@ -41567,7 +41726,16 @@ var render = function() {
                       _c("div", { staticClass: "col-md-12" }, [
                         _c(
                           "div",
-                          { staticClass: "input-group-append" },
+                          {
+                            staticClass: "input-group-append",
+                            attrs: {
+                              id: "tooltip_concept",
+                              "data-toggle": "tooltip",
+                              "data-html": "true",
+                              title:
+                                "\n                                <p style='font-size:20px'>Selecciona concepto cobro</p>\n                            "
+                            }
+                          },
                           [
                             _c("chosen-select", {
                               attrs: {
@@ -41592,7 +41760,11 @@ var render = function() {
                                 staticClass: "btn btn-primary",
                                 attrs: {
                                   type: "button",
-                                  id: "button-registrar"
+                                  id: "button-registrar",
+                                  "data-toggle": "tooltip",
+                                  "data-html": "true",
+                                  title:
+                                    "\n                                <p style='font-size:20px'>Presiona si el concepto no aparece en la lista para agregar uno nuevo</p>\n                            "
                                 },
                                 on: { click: _vm.cambiarCuadro }
                               },
@@ -41624,6 +41796,10 @@ var render = function() {
                         attrs: {
                           type: "text",
                           id: "concepto",
+                          "data-toggle": "tooltip",
+                          "data-html": "true",
+                          title:
+                            "\n                                <p style='font-size:20px'>Ingresa el nombre del nuevo concepto de cobro</p>\n                            ",
                           placeholder: "Describa concepto de cobro",
                           name: "concepto",
                           value: ""
@@ -41667,7 +41843,15 @@ var render = function() {
                 _c("div", { staticClass: "input-group" }, [
                   _c(
                     "div",
-                    { staticClass: "col-md-12" },
+                    {
+                      staticClass: "col-md-12",
+                      attrs: {
+                        "data-toggle": "tooltip",
+                        "data-html": "true",
+                        title:
+                          "\n                                <p style='font-size:20px'>Selecciona la cuenta-producto que vas a vender</p>\n                               "
+                      }
+                    },
                     [
                       _c("chosen-select", {
                         attrs: {
@@ -41692,100 +41876,139 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _c("div", { staticClass: "form-group col-md-2" }, [
-                _c("label", { attrs: { for: "monto" } }, [
-                  _vm._v("PRECIO UNI. ")
-                ]),
-                _vm._v(" "),
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.precio_unitario,
-                      expression: "precio_unitario"
-                    }
-                  ],
-                  staticClass: "form-control",
+              _c(
+                "div",
+                {
+                  staticClass: "form-group col-md-2",
                   attrs: {
-                    type: "text",
-                    id: "precio_unitario",
-                    placeholder: "precio unitario",
-                    name: "precio_unitario"
-                  },
-                  domProps: { value: _vm.precio_unitario },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.precio_unitario = $event.target.value
-                    }
+                    "data-toggle": "tooltip",
+                    "data-html": "true",
+                    title:
+                      "\n                                <p style='font-size:20px'>Edita el precio solo si es necesario</p>\n                               "
                   }
-                })
-              ]),
+                },
+                [
+                  _c("label", { attrs: { for: "monto" } }, [
+                    _vm._v("PRECIO UNI. ")
+                  ]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.precio_unitario,
+                        expression: "precio_unitario"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      id: "precio_unitario",
+                      placeholder: "precio unitario",
+                      name: "precio_unitario"
+                    },
+                    domProps: { value: _vm.precio_unitario },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.precio_unitario = $event.target.value
+                      }
+                    }
+                  })
+                ]
+              ),
               _vm._v(" "),
-              _c("div", { staticClass: "form-group col-md-2" }, [
-                _c("label", { attrs: { for: "monto" } }, [_vm._v("CANTIDAD")]),
-                _vm._v(" "),
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.cantidad,
-                      expression: "cantidad"
-                    }
-                  ],
-                  staticClass: "form-control",
+              _c(
+                "div",
+                {
+                  staticClass: "form-group col-md-2",
                   attrs: {
-                    type: "text",
-                    id: "cantidad",
-                    placeholder: "cantidad",
-                    name: "cantidad"
-                  },
-                  domProps: { value: _vm.cantidad },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.cantidad = $event.target.value
-                    }
+                    "data-toggle": "tooltip",
+                    "data-html": "true",
+                    title:
+                      "\n                                <p style='font-size:20px'>Indica la cantidad que vas a vender</p>\n                               "
                   }
-                })
-              ]),
+                },
+                [
+                  _c("label", { attrs: { for: "monto" } }, [
+                    _vm._v("CANTIDAD")
+                  ]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.cantidad,
+                        expression: "cantidad"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      id: "cantidad",
+                      placeholder: "cantidad",
+                      name: "cantidad"
+                    },
+                    domProps: { value: _vm.cantidad },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.cantidad = $event.target.value
+                      }
+                    }
+                  })
+                ]
+              ),
               _vm._v(" "),
-              _c("div", { staticClass: "form-group col-md-2" }, [
-                _c("label", { attrs: { for: "monto" } }, [_vm._v("MONTO")]),
-                _vm._v(" "),
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.sub_total,
-                      expression: "sub_total"
-                    }
-                  ],
-                  staticClass: "form-control",
+              _c(
+                "div",
+                {
+                  staticClass: "form-group col-md-2",
                   attrs: {
-                    type: "text",
-                    id: "monto",
-                    placeholder: "monto",
-                    name: "monto"
-                  },
-                  domProps: { value: _vm.sub_total },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.sub_total = $event.target.value
-                    }
+                    "data-toggle": "tooltip",
+                    "data-html": "true",
+                    title:
+                      "\n                                <p style='font-size:20px'>Te muestra el monto total tu venta</p>\n                               "
                   }
-                })
-              ])
+                },
+                [
+                  _c("label", { attrs: { for: "monto" } }, [_vm._v("MONTO")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.sub_total,
+                        expression: "sub_total"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "text",
+                      id: "monto",
+                      disabled: "",
+                      placeholder: "monto",
+                      name: "monto"
+                    },
+                    domProps: { value: _vm.sub_total },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.sub_total = $event.target.value
+                      }
+                    }
+                  })
+                ]
+              )
             ])
           ]),
           _vm._v(" "),
@@ -41794,7 +42017,14 @@ var render = function() {
               "button",
               {
                 staticClass: "btn btn-primary",
-                attrs: { type: "button", id: "button-pagar" },
+                attrs: {
+                  type: "button",
+                  id: "button-pagar",
+                  "data-toggle": "tooltip",
+                  "data-html": "true",
+                  title:
+                    "\n                                <p style='font-size:20px'>Agregaras al detalle para posterior pago</p>\n                               "
+                },
                 on: { click: _vm.agregarPago }
               },
               [_vm._v("Agregar")]
@@ -41831,7 +42061,7 @@ var render = function() {
                             attrs: { type: "button" },
                             on: {
                               click: function($event) {
-                                return _vm.eliminarPago(_vm.pago, key)
+                                return _vm.eliminarPago(pago1, key)
                               }
                             }
                           },
@@ -55888,7 +56118,9 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _PagoComponent_vue_vue_type_template_id_5f080009___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PagoComponent.vue?vue&type=template&id=5f080009& */ "./resources/js/components/PagoComponent.vue?vue&type=template&id=5f080009&");
 /* harmony import */ var _PagoComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PagoComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/PagoComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _PagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PagoComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/PagoComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
@@ -55896,7 +56128,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _PagoComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _PagoComponent_vue_vue_type_template_id_5f080009___WEBPACK_IMPORTED_MODULE_0__["render"],
   _PagoComponent_vue_vue_type_template_id_5f080009___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -55925,6 +56157,22 @@ component.options.__file = "resources/js/components/PagoComponent.vue"
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PagoComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./PagoComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PagoComponent.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PagoComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/PagoComponent.vue?vue&type=style&index=0&lang=css&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/PagoComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./PagoComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/PagoComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PagoComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+
 
 /***/ }),
 

@@ -34,6 +34,7 @@
                       <option value="Administracion" selected>Administracion</option>
                       <option value="Carrera">Carrera</option>
                       <option value="Modulo"> Modulo</option>
+                      <option value="Modulo"> Submodulo</option>
                     </select>
                   </div>
                   <div class="form-group">
