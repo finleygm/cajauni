@@ -9,14 +9,16 @@ use Illuminate\Support\Facades\Redirect;
 class UnidadController extends Controller
 {
     public function index(Request $request){
+       // $unidadPru=Unidad::findOrFail($unidad_id);
         if($request)
         {                       
         }  
         $lunidad1=Unidad::orderBy('id','desc')->paginate(15);        
-        return view('unidad.index',["lunidades"=>$lunidad1]);            
+        return view('unidad.index',["lunidades"=>$lunidad1,]);            
     }
     public function create(){
-        return view('unidad.create');
+        return view('unidad.create',['id_nuevo'=>Unidad::max('id')+1]);
+
     }
     public function store(Request $request){
         $unidad=new Unidad();   

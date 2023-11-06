@@ -33,7 +33,7 @@ class CuentaController extends Controller
         return view('cuenta.index',["lcuentas"=>$lcuentas1]);            
     }
     public function create(){
-        return view('cuenta.create');
+        return view('cuenta.create',["nro_cuenta"=>Cuenta::max('id')+1]);
     }
     public function store(Request $request){
         

@@ -23,7 +23,7 @@
 
           <div class="form-group">
             <label for="inumero_cuenta">Numero de Cuenta del Producto</label>
-            <input type="text" class="form-control" id="inumero_cuenta" required placeholder="Indique el numero de cuenta de su producto a registrar" name="numero_cuenta" value="{{old('numero_cuenta',)}}">
+            <input type="text" class="form-control" id="inumero_cuenta" required placeholder="Indique el numero de cuenta de su producto a registrar" name="numero_cuenta" value="{{old('numero_cuenta',$nro_cuenta)}}">
           </div>
           <div class="form-group">
             <label for="inombre_cuenta">Nombre del Producto</label>

@@ -22,7 +22,7 @@
                 <div class="card-body">
                   <div class="form-group">
                     <label for="inumero_unidad">Numero de Unidad</label>
-                    <input type="text" class="form-control" id="inumero_unidad" placeholder="Numero Unidad" name="numero_unidad" value="{{old('numero_unidad',)}}">
+                    <input type="text" class="form-control" id="inumero_unidad" placeholder="Numero Unidad" name="numero_unidad" value="{{old('numero_unidad',$id_nuevo)}}">
                   </div>
                   <div class="form-group">
                     <label for="idescripcion">Nombre de la Unidad</label>
