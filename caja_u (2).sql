@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generaci髇: 04-10-2023 a las 15:46:45
--- Versi髇 del servidor: 5.7.24-log
--- Versi髇 de PHP: 7.4.33
+-- Tiempo de generaci贸n: 26-06-2024 a las 22:35:26
+-- Versi贸n del servidor: 5.7.24-log
+-- Versi贸n de PHP: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -15,7 +15,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES latin1 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Base de datos: `caja_u`
@@ -37,17 +37,7 @@ CREATE TABLE `clasificador_pago` (
 --
 
 INSERT INTO `clasificador_pago` (`id`, `concepto`) VALUES
-(1, 'Certificado Global'),
-(2, 'Titulo Provisi髇'),
-(3, 'Diploma Provisi髇'),
-(4, 'Titulo tec Sup'),
-(5, 'Verduras'),
-(6, 'Licor'),
-(7, 'Cerdos'),
-(8, 'Muebles'),
-(9, 'Animales bovinos'),
-(10, 'Colchones'),
-(11, 'Venta de productos');
+(1, 'historicos');
 
 -- --------------------------------------------------------
 
@@ -70,24 +60,12 @@ CREATE TABLE `cliente` (
 --
 
 INSERT INTO `cliente` (`id`, `ci`, `ci_expedido`, `nombres`, `apellidos`, `created_at`, `updated_at`) VALUES
-(1, '6304332', 'SC', 'FINLEY', 'GUERRA MENDOZA', NULL, NULL),
-(2, '9743924', 'sc', 'MELISSA', 'A袳Z AGUILERA', NULL, NULL),
-(3, '8135356', 'sc', 'Juan', 'Pachuri Pesoa', NULL, NULL),
-(4, '8873173', 'SC', 'GENRRY', 'JUSTINIANO YANDURA', NULL, NULL),
-(5, '7573573', 'SC', 'ROY', 'QUISPE TORREZ', NULL, NULL),
-(6, '9803178', 'SC', 'DIEGO', 'MOZA VARGAS', NULL, NULL),
-(7, '9037181', 'SC', 'JORGE LUIS', 'VARGAS MENDEZ', NULL, NULL),
-(8, '11328676', 'SC', 'ERICKA XIMENA', 'LIMACHI CLAURE', NULL, NULL),
-(9, '15143488', 'SC', 'SORAYA', 'ORTEGA VIDES', NULL, NULL),
-(10, '13887154', 'SC', 'MARIOLY', 'PARIAMO VALDEZ', NULL, NULL),
-(11, '10670314', 'SC', 'JULIO ARNALDO', 'CORTEZ', NULL, NULL),
-(12, '13168012', 'Sc', 'LUIS DAVID', 'MERCADO GOMEZ', NULL, NULL),
-(13, '13887169', 'Sc', 'ZINARA', 'CUIQUI MACUAPA', NULL, NULL),
-(14, '6935823', 'Sc', 'ALDAIR', 'CALLE LIMACO', NULL, NULL),
-(15, '10670464', 'Sc', 'MARIA SOLEDAD', 'ACOSTA SAAVEDRA', NULL, NULL),
-(16, '13670965', 'Sc', 'CARLOS LEONEL', 'VIDAL LOBO', NULL, NULL),
-(17, '12787076', 'Tj', 'ROY DANY', 'URZAGASTE HERRERA', NULL, NULL),
-(18, '12345678', 'Sc', 'CARLOS', 'PALENQUE', NULL, NULL);
+(1, '11370434', '', 'JOSE VICENTE', 'FRIAS CESPEDES', NULL, NULL),
+(2, '13636924', '', 'JUAN GABRIEL', 'YURE RIVERO', NULL, NULL),
+(3, '8412755', '', 'RAQUIELA', 'MAYTO BAYA', NULL, NULL),
+(4, '9606382', '', 'FABIO', 'AMARAL MONTENEGRO', NULL, NULL),
+(5, '10812001', '', 'BERTHA VIVIANA', 'ALIPAZ LURICI', NULL, NULL),
+(6, '7779062', '', 'ALDO ANTONIO', 'FERNANDEZ POICHE', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -98,7 +76,7 @@ INSERT INTO `cliente` (`id`, `ci`, `ci_expedido`, `nombres`, `apellidos`, `creat
 CREATE TABLE `cuenta` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `numero_cuenta` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nombre_cuenta` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nombre_cuenta` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -115,16 +93,42 @@ CREATE TABLE `cuenta` (
 --
 
 INSERT INTO `cuenta` (`id`, `numero_cuenta`, `nombre_cuenta`, `descripcion`, `created_at`, `updated_at`, `precio_unitario`, `rubro_id`, `unidad_id`, `tipo_cuenta`, `stock`, `unidad`) VALUES
-(1, '12341', 'Pago Historicos', 'Aranceles', NULL, NULL, 15, 2, 5, '2', 0, ''),
-(2, '123', 'Certificado de Notas', 'Aranceles', NULL, NULL, 50, 2, 5, '2', 0, ''),
-(4, '4567', 'Diploma Academico', 'Aranceles,  Tiene un costo de 200bs', NULL, NULL, 200, 2, 5, '2', 0, ''),
-(5, '1234', 'Certificados de Notas  nivel Tecnico Superior', 'Aranceles', NULL, NULL, 30, 2, 5, '2', 0, ''),
-(6, '234', 'pago de certificados de notas', 'Cuentas', NULL, NULL, 30, 2, 4, '2', 0, ''),
-(7, '2343', 'Historicos academicos', 'Pago para historicos de notas de postgrado', NULL, NULL, 15, 2, 5, '2', 0, ''),
-(8, '1', 'DIPLOMA ACADEMICO DE DIPLOMADO', NULL, NULL, NULL, 300, 2, 5, '2', 0, ''),
-(9, '232', 'Pago de Alevines', NULL, NULL, NULL, 2, 2, 5, '1', 0, ''),
-(10, '12', 'pollos', 'venta de pollos', NULL, NULL, 20, 3, 6, '1', 100, ''),
-(11, '741', 'Perejil', 'se vendera por amarro', NULL, NULL, 2, 2, 2, '1', 50, 'amarro');
+(1, '1', 'Diploma Academico', NULL, NULL, NULL, 200, 1, 2, '0', 2, 'Unidad'),
+(2, '2', 'Legalizacion de Diploma Acad茅mico', NULL, NULL, NULL, 80, 1, 2, '0', 1, 'Unidad'),
+(3, '3', 'Certificado de Notas (por semestre)', NULL, NULL, NULL, 5, 1, 2, '2', 6, 'Unidad'),
+(4, '4', 'Certificado Global de Notas (Historial Academico)', '', NULL, NULL, 15, 1, 2, '2', 1, 'Unidad'),
+(5, '5', 'Carga horaria universitaria (por gesti贸n)', '', NULL, NULL, 20, 1, 2, '2', 0, 'Unidad'),
+(6, '6', 'Certificado de equivalencia de notas', '', NULL, NULL, 20, 1, 2, '2', 0, 'Unidad'),
+(7, '7', 'Legalizacion Programa Anal铆tico', '', NULL, NULL, 20, 1, 2, '2', 0, 'Unidad'),
+(8, '8', 'Certificado de Vencimiento Plan de Estudios', '', NULL, NULL, 20, 1, 2, '2', 0, 'Unidad'),
+(9, '9', 'Legalizaci贸n Plan de Estudios', '', NULL, NULL, 10, 1, 2, '2', 0, 'Unidad'),
+(10, '10', 'Legalizacion Certificado Acta de Defensa de Grado', NULL, NULL, NULL, 10, 1, 2, '2', 0, 'Unidad'),
+(11, '11', 'Otros documentos universitarios', NULL, NULL, NULL, 20, 1, 2, '2', 0, 'Unidad'),
+(12, '12', 'Diploma Academico de Diplomado', NULL, NULL, NULL, 300, 1, 3, '2', 0, 'Unidad'),
+(13, '13', 'Diploma Acad茅mico de Especialidad', NULL, NULL, NULL, 350, 1, 3, '2', 0, 'Unidad'),
+(14, '14', 'Diploma Academico de Maestria', NULL, NULL, NULL, 450, 1, 3, '2', 0, 'Unidad'),
+(15, '15', 'Diploma Academico de Doctorado', '', NULL, NULL, 500, 1, 3, '2', 0, 'Unidad'),
+(16, '16', 'Diploma Acad茅mico de Post Doctorado', '', NULL, NULL, 550, 1, 3, '2', 0, 'Unidad'),
+(17, '17', 'Copia legalizada de Diploma Academico de Diplomado', NULL, NULL, NULL, 100, 1, 3, '2', 0, 'Unidad'),
+(18, '18', 'Copia legalizada de Diploma Academico de Especialidad', '', NULL, NULL, 100, 1, 3, '2', 0, 'Unidad'),
+(19, '19', 'Copia legalizada de Diploma Academico de Maestria', '', NULL, NULL, 150, 1, 3, '2', 0, 'Unidad'),
+(20, '20', 'Copia legalizada de Diploma Academico de Doctorado', NULL, NULL, NULL, 200, 1, 3, '2', 0, 'Unidad'),
+(21, '21', 'Copia legalizada de Diploma Academico de Post Doctorado', NULL, NULL, NULL, 250, 1, 3, '2', 0, 'Unidad'),
+(22, '22', 'Certificado de Calificaciones por M贸dulo (Diplomado, Especialidad, Maestria)', NULL, NULL, NULL, 20, 1, 3, '2', 0, 'Unidad'),
+(23, '23', 'Certificado de Calificaciones por M贸dulo Doctorado', NULL, NULL, NULL, 30, 1, 3, '2', 0, 'Unidad'),
+(24, '24', 'Certificado de Calificaciones por M贸dulo Post Doctorado', NULL, NULL, NULL, 50, 1, 3, '2', 0, 'Unidad'),
+(25, '25', 'Historial Academico Post Gradual', NULL, NULL, NULL, 50, 1, 3, '2', 0, 'Unidad'),
+(26, '26', 'Certificado de Acta de Defensa de Post Grado', NULL, NULL, NULL, 50, 1, 3, '2', 0, 'Unidad'),
+(27, '27', 'Copia legalizada del programa anal铆tico, Acta de defensa u otro documento de Post Grado', NULL, NULL, NULL, 20, 1, 3, '2', 0, 'Unidad'),
+(28, '28', 'Curso Preparatorio (presencial)', '', NULL, NULL, 150, 1, 2, '2', 0, 'Unidad'),
+(29, '29', 'Curso Preparatorio (Examen Directo)', '', NULL, NULL, 150, 1, 2, '2', 0, 'Unidad'),
+(30, '30', 'Matricula de Inscripci贸n', '', NULL, NULL, 50, 1, 2, '2', 0, 'Unidad'),
+(31, '31', 'Multa por inscripci贸n', '', NULL, NULL, 50, 1, 2, '2', 0, 'Unidad'),
+(32, '32', 'Curso Intensivo', '', NULL, NULL, 50, 1, 2, '2', 0, 'Unidad'),
+(33, '33', 'Servicio de Cisterna', '', NULL, NULL, 0, 2, 2, '2', 0, 'Unidad'),
+(34, '34', 'Certificado No Deudor', '', NULL, NULL, 50, 2, 2, '2', 0, 'Unidad'),
+(35, '35', 'Certificado de No procesos Judiciales', '', NULL, NULL, 50, 2, 2, '2', 0, 'Unidad'),
+(36, '36', 'MULTA POR RETRASO EN LA DEFENSA DE TRABAJO DE GRADO', '', NULL, NULL, 200, 1, 2, '2', 0, 'Unidad');
 
 -- --------------------------------------------------------
 
@@ -138,30 +142,6 @@ CREATE TABLE `cuenta_clasificador` (
   `descripcion` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Volcado de datos para la tabla `cuenta_clasificador`
---
-
-INSERT INTO `cuenta_clasificador` (`id`, `numero_clasificador`, `descripcion`) VALUES
-(1, 1, 'Inscripci髇/Multa'),
-(2, 2, 'Aranceles de Postgrado'),
-(3, 3, 'Examen de Admision'),
-(4, 4, 'Aranceles Universitarios'),
-(5, 5, 'Aranceles de Pagos Servicios'),
-(6, 8, 'Pago de Pescado'),
-(7, 75, 'awr'),
-(8, 8687, 'qwer'),
-(9, 798, 'afds'),
-(10, 890, 'af'),
-(11, 25423, 'a2'),
-(12, 204, 'Notas'),
-(13, 2041, 'abcde2'),
-(15, 1234, 'Producto Avicola2'),
-(16, 123456, 'Producto Avicola'),
-(17, 12345, 'prueba'),
-(18, 3564, 'aa'),
-(19, 874545, 'coca');
-
 -- --------------------------------------------------------
 
 --
@@ -173,22 +153,6 @@ CREATE TABLE `cuenta_producto_clasificador` (
   `cuenta_id` int(11) NOT NULL,
   `cuenta_clasificador_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Volcado de datos para la tabla `cuenta_producto_clasificador`
---
-
-INSERT INTO `cuenta_producto_clasificador` (`id`, `cuenta_id`, `cuenta_clasificador_id`) VALUES
-(1, 6, 1),
-(2, 2, 1),
-(3, 4, 1),
-(6, 9, 15),
-(7, 6, 16),
-(8, 2, 16),
-(11, 6, 15),
-(14, 2, 12),
-(15, 2, 18),
-(16, 4, 19);
 
 -- --------------------------------------------------------
 
@@ -224,7 +188,7 @@ CREATE TABLE `pago` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `serie` int(11) NOT NULL,
   `cliente_id` int(11) NOT NULL,
-  `fecha_pago` date DEFAULT NULL,
+  `fecha_pago` datetime DEFAULT NULL,
   `total` double(8,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -233,60 +197,25 @@ CREATE TABLE `pago` (
   `sector` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
   `categoria` int(11) NOT NULL COMMENT '1.- Tesoreria\r\n2.- Comercializacion\r\n',
   `nro_recibo` int(11) NOT NULL,
-  `clasificador_pago_id` int(11) NOT NULL
+  `clasificador_pago_id` int(11) NOT NULL,
+  `estado_pago` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado de boleta\r\n1.- activo\r\n2.- anulado\r\n',
+  `justificacion` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `fecha_anulacion` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `pago`
 --
 
-INSERT INTO `pago` (`id`, `serie`, `cliente_id`, `fecha_pago`, `total`, `created_at`, `updated_at`, `lugar`, `user_id`, `sector`, `categoria`, `nro_recibo`, `clasificador_pago_id`) VALUES
-(1, 1, 1, '2021-04-12', 250.00, NULL, NULL, 'IVO', '2', '', 1, 0, 0),
-(2, 2, 2, '2021-04-12', 295.00, NULL, NULL, 'IVO', '2', '', 1, 0, 0),
-(3, 3, 1, '2021-04-12', 230.00, NULL, NULL, 'IVO', '2', '', 1, 0, 0),
-(4, 4, 1, '2021-04-12', 230.00, NULL, NULL, 'IVO', '2', '', 1, 0, 0),
-(5, 5, 1, '2021-04-12', 200.00, NULL, NULL, 'IVO', '2', '', 1, 0, 0),
-(6, 6, 1, '2021-04-12', 200.00, NULL, NULL, 'IVO', '2', '', 1, 0, 0),
-(7, 7, 3, '2021-04-12', 45.00, NULL, NULL, 'IVO', '2', '', 1, 0, 0),
-(8, 8, 3, '2021-04-12', 45.00, NULL, NULL, 'IVO', '2', '', 1, 0, 0),
-(9, 1, 1, '2021-05-10', 230.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(10, 2, 1, '2021-05-10', 230.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(11, 9, 1, '2021-05-11', 300.00, NULL, NULL, 'IVO', '2', '', 1, 0, 0),
-(12, 3, 1, '2021-05-17', 200.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(13, 4, 1, '2021-05-18', 4.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(14, 5, 10, '2021-05-18', 17.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(15, 6, 12, '2021-05-18', 200.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(16, 7, 14, '2021-05-18', 30.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(17, 8, 15, '2021-05-18', 2.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(18, 9, 1, '2023-08-11', 50.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(19, 10, 16, '2023-08-11', 365.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(20, 11, 1, '2023-08-14', 30.00, NULL, NULL, 'IVO', '1', '', 2, 0, 0),
-(21, 10, 1, '2023-08-28', 15.00, NULL, NULL, 'IVO', '5', 'Externa', 1, 0, 0),
-(22, 11, 1, '2023-08-28', 20.00, NULL, NULL, 'IVO', '5', 'Externa', 1, 0, 0),
-(23, 12, 1, '2023-08-28', 50.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0),
-(24, 12, 1, '2023-08-28', 20.00, NULL, NULL, 'IVO', '2', 'Externa', 2, 1234, 0),
-(25, 13, 1, '2023-08-28', 50.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0),
-(26, 14, 1, '2023-08-28', 50.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0),
-(27, 13, 1, '2023-08-28', 15.00, NULL, NULL, 'IVO', '2', 'Interna', 2, 0, 0),
-(28, 14, 1, '2023-08-28', 50.00, NULL, NULL, 'IVO', '2', 'Externa', 2, 12345, 0),
-(29, 15, 2, '2023-08-28', 200.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0),
-(30, 16, 5, '2023-08-28', 15.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0),
-(31, 15, 2, '2023-08-28', 20.00, NULL, NULL, 'IVO', '1', 'Externa', 2, 741, 0),
-(32, 16, 1, '2023-08-28', 2.00, NULL, NULL, 'IVO', '1', 'Interna', 2, 0, 0),
-(33, 17, 1, '2023-08-29', 50.00, NULL, NULL, 'IVO', '5', 'Externa', 2, 4545, 0),
-(34, 18, 1, '2023-08-29', 160.00, NULL, NULL, 'IVO', '5', 'Externa', 2, 12345, 0),
-(35, 19, 1, '2023-08-31', 2.00, NULL, NULL, 'IVO', '5', 'Interna', 2, 0, 0),
-(36, 20, 1, '2023-08-31', 50.00, NULL, NULL, 'IVO', '5', 'Interna', 2, 0, 1),
-(37, 21, 6, '2023-08-31', 2.00, NULL, NULL, 'IVO', '5', 'Externa', 2, 7898, 0),
-(38, 22, 1, '2023-09-01', 2.00, NULL, NULL, 'IVO', '5', 'Interna', 2, 0, 3),
-(39, 23, 2, '2023-09-01', 50.00, NULL, NULL, 'IVO', '5', 'Interna', 2, 0, 4),
-(40, 24, 1, '2023-09-01', 2.00, NULL, NULL, 'IVO', '5', 'Interna', 2, 0, 5),
-(41, 25, 2, '2023-09-01', 2.00, NULL, NULL, 'IVO', '5', 'Externa', 2, 98745, 5),
-(42, 17, 1, '2023-09-01', 50.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 3),
-(43, 18, 1, '2023-09-01', 50.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 3),
-(44, 26, 3, '2023-09-01', 2.00, NULL, NULL, 'IVO', '5', 'Interna', 2, 0, 5),
-(45, 27, 14, '2023-09-01', 2.00, NULL, NULL, 'IVO', '5', 'Externa', 2, 987534, 11),
-(46, 28, 1, '2023-09-08', 2.00, NULL, NULL, 'Villamontes', '5', 'Externa', 2, 7896, 5);
+INSERT INTO `pago` (`id`, `serie`, `cliente_id`, `fecha_pago`, `total`, `created_at`, `updated_at`, `lugar`, `user_id`, `sector`, `categoria`, `nro_recibo`, `clasificador_pago_id`, `estado_pago`, `justificacion`, `fecha_anulacion`) VALUES
+(1, 1, 1, '2024-04-03 00:00:00', 240.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0, 'Activo', '', NULL),
+(2, 2, 2, '2024-04-03 00:00:00', 125.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0, 'Activo', '', NULL),
+(3, 3, 3, '2024-04-03 00:00:00', 200.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0, 'Activo', '', NULL),
+(4, 4, 1, '2024-04-03 00:00:00', 50.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0, 'Activo', '', NULL),
+(5, 5, 4, '2024-04-03 00:00:00', 230.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0, 'Activo', '', NULL),
+(6, 6, 5, '2024-04-03 00:00:00', 265.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0, 'Activo', '', NULL),
+(7, 7, 2, '2024-04-03 00:00:00', 125.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0, 'Anulado', 'xxxx', '2024-04-24 11:45:58'),
+(8, 8, 6, '2024-04-03 00:00:00', 230.00, NULL, NULL, 'IVO', '2', 'Interna', 1, 0, 0, 'Anulado', 'por error', NULL);
 
 -- --------------------------------------------------------
 
@@ -312,67 +241,26 @@ CREATE TABLE `pago_detalle` (
 --
 
 INSERT INTO `pago_detalle` (`id`, `posicion`, `monto`, `descripcion`, `pago_id`, `precio_unitario`, `cantidad`, `created_at`, `updated_at`, `cuenta_id`) VALUES
-(1, NULL, 50.00, 'Certificado de Notas', 1, 50.00, 1, NULL, NULL, 2),
-(2, NULL, 200.00, 'Diploma Academico', 1, 200.00, 1, NULL, NULL, 4),
-(3, NULL, 15.00, 'Pago Historicos', 2, 15.00, 1, NULL, NULL, 1),
-(4, NULL, 50.00, 'Certificado de Notas', 2, 50.00, 1, NULL, NULL, 2),
-(5, NULL, 30.00, 'Certificados de Notas  nivel Tecnico Superior', 2, 30.00, 1, NULL, NULL, 5),
-(6, NULL, 200.00, 'Diploma Academico', 2, 200.00, 1, NULL, NULL, 4),
-(7, NULL, 200.00, 'Diploma Academico', 3, 200.00, 1, NULL, NULL, 4),
-(8, NULL, 30.00, 'Certificados de Notas  nivel Tecnico Superior', 3, 30.00, 1, NULL, NULL, 5),
-(9, NULL, 200.00, 'Diploma Academico', 4, 200.00, 1, NULL, NULL, 4),
-(10, NULL, 30.00, 'Certificados de Notas  nivel Tecnico Superior', 4, 30.00, 1, NULL, NULL, 5),
-(11, NULL, 200.00, 'Diploma Academico', 5, 200.00, 1, NULL, NULL, 4),
-(12, NULL, 200.00, 'Diploma Academico', 6, 200.00, 1, NULL, NULL, 4),
-(13, NULL, 30.00, 'pago de certificados de notas', 7, 30.00, 1, NULL, NULL, 6),
-(14, NULL, 15.00, 'Historicos academicos', 7, 15.00, 1, NULL, NULL, 7),
-(15, NULL, 15.00, 'Historicos academicos', 8, 15.00, 1, NULL, NULL, 7),
-(16, NULL, 30.00, 'pago de certificados de notas', 8, 30.00, 1, NULL, NULL, 6),
-(17, NULL, 200.00, 'Diploma Academico', 9, 200.00, 1, NULL, NULL, 4),
-(18, NULL, 30.00, 'Certificados de Notas  nivel Tecnico Superior', 9, 30.00, 1, NULL, NULL, 5),
-(19, NULL, 30.00, 'Certificados de Notas  nivel Tecnico Superior', 10, 30.00, 1, NULL, NULL, 5),
-(20, NULL, 200.00, 'Diploma Academico', 10, 200.00, 1, NULL, NULL, 4),
-(21, NULL, 300.00, 'DIPLOMA ACADEMICO DE DIPLOMADO', 11, 300.00, 1, NULL, NULL, 8),
-(22, NULL, 200.00, 'Pago de Alevines', 12, 2.00, 100, NULL, NULL, 9),
-(23, NULL, 2.00, 'Pago de Alevines', 13, 2.00, 1, NULL, NULL, 9),
-(24, NULL, 2.00, 'Pago de Alevines', 13, 2.00, 1, NULL, NULL, 9),
-(25, NULL, 2.00, 'Pago de Alevines', 14, 2.00, 1, NULL, NULL, 9),
-(26, NULL, 15.00, 'Historicos academicos', 14, 15.00, 1, NULL, NULL, 7),
-(27, NULL, 200.00, 'Diploma Academico', 15, 200.00, 1, NULL, NULL, 4),
-(28, NULL, 30.00, 'pago de certificados de notas', 16, 30.00, 1, NULL, NULL, 6),
-(29, NULL, 2.00, 'Pago de Alevines', 17, 2.00, 1, NULL, NULL, 9),
-(30, NULL, 50.00, 'Certificado de Notas', 18, 50.00, 1, NULL, NULL, 2),
-(31, NULL, 300.00, 'DIPLOMA ACADEMICO DE DIPLOMADO', 19, 300.00, 1, NULL, NULL, 8),
-(32, NULL, 50.00, 'Certificado de Notas', 19, 50.00, 1, NULL, NULL, 2),
-(33, NULL, 15.00, 'Historicos academicos', 19, 15.00, 1, NULL, NULL, 7),
-(34, NULL, 30.00, 'pago de certificados de notas', 20, 30.00, 1, NULL, NULL, 6),
-(35, NULL, 15.00, 'Pago Historicos', 21, 15.00, 1, NULL, NULL, 1),
-(36, NULL, 20.00, 'pollos', 22, 20.00, 1, NULL, NULL, 10),
-(37, NULL, 50.00, 'Certificado de Notas', 23, 50.00, 1, NULL, NULL, 2),
-(38, NULL, 20.00, 'pollos', 24, 20.00, 1, NULL, NULL, 10),
-(39, NULL, 50.00, 'Certificado de Notas', 25, 50.00, 1, NULL, NULL, 2),
-(40, NULL, 50.00, 'Certificado de Notas', 26, 50.00, 1, NULL, NULL, 2),
-(41, NULL, 15.00, 'Pago Historicos', 27, 15.00, 1, NULL, NULL, 1),
-(42, NULL, 50.00, 'Certificado de Notas', 28, 50.00, 1, NULL, NULL, 2),
-(43, NULL, 200.00, 'Diploma Academico', 29, 200.00, 1, NULL, NULL, 4),
-(44, NULL, 15.00, 'Historicos academicos', 30, 15.00, 1, NULL, NULL, 7),
-(45, NULL, 20.00, 'pollos', 31, 20.00, 1, NULL, NULL, 10),
-(46, NULL, 2.00, 'Pago de Alevines', 32, 2.00, 1, NULL, NULL, 9),
-(47, NULL, 50.00, 'Certificado de Notas', 33, 50.00, 1, NULL, NULL, 2),
-(48, NULL, 60.00, 'Certificados de Notas  nivel Tecnico Superior', 34, 30.00, 2, NULL, NULL, 5),
-(49, NULL, 100.00, 'Certificado de Notas', 34, 50.00, 2, NULL, NULL, 2),
-(50, NULL, 2.00, 'Perejil', 35, 2.00, 1, NULL, NULL, 11),
-(51, NULL, 50.00, 'Certificado de Notas', 36, 50.00, 1, NULL, NULL, 2),
-(52, NULL, 2.00, 'Perejil', 37, 2.00, 1, NULL, NULL, 11),
-(53, NULL, 2.00, 'Perejil', 38, 2.00, 1, NULL, NULL, 11),
-(54, NULL, 50.00, 'Certificado de Notas', 39, 50.00, 1, NULL, NULL, 2),
-(55, NULL, 2.00, 'Perejil', 40, 2.00, 1, NULL, NULL, 11),
-(56, NULL, 2.00, 'Perejil', 41, 2.00, 1, NULL, NULL, 11),
-(57, NULL, 50.00, 'Certificado de Notas', 42, 50.00, 1, NULL, NULL, 2),
-(58, NULL, 50.00, 'Certificado de Notas', 43, 50.00, 1, NULL, NULL, 2),
-(59, NULL, 2.00, 'Perejil', 44, 2.00, 1, NULL, NULL, 11),
-(60, NULL, 2.00, 'Perejil', 45, 2.00, 1, NULL, NULL, 11),
-(61, NULL, 2.00, 'Perejil', 46, 2.00, 1, NULL, NULL, 11);
+(1, NULL, 200.00, 'Diploma Academico', 1, 200.00, 1, NULL, NULL, 1),
+(2, NULL, 15.00, 'Certificado Global de Notas (Historial Academico)', 1, 15.00, 1, NULL, NULL, 4),
+(3, NULL, 25.00, 'Certificado de Notas (por semestre)', 1, 5.00, 5, NULL, NULL, 3),
+(4, NULL, 80.00, 'Legalizacion de Diploma Acad茅mico', 2, 80.00, 1, NULL, NULL, 2),
+(5, NULL, 15.00, 'Certificado Global de Notas (Historial Academico)', 2, 15.00, 1, NULL, NULL, 4),
+(6, NULL, 30.00, 'Certificado de Notas (por semestre)', 2, 5.00, 6, NULL, NULL, 3),
+(7, NULL, 200.00, 'MULTA POR RETRASO EN LA DEFENSA DE TRABAJO DE GRADO', 3, 200.00, 1, NULL, NULL, 36),
+(8, NULL, 50.00, 'Certificado No Deudor', 4, 50.00, 1, NULL, NULL, 34),
+(9, NULL, 200.00, 'Diploma Academico', 5, 200.00, 1, NULL, NULL, 1),
+(10, NULL, 15.00, 'Certificado Global de Notas (Historial Academico)', 5, 15.00, 1, NULL, NULL, 4),
+(11, NULL, 15.00, 'Certificado de Notas (por semestre)', 5, 5.00, 3, NULL, NULL, 3),
+(12, NULL, 200.00, 'Diploma Academico', 6, 200.00, 1, NULL, NULL, 1),
+(13, NULL, 15.00, 'Certificado Global de Notas (Historial Academico)', 6, 15.00, 1, NULL, NULL, 4),
+(14, NULL, 50.00, 'Certificado de Notas (por semestre)', 6, 5.00, 10, NULL, NULL, 3),
+(15, NULL, 80.00, 'Legalizacion de Diploma Acad茅mico', 7, 80.00, 1, NULL, NULL, 2),
+(16, NULL, 15.00, 'Certificado Global de Notas (Historial Academico)', 7, 15.00, 1, NULL, NULL, 4),
+(17, NULL, 30.00, 'Certificado de Notas (por semestre)', 7, 5.00, 6, NULL, NULL, 3),
+(18, NULL, 200.00, 'Diploma Academico', 8, 200.00, 1, NULL, NULL, 1),
+(19, NULL, 15.00, 'Certificado de Notas (por semestre)', 8, 5.00, 3, NULL, NULL, 3),
+(20, NULL, 15.00, 'Certificado Global de Notas (Historial Academico)', 8, 15.00, 1, NULL, NULL, 4);
 
 -- --------------------------------------------------------
 
@@ -403,10 +291,43 @@ CREATE TABLE `productousuario` (
 --
 
 INSERT INTO `productousuario` (`id`, `cuenta_id`, `user_id`) VALUES
-(1, 2, 2),
-(2, 2, 5),
-(3, 5, 5),
-(7, 11, 5);
+(1, 1, 2),
+(2, 2, 2),
+(3, 3, 2),
+(4, 4, 2),
+(5, 5, 2),
+(9, 12, 3),
+(10, 14, 3),
+(13, 36, 2),
+(14, 34, 2),
+(15, 33, 2),
+(16, 32, 2),
+(17, 31, 2),
+(18, 30, 2),
+(19, 29, 2),
+(20, 28, 2),
+(21, 26, 2),
+(22, 25, 2),
+(23, 24, 2),
+(24, 22, 2),
+(25, 21, 2),
+(26, 20, 2),
+(27, 18, 2),
+(28, 17, 2),
+(29, 16, 2),
+(30, 15, 2),
+(31, 14, 2),
+(32, 13, 2),
+(33, 12, 2),
+(34, 11, 2),
+(35, 10, 2),
+(36, 9, 2),
+(37, 8, 2),
+(38, 6, 2),
+(39, 5, 2),
+(45, 3, 3),
+(46, 5, 3),
+(59, 1, 3);
 
 -- --------------------------------------------------------
 
@@ -425,9 +346,9 @@ CREATE TABLE `rubro` (
 --
 
 INSERT INTO `rubro` (`id`, `numero_identificador`, `descripcion`) VALUES
-(1, 12100, 'Venta de Bienes'),
-(2, 12200, 'Venta de Servicios'),
-(3, 15200, 'Derechos');
+(1, 15200, 'Derechos'),
+(2, 12200, 'Venta de servicios de la Administraci贸n P煤blica'),
+(3, 15990, 'Otros Ingresos No Espec铆ficos');
 
 -- --------------------------------------------------------
 
@@ -439,8 +360,8 @@ CREATE TABLE `unidad` (
   `id` int(11) NOT NULL,
   `numero_unidad` int(255) DEFAULT NULL,
   `descripcion` text,
-  `tipo_unidad` varchar(50) NOT NULL,
-  `unidad_id` int(11) NOT NULL COMMENT 'id unidad padre'
+  `tipo_unidad` varchar(50) NOT NULL COMMENT '1.- Administracion\r\n2.- Modulo\r\n3.- Carreraa\r\n4.- Sub Modulo\r\n\r\n',
+  `unidad_id` int(11) DEFAULT NULL COMMENT 'unidad padre \r\n'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -448,14 +369,9 @@ CREATE TABLE `unidad` (
 --
 
 INSERT INTO `unidad` (`id`, `numero_unidad`, `descripcion`, `tipo_unidad`, `unidad_id`) VALUES
-(1, 1, 'UNIBOL', 'Administracion', 1),
-(2, 2, 'Medicina Veterinaria y Zootecnia', '', 0),
-(3, 3, 'Ing. Ecopiscicultura', '', 0),
-(4, 4, 'Vice Rectorado', '', 0),
-(5, 6, 'Contabilidad', '', 0),
-(6, 7, 'Almacenes', '', 0),
-(7, 8, 'Biblioteca', '', 0),
-(8, 9, 'Modulos Ecopiscicultura', '', 0);
+(1, 1, 'Unibol', 'Administracion', NULL),
+(2, 2, 'Administracion Central', 'Administracion', 1),
+(3, 3, 'Postgrado', 'Administracion', 1);
 
 -- --------------------------------------------------------
 
@@ -482,32 +398,15 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `sexo`, `cargo`, `categoria`) VALUES
-(1, 'FINLEY GUERRA', 'finley_1231@hotmail.com', NULL, '$2y$10$M15Z8PeIV.CgwFRWSz3no.Yxc3WdMNt8qUM6Y6gMyoUraOUNCHmfa', NULL, '2021-04-19 21:33:53', '2021-04-19 21:33:53', 'Masculino', 'Administrador', 2),
-(2, 'Ericka Barrientos', 'erikabr20@hotmail.com', NULL, '$2y$10$n2nU0blbDCZ943il22Tklude8FoauBWw7S9/J1gWrQ8EwS1H0Oiw.', NULL, '2021-05-05 19:35:34', '2021-05-05 19:35:34', 'FEMENINO', 'administrador', 1),
-(3, 'Carla Villegas', 'carlavillegas123@gmail.com', NULL, '$2y$10$QZoIme1z0sCwsUyd.ePmuOZDE3P3vX7tx95.SGGD4ImkAQDQpL/Eq', NULL, '2023-08-16 01:32:20', '2023-08-16 01:32:20', 'Femenino', 'usuario', 0),
-(5, 'ROY DANY', 'roydanyurzagaste@gmail.com', NULL, '$2y$10$NVILQK6xhfY71dbJsGmT1eBVesLwwb0IllIL0JhqrYAQPoR4xBUT2', NULL, '2023-08-18 19:25:45', '2023-08-18 19:25:45', 'Masculino', 'Administrador', 2),
-(6, 'Yovana Nina Perez', 'yovananina@gmail.com', NULL, '$2y$10$UaZ5hr3fxbwYBPXL8tZ2EepNghiyAMvC7Fl/iaFeTKXYf/r2.dOlG', NULL, '2023-08-18 19:34:41', '2023-08-18 19:34:41', 'Femenino', 'Usuario', 0),
-(7, 'Roberto Mattu', 'robertomatu@gmail.com', NULL, '$2y$10$VVkqyW4TZKmAcl/80ejjp.PZ7ndPOxD8fTsG/hvePx2yf4C.ryAQ6', NULL, '2023-08-18 19:38:15', '2023-08-18 19:38:15', 'Masculino', 'Administrador', 2),
-(8, 'Marcos Alexander Orosco', 'marcos123@gmail.com', NULL, '$2y$10$TuebzO6iSUdtTYQy3O8NqunB6wPUZ2.K3c.xZNSfctHTWvnY8785K', NULL, '2023-08-18 19:43:46', '2023-08-18 19:43:46', 'Masculino', 'Usuario', 0),
-(9, 'Milton Chacay', 'miltoncachay@gmail.com', NULL, '$2y$10$82rrr0bJbyvB0swIPEiURemkrDJOSK5Dk.iWctQ/Hko1BWS71tE4G', NULL, '2023-08-18 19:46:03', '2023-08-18 19:46:03', 'Masculino', 'Usuario', 0),
-(10, 'Carlos Bustamante', 'carlosbustamante@gmail.com', NULL, '$2y$10$0X5w7BLMm00nZKE2c6ZMeugcBOn9vI4p/EFSGMWPFhGGaRK1f51Sq', NULL, '2023-08-18 20:05:10', '2023-08-18 20:05:10', 'Femenino', 'Usuario', 0),
-(11, 'Roberto Fernandez', 'Robertofernandez@gmail.com', NULL, '$2y$10$VWPsD963EKDtuLPM0pp.1uaz7c8AHoBTM/DK0UDSUeNATbZzOLHXS', NULL, '2023-08-18 22:13:34', '2023-08-18 22:13:34', 'Masculino', 'Administrador', 0),
-(12, 'Viviana Alapez', 'vivianaalapez@gmail.com', NULL, '$2y$10$geIRUsBv6/KBtQB8mQKs1.L8dlalzRVweatiZhhoZJ/EVN1B57iGC', NULL, '2023-08-18 22:26:58', '2023-08-18 22:26:58', 'Femenino', 'Usuario', 0),
-(17, 'Gonzalo Maratua', 'gonzalo@gmail.com', NULL, '$2y$10$0qUPLNlXDcPm7km6kEKQrOyjRn79nImg101XOFa63A1Y.KN3s6xfO', NULL, '2023-08-21 18:49:15', '2023-08-21 18:49:15', 'Masculino', 'Administrador', 0),
-(20, 'Jose Luis Alcadia', 'josel@gmail.com', NULL, '$2y$10$Wx99zJeYDfRxRc0tCznFXe5CsXyLsq4SABCeQcR3b9y9t60zkWuhm', NULL, '2023-08-21 18:55:00', '2023-08-21 18:55:00', 'Masculino', 'Usuario', 0),
-(21, 'Camen Vallejos', 'carmenv@gmail.com', NULL, '$2y$10$HqfUDehlKsyNWZUK7I9msemAnqsBXcjd5XSDyImwphaDPEqGuXQJS', NULL, '2023-08-21 18:57:01', '2023-08-21 18:57:01', 'Femenino', 'Usuario', 0),
-(22, 'Milton  Flores', 'milton@gmail.com', NULL, '$2y$10$Qt74jfreq4YoNmCjLrykmeY9SQaSBBOU8rHdBxm3FOOitwUIqLJIS', NULL, '2023-08-21 18:58:15', '2023-08-21 18:58:15', 'Masculino', 'Usuario', 0),
-(23, 'Alvaro Torrez', 'alvaro@gmail.com', NULL, '$2y$10$MQK4sDmQYBgji2KT76DfdeTXTKGFabZ9b16xkGp0eGavBOmws.1vq', NULL, '2023-08-21 22:50:29', '2023-08-21 22:50:29', 'Masculino', 'Usuario', 0),
-(24, 'Oscar Cadena', 'oscar@gmail.com', NULL, '$2y$10$AFK1Oa1224MJC3jkYZhRTujjKIVqJWY8gITydl1vOLmSAchqp1xCC', NULL, '2023-08-21 22:53:38', '2023-08-21 22:53:38', 'Masculino', 'Usuario', 0),
-(25, 'Ariel Vacies', 'ariel@gmai.com', NULL, '$2y$10$x8ZlfZ/thg6AmoYYG5LqkeTZktxbItbj7DFsl5SDFlSZveaoVnrmy', NULL, '2023-08-21 22:55:33', '2023-08-21 22:55:33', 'Masculino', 'Usuario', 0),
-(26, 'Ana', 'anita@gmail.com', NULL, '$2y$10$mch9NDmLO4dDopYwmObJV.uglf4p7weifkrAQHyqfDG4IjZwoQywe', NULL, '2023-08-21 23:01:48', '2023-08-21 23:01:48', 'Femenino', 'Usuario', 0),
-(27, 'Marta Alejandra', 'martia@gmail.com', NULL, '$2y$10$/Y7Qq0q7.KyTYcfDTwa9vO8NWw35htnfg1W4N2lWQl0J.7NYFV2.a', NULL, '2023-08-21 23:06:34', '2023-08-21 23:06:34', 'Femenino', 'Usuario', 0),
-(28, 'Alcira', 'alci@gmail.com', NULL, '$2y$10$.ZPIgR/ScJBn8WzZd3X7SeBl99CkY3Q/Jyjv.S5mg3JDw49AzwQZS', NULL, '2023-08-21 23:07:29', '2023-08-21 23:07:29', 'Femenino', 'Usuario', 0),
-(29, 'Carlos ariel', 'carlos@gmail.com', NULL, '$2y$10$QicRt57sOb8GPDvoRgdkN.jPk0WJz1mfp/cwoaMhfglamMWRvPvhG', NULL, '2023-08-22 00:57:04', '2023-08-22 00:57:04', 'Masculino', 'Usuario', 0),
-(30, 'Roberto matias', 'robert@gmail.com', NULL, '$2y$10$VXW5dLKevU9HiFCYB66GCeVWtA4TpR6chP4gA5bqiNaiRF5ah8yqy', NULL, '2023-08-22 01:43:58', '2023-08-22 01:43:58', 'Masculino', 'Usuario', 1);
+(1, 'FINLEY GUERRA MENDOZA', 'finley_1231@hotmail.com', NULL, '$2y$10$M15Z8PeIV.CgwFRWSz3no.Yxc3WdMNt8qUM6Y6gMyoUraOUNCHmfa', NULL, '2021-04-19 21:33:53', '2023-10-09 19:54:49', 'Masculino', 'Usuario', 1),
+(2, 'Erika Barrientos', 'erikabr20@hotmail.com', NULL, '$2y$10$n2nU0blbDCZ943il22Tklude8FoauBWw7S9/J1gWrQ8EwS1H0Oiw.', NULL, '2021-05-05 19:35:34', '2024-04-24 19:47:15', 'Femenino', 'Administrador', 1),
+(3, 'ROY DANY', 'roydanyurzagaste@gmail.com', NULL, '$2y$10$9mEeyBpgVvoW7Q.uu6g4h.3ed/aTblSwK28.XN71vhGUZJq0LYrlC', NULL, '2023-08-18 19:25:45', '2024-04-19 19:53:31', 'Masculino', 'Administrador', 2),
+(4, 'Roberto Carlos Mattu Guzman', 'robertomatu@gmail.com', NULL, '$2y$10$dzv2Y8398ivjZKyhluhhW.baMONkr.PAJ09gSJxTiVLguO9m8X43u', NULL, '2023-11-01 01:24:06', '2023-11-01 01:24:06', 'Masculino', 'Usuario', 2),
+(5, 'Carla Villegas Juchani', 'carlavillegas123@gmail.com', NULL, '$2y$10$jWTAi3DPDLJlviNXNmV06uLymT0WgAXso9stHYXRRvZpXGdYl4/i.', NULL, '2023-11-01 01:36:01', '2023-11-01 01:36:01', 'Femenino', 'Usuario', 1),
+(6, 'Yudit Carmelo Manuel', 'yuditusielacarmelo@gmail.com', NULL, '$2y$10$rQskmGS6I2oV7qNUOMSFsO0qH2t9ACZEgMlNwEL6vW42/MXr5fITO', NULL, '2024-05-06 21:51:39', '2024-05-06 21:51:39', 'Femenino', 'Usuario', 1);
 
 --
--- 蚽dices para tablas volcadas
+-- 脥ndices para tablas volcadas
 --
 
 --
@@ -599,31 +498,31 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `clasificador_pago`
 --
 ALTER TABLE `clasificador_pago`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `cuenta`
 --
 ALTER TABLE `cuenta`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `cuenta_clasificador`
 --
 ALTER TABLE `cuenta_clasificador`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `cuenta_producto_clasificador`
 --
 ALTER TABLE `cuenta_producto_clasificador`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -635,19 +534,19 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT de la tabla `pago`
 --
 ALTER TABLE `pago`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `pago_detalle`
 --
 ALTER TABLE `pago_detalle`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `productousuario`
 --
 ALTER TABLE `productousuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT de la tabla `rubro`
@@ -659,13 +558,13 @@ ALTER TABLE `rubro`
 -- AUTO_INCREMENT de la tabla `unidad`
 --
 ALTER TABLE `unidad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
