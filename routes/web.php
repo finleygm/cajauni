@@ -49,6 +49,7 @@ Route::post('/update/{id}',[ UsuarioController::class,'update']) ->name('update'
 
 Route::delete('/cuenta_prod_clasificador/eliminar/{id}','CuentaProdClasificadorController@delete')->name('cuenta_clasificador.delete')->middleware('auth');
 
+Route::delete('/permiso_prod/eliminar/{id}','ProductoUsuarioController@delete')->name('per_producto.delete')->middleware('auth');
 
 
 Route::get('/ajax/clasiPago', 'ClasificadorPagoController@ajaxclasiPago')->name('clasificadorPago.clasiPago')->middleware('auth');

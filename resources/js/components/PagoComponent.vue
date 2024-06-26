@@ -31,7 +31,7 @@
                   <div class="col-md-8">
                     <div class="form-group">
                       <label for="nombres">NOMBRE Y APELLIDOS</label>
-                        <input type="text" class="form-control" id="nombres" placeholder="NOMBRE Y APELLIDOS" name="nombres"  value="" readonly v-model="nombres_apellidos" >
+                        <input type="text" class="form-control" id="nombres" placeholder="" name="nombres"  value="" readonly v-model="nombres_apellidos" >
                     </div>        
                   </div>
                 </div>
@@ -77,14 +77,14 @@
 
 
                      <div class="col-md-4" v-if="cambiar">
-                        <label for="concept">CONCEPTO DE COBRO</label>
+                        <label for="concept">CONCEPTO DE COBRO(Opcional)</label>
                         <div class="input-group">                                              
                           <div class="col-md-12" >
                                <div id="tooltip_concept" class="input-group-append" data-toggle="tooltip" data-html="true" title="
                                     <p style='font-size:20px'>Selecciona concepto cobro</p>
                                 " >
                                   <chosen-select v-model="clasificador_pago" placeholder="Seleccionar un concepto de cobro" label="concepto" 
-                                    track-by="id" :options="lista_clasificador_pago" id="concept">
+                                    track-by="id"  :options="lista_clasificador_pago" id="concept">
                              </chosen-select> 
                           
                              <button type="button" id="button-registrar" data-toggle="tooltip" data-html="true" title="
@@ -305,7 +305,7 @@
                 fecha_pago:'12/04/2021',
                 nombres_apellidos:"",
                 numero_recibo:0,
-                ci:"6304332",
+                ci:"",
                 cliente_id:-1,
                 id_pago:-1,
                 id_pago_detalle:1,
@@ -491,7 +491,10 @@
                 const confirmacion = confirm(`Se eliminara el pago "${pago.descripcion}". ¿Esta seguro de hacerlo?`);
                 if(confirmacion){
                     // axios.delete(`/ajax/ajaxRegistrarMateriasAvanzada/${materia.id}`).then(()=>{
+                      const montoDelPago = pago.monto;
+                      this.total=this.total-montoDelPago;
                       this.lista_pagos.splice(index, 1);
+                     // console.log("El monto del pago es: " + this.total);
                     // });
                 }
             },
@@ -576,13 +579,12 @@
                          this.cliente_id=this.cliente.id;                                            
                          if(this.cliente_id==undefined){
                             this.cliente_id=-1;
+                            alert("No existe!!!!!");
                          }else{
                            this.nombres_apellidos=this.cliente.nombres+" "+this.cliente.apellidos;
                         console.log(this.cliente);
                          }
 
-                        
-                      
                 });                                      
             },
             cambiar_precio(){

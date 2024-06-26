@@ -10,11 +10,13 @@ use App\Cliente;
 use App\Cuenta;
 use App\PagoDetalle;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Redirect;
 use DB;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Dompdf\Dompdf;
 //instalacion
 //composer require phpoffice/phpword
 //si hay problema con memoria 
@@ -32,18 +34,49 @@ use \PhpOffice\PhpWord\Style\Font;
 use \PhpOffice\PhpWord\Style\Language;
 use Illuminate\Support\Facades\Storage;
 use NunoMaduro\Collision\Contracts\Writer;
+use PhpOffice\PhpWord\Style\Frame;
+use PhpOffice\PhpWord\Writer\PDF;
 
 ;
 
 class PagoController extends Controller
 {
-    public function index(){
+    public function index(Request $recibir){
         // if($request)
         // {
                        
-        // }  
-        $lpagos=Pago::orderBy('id','desc')->paginate(15);        
-        return view('pago.index',["lpagos"=>$lpagos]);            
+        // }
+        $criterio=$recibir->get('busq');  
+        
+       // 
+        if($criterio==""){
+            $lpagos=Pago::orderBy('id','desc')->paginate(15);        
+            return view('pago.index',["lpagos"=>$lpagos]);            
+        }else{
+           
+            $lpagos=Pago::where('serie',$criterio)->paginate(15);
+           // dd($lpagos);
+            if($lpagos->isEmpty()){ 
+                //dd($lpagos);
+                $cliente=Cliente::where('ci',$criterio)->first();
+               // dd($cliente->id);
+               if($cliente==null){
+                $mensaje="No existe el elemento buscado, busca bien...!";
+                $lpagos=Pago::orderBy('id','desc')->paginate(15);  
+                return redirect()->route('pago.index')->with('mensaje', $mensaje);
+                //return view('pago.index',["lpagos"=>$lpagos]);
+               }
+                $lpagos=Pago::where('cliente_id',$cliente->id)->paginate(15);
+                return view('pago.index',["lpagos"=>$lpagos]);
+            }else{
+              //  dd($lpagos);
+                return view('pago.index',["lpagos"=>$lpagos]);
+            }
+
+        //    dd($lpagos);
+         //   $lpagos=Pago::findOrFail($criterio);  
+            //return view('pago.index',["lpagos"=>$lpagos]);
+        }
     }
     public function create(){
         return  view('pago.create');
@@ -88,7 +121,12 @@ class PagoController extends Controller
 
     public function buscarSerieT($valor){
         $pagocat=Pago::where('categoria',$valor)->orderBy('id','desc')->first();
-        return $pagocat->serie;
+        if($pagocat!=null){
+            return $pagocat->serie;
+        }else{
+        return $pagocat=0;
+        }
+        dd($pagocat);
     }
     
 
@@ -100,11 +138,13 @@ class PagoController extends Controller
 
     public function pagar(Request $request){
         
+
+        //dd($request);
         $pago_r=$request->pago;
         $pago=new Pago(); 
-       
+       // $numero=$pago_r["total"];
         $pago->cliente_id=$pago_r["cliente_id"];               
-        $pago->total=$pago_r["total"];
+        $pago->total=$pago_r["total"]; 
         $pago->lugar=$pago_r["lugar"];
         if($pago_r["sector"]=='Externa'){
            $serie=$this->buscarSerieT(Auth::user()->categoria);
@@ -121,6 +161,7 @@ class PagoController extends Controller
          }else{
             if($pago_r["sector"]==null){
                 $serie=$this->buscarSerieT(Auth::user()->categoria);
+                dd($serie);
                 $pago->serie=$serie+1;
                 $pago->sector='Interna';
                 $pago->nro_recibo=0;
@@ -131,15 +172,27 @@ class PagoController extends Controller
         $pago->categoria=$request->propsTipocuenta;
         $pago->id=null;
         $pago->user_id=Auth::user()->id;
-        $clasi_pago=ClasificadoPago::where("concepto",'=',$request->pago_clasi['concepto'])->first(); 
-        $pago->clasificador_pago_id=$clasi_pago->id;
+        $clasi_pago=ClasificadoPago::where("concepto",'=',$request->pago_clasi['concepto'])->first();
+        if( $clasi_pago!=null){
+             $pago->clasificador_pago_id=$clasi_pago->id;
+        }else{
+            $pago->clasificador_pago_id=0;
+        }
         $pago->estado_pago='Activo';
         $pago->justificacion='';
         DB::beginTransaction();
         $error=0;
         try {
-            $pago->save();   
+         
             $listado_pago=$request->lista_pago_detalle;
+            $sto=$this->buscarCuenta($listado_pago[0]['cuenta_id']);
+             if($sto!=0)  {
+                $pago->save();   
+           }else{
+            $success = true;
+            DB::rollback();     
+            $error=2;
+           }
             $lSin_cupo=[];
             foreach($listado_pago as $pago_detalle_r){
                 $pago_detalle=new PagoDetalle();
@@ -185,13 +238,17 @@ class PagoController extends Controller
     }
     public function show($id){
         $pago=Pago::findOrFail($id); 
-           
+        //   dd($pago);
         return view("pago.show",[      
           "pago"=>$pago      
       ]);
     }
     public function anular(Request $request){
-    //  dd($request);
+    //  dd($request); 
+    date_default_timezone_set('America/La_Paz');
+       $hor=Carbon::now(); //Para la fecha y hora
+       $horaf=$hor->toDateTimeString();
+            //dd($horaf);
         $id=$request->id;
         $pago=Pago::findOrFail($id); 
     //    dd('ingreso');
@@ -202,7 +259,7 @@ class PagoController extends Controller
             $pagocuenta=DB::table('pago_detalle')
             ->where('pago_id','=',$id)
             ->get();
-    
+
             foreach($pagocuenta as $cuent){
                 $cuenta1=Cuenta::findOrFail($cuent->cuenta_id);
                 $cuenta1->stock=$cuenta1->stock+$cuent->cantidad;
@@ -210,6 +267,7 @@ class PagoController extends Controller
             }
             $pago->estado_pago='Anulado';
             $pago->justificacion=$request->justifica;
+            $pago->fecha_anulacion=$horaf;
             $pago->update();
             return   response()->json(['error'=>0,'error_msg'=>'Anulacion exitosa']);
         }
@@ -587,7 +645,7 @@ class PagoController extends Controller
         $section = $phpWord->addSection(
          array('paperSize' => 'Letter',
           'marginTop' => Converter::cmToTwip(2), 
-          'marginLeft' => Converter::cmToTwip(4), 
+          'marginLeft' => Converter::cmToTwip(2), 
           'marginRight' => Converter::cmToTwip(2), 
           'marginBottom' => Converter::cmToTwip(1),           
              )
@@ -601,7 +659,7 @@ class PagoController extends Controller
             'positioning' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
             'posHorizontal' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
             'posVertical' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
-            'marginLeft' => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(-0.97)),
+            'marginLeft' => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(-0.50)),
             'marginTop' => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(0.26)),
             'wrappingStyle' => 'infront',
         );
@@ -610,12 +668,13 @@ class PagoController extends Controller
          array(
                'alineacion1'=> array(
                'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::RIGHT, //ALINEACION    
+               'spaceAfter'=>'0', 
                 ),
                 'alineacion2' =>array(
                     'indent' =>(7.49),
                 ), 
                 'alineacion3' =>array(
-                    'indent' =>(9),
+                    'indent' =>(10.5),
                 ), 
                 'alineacion4' =>array(
                     'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, //ALINEACION 
@@ -627,7 +686,10 @@ class PagoController extends Controller
                    
                 ),   
                 'alineacion6' =>array(
-                    'indent' =>(7),     
+                    'indent' =>(9.3),   
+                ),  
+                'alineacion7' =>array(
+                    'spaceAfter'=>'0', 
                 ),  
              
 
@@ -662,7 +724,7 @@ class PagoController extends Controller
                     // 'underline' => 'single', //subrayado 
               //'bold'=> true,   //Texto en negrita
               'size'=>10, 
-              'allCaps' =>true,         //Mayuscula letra
+             // 'allCaps' =>true,         //Mayuscula letra
               'name'=>'Bahnschrift SemiBold',   //stilo de letra
               'color'=>'black'    //color letra
              ),        
@@ -688,6 +750,25 @@ class PagoController extends Controller
                   'name'=>'Cambria',   //stilo de letra
                   'color'=>'black'    //color letra
                  ),
+                 
+                 'estilo8' => array(
+                    //   'alignment'=>'center',
+                    'bold' => true,
+                    'size'=>8, 
+                    'allCaps' =>true,         //Mayuscula letra
+                      'name'=>'Cambria',   //stilo de letra
+                      'color'=>'black'    //color letra
+                     ),
+                     
+                     'estilo8' => array(
+                        //   'alignment'=>'center',
+                        'bold' => true,
+                        'size'=>8, 
+                        'allCaps' =>true,         //Mayuscula letra
+                          'name'=>'Cambria',   //stilo de letra
+                          'color'=>'black'    //color letra
+                         ),
+       
    
 
          );
@@ -708,17 +789,37 @@ class PagoController extends Controller
                     'angle' => 45    // Ángulo de inclinación del texto
                 ));
         }
-        
+        $frame=new Frame(array(          
+            'width'            => round(Converter::cmToPoint(19.78)),            
+            'height'           => round(Converter::cmToPoint(15)),     
+        ));
+        $frame->setWrap('behind');
+        $frame->setPos('absolute');
+        $frame->setHPosRelTo(Frame::POS_RELTO_PAGE);
+        $frame->setVPosRelTo(Frame::POS_RELTO_PAGE);
+        $frame->setTop(round(Converter::cmToPoint(2)));
+        $frame->setLeft(round(Converter::cmToPoint(1)));
+        $shape02=$section->addShape('rect',
+            //storage_path('./logo_planilla/ministerio.png'),
+            array(
+                'roundness' => 0.05,
+                'frame'     => $frame,
+                'outline'   => array('color' => '#990000', 'weight' => 1),
+                'fill'      =>  array('color' => null),                 
+        )
+        );
+
         $section->addImage(storage_path('unibol_logo.png'),$imagenStyle);
 
          if($pago->categoria==1){
-         $section->addText("UNIDAD DE PRESUPUESTO Y TESORERIA\n",$paraTituloLetra['estilo1'],$paraTituloAl['alineacion1']);
+         $section->addText("UNIDAD DE PRESUPUESTO Y TESORERÍA",$paraTituloLetra['estilo1'],$paraTituloAl['alineacion1']);
         }else{
-            $section->addText("UNIDAD DE COMERCIALIZACION\n",$paraTituloLetra['estilo1'],$paraTituloAl['alineacion6']);
+            $section->addText("UNIDAD DE COMERCIALIZACION",$paraTituloLetra['estilo1'],$paraTituloAl['alineacion6']);
         }
-        
-         $section->addText("RECIBO DE INGRESO\n",$paraTituloLetra['estilo2'],$paraTituloAl['alineacion2']);
-         $section->addText($pago->getNumeroSerieStr(),$paraTituloLetra['estilo3'],$paraTituloAl['alineacion3']);
+
+                
+         $section->addText("RECIBO DE INGRESO\n",$paraTituloLetra['estilo2'],$paraTituloAl['alineacion6']);
+         $section->addText("Nº ".$pago->getNumeroSerieStr(),$paraTituloLetra['estilo3'],$paraTituloAl['alineacion3']);
 
         $tabla = $section->addTable();
         // Establece el estilo de borde de la tabla en "none" (sin bordes)
@@ -727,39 +828,42 @@ class PagoController extends Controller
         // fila 1 
         $row = $tabla->addRow();
         $cell = $row->addCell(2000); // Ancho de celda en twips
-        $cell->addText('Lugar',$paraTituloLetra['estilo5'],null);  
+        $cell->addText('Lugar',$paraTituloLetra['estilo8'], $paraTituloAl['alineacion7'] );  
         $cell1 = $row->addCell(2000); // Ancho de celda en twips
-        $cell1->addText(': '.$pago->lugar,$paraTituloLetra['estilo4'],null);
+        $cell1->addText(': '.$pago->lugar,$paraTituloLetra['estilo4'],$paraTituloAl['alineacion7']);
         //fila 2
         $row = $tabla->addRow();
         $cell = $row->addCell(2000); // Ancho de celda en twips
-        $cell->addText('Fecha',$paraTituloLetra['estilo5'],null);
+        $cell->addText('FECHA',$paraTituloLetra['estilo7'],$paraTituloAl['alineacion7']);
         $cell1 = $row->addCell(2000);
-        $cell1->addText(': '.$pago->fecha_pago,$paraTituloLetra['estilo4'],null);
+        $cell1->addText(': '.$pago->fecha_pago,$paraTituloLetra['estilo4'],$paraTituloAl['alineacion7']);
         //fila 3
         $row = $tabla->addRow();
         $cell = $row->addCell(2000); // Ancho de celda en twips
-        $cell->addText('Recibe de',$paraTituloLetra['estilo5'],null);  
+        $cell->addText('RECIBE DE',$paraTituloLetra['estilo7'],$paraTituloAl['alineacion7']);  
         $cell1 = $row->addCell(7000); // Ancho de celda en twips
-        $cell1->addText(': '.$cliente->nombres.' '.$cliente->apellidos,$paraTituloLetra['estilo4'],null);
+        $prueba = $cliente->nombres.' '.$cliente->apellidos;
+        $textoModificado = ucfirst($prueba);        
+        $cell1->addText(': '.$textoModificado,null,null);
+       // $cell1->addText(': '.$cliente->nombres.' '.$cliente->apellidos,$paraTituloLetra['estilo4'],null);
        
         if($pago->nro_recibo!=0){
         $row = $tabla->addRow();
         $cell = $row->addCell(2000); // Ancho de celda en twips
-        $cell->addText('Nro. de recibe ',$paraTituloLetra['estilo5'],null);
+        $cell->addText('Nro. de recibe ',$paraTituloLetra['estilo5'],$paraTituloAl['alineacion7']);
         $cell1 = $row->addCell(2000);
         $cell1->addText(': '.$pago->nro_recibo,$paraTituloLetra['estilo4'],null);
          }
         
 
         //fila 4
-        $row = $tabla->addRow();
-        $cell = $row->addCell(2000); // Ancho de celda en twips
-        $cell->addText('Por Concepto ',$paraTituloLetra['estilo5'],null);
-        $cell1 = $row->addCell(2000);
-        if($clasi_pago!=null){
-        $cell1->addText(': '.$clasi_pago->concepto,$paraTituloLetra['estilo4'],null);
-         }
+        // $row = $tabla->addRow();
+        // $cell = $row->addCell(2000); // Ancho de celda en twips
+        // $cell->addText('Por Concepto ',$paraTituloLetra['estilo5'],null);
+        // $cell1 = $row->addCell(2000);
+        // if($clasi_pago!=null){
+        // $cell1->addText(': ',$paraTituloLetra['estilo4'],null);
+        //  }
 
 
       //   $section->addText($pago->lugar,$paraTituloLetra['estilo1'],$paraTituloAl['alineacion1']);
@@ -841,7 +945,7 @@ class PagoController extends Controller
          $table->addCell(2000,$cellStyleInvisible1)->addText($detalle_pago->cantidad,$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
          $table->addCell(9000,$cellStyleInvisible2)->addText($detalle_pago->descripcion,$paraTituloLetra['estilo6'],array(  'spaceAfter'=>'0', ));
          $table->addCell(2000,$cellStyleInvisible2)->addText($detalle_pago->precio_unitario,$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
-         $table->addCell(2000,$cellStyleInvisible3)->addText($detalle_pago->precio_unitario,$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
+         $table->addCell(2000,$cellStyleInvisible3)->addText($detalle_pago->monto,$paraTituloLetra['estilo6'],$paraTituloAl['alineacion4']);
          }
          $table->addRow(Converter::cmToTwip(0.74));
          $table->addCell(13000,$cellStyleInvisible_ancho)->addText("TOTAL EN BOLIVIANOS",$paraTituloLetra['estilo7'],array(  'spaceAfter'=>'0', ));
@@ -869,19 +973,37 @@ class PagoController extends Controller
          'name'=>'Agency FB',   //stilo de letra
          'color'=>'	#0000FF'],$paraTituloAl['alineacion1']);
 
-         $phpWord->getProtection()->setEditing('forms');
-         $phpWord->getProtection()->setPassword('123456');
+        //  $phpWord->getProtection()->setEditing('forms');
+        //  $phpWord->getProtection()->setPassword('123456');
 
-         $nombre_completo='test';    
-         $objWriter1 = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+         $nombre_completo='T-'.$pago->getNumeroSerieStr().' '.$cliente->apellidos.' '.$cliente->nombres; 
+         
          
          try { 
-          $objWriter1->save(storage_path($nombre_completo.".docx"));
- 
+             $objWriter1 = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+             $objWriter1->save(storage_path($nombre_completo.".docx"));             
+             $objWriter2 = \PhpOffice\PhpWord\IOFactory::load(storage_path($nombre_completo.".docx"));
+             
+             $dompdf = new Dompdf();
+             $objWriter2->save(storage_path($nombre_completo."2.docx"));             
+        
+
+        //   \PhpOffice\PhpWord\Settings::setPdfRendererName(\PhpOffice\PhpWord\Settings::PDF_RENDERER_DOMPDF);
+        //   \PhpOffice\PhpWord\Settings::setPdfRendererPath('../vendor/dompdf/dompdf');
+  
+        // $writer = \PhpOffice\PhpWord\IOFactory::createWriter($objWriter2, 'HTML')->save(storage_path($nombre_completo.".html"));
+      //  $reader = \PhpOffice\PhpWord\IOFactory::load($objWriter1);
+      $dompdf->loadHtml(storage_path($nombre_completo.".html"));
+      $dompdf->render();
+      // $dompdf->stream('documento.pdf', array('Attachment' => 0));
+     //return $pdf = PDF::loadFile(public_path().storage_path($nombre_completo.".html"))->stream('archivo.pdf');
+       // $writer->save(storage_path($nombre_completo.".pdf"));
         } catch (Exception $e) { 
         }
      
-        return response()->download(storage_path($nombre_completo.".docx"));
+       // return response()->download(storage_path($nombre_completo.".pdf"));
    
     }
+
+
 }

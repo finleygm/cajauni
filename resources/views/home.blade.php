@@ -28,7 +28,7 @@
                         {{ session('status') }}
                     </div>
                     @endif
-                    <img src="{{ asset('/storage/uploads/cja.png') }}" class="rounded mx-auto d-block" width="100%" alt="User Image">
+                    <img src="{{ asset('cja.png') }}" class="rounded mx-auto d-block" width="100%" alt="User Image">
                     <br>
                     Sistema de Caja Tesoreria
                 </div>

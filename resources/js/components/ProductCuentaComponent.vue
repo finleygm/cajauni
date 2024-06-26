@@ -14,7 +14,7 @@
                       <label for="email">Correo</label>
                       <div class="form-group">                     
                         <div class="input-group">
-                          <input type="text" class="form-control" id="email" placeholder="" name="email" value="" :readonly="(pid_clasificador!=undefined)" v-model="email">                         
+                          <input type="text" class="form-control" id="email" placeholder="" name="email" value="" v-model="email">                         
                         </div>
                       </div>                                            
                   </div> 
@@ -54,7 +54,7 @@
                 <!-- /.card-body -->
               <div class="card-footer">
                   <button type="button" id="button-pagar" class="btn btn-primary" @click="agregarProdCuenta">Permitir</button> 
-                  <button type="button" id="button-pagar" class="btn btn-primary" @click="">Permitir Todo</button>
+                  <!-- <button type="button" id="button-pagar" class="btn btn-primary" @click="">Permitir Todo</button> -->
               </div> 
         </div>
         <div class="card card-primary">
@@ -75,10 +75,11 @@
                             </thead>
                             <tbody id="detalles">
                               <tr  v-for="(cuenta1,key) in lista_productos_usuarios"  v-bind:key="cuenta1.id"> 
+                               
                                 <td>{{cuenta1.numero_cuenta}}</td>
                                 <td>{{cuenta1.nombre_cuenta}}</td>
                                 <td v-if="(cuenta1.tipo_cuenta==2)">No es producto</td>
-                                <td v-if="(cuenta1.tipo_cuenta==1)">Es producto</td>
+                                <td v-else>Es producto</td>
                                 <td>{{cuenta1.precio_unitario}}</td>
                                 <td><button class="btn btn-danger btn-sm" type="button"  @click="eliminarCuentaClasificador(cuenta1,key)">Eliminar</button></td>                            
                            
@@ -116,16 +117,11 @@
                     // }
                 ],
                 lista_datos_obtenidos:[
-                    // {
-                    //   id:0,
-                    //   numero_identificador:1,                      
-                    //   descripcion:'descripcion'
-                    // }
+                    
                 ],
                 lista_productos_usuarios:[
-
-                ]
-                ,
+               
+                ],
                 lista_cuenta:[{
                     id:0,
                     numero_cuenta:1,
@@ -195,8 +191,7 @@
         },        
         methods:{
 
-          agregarProdCuenta(){               
-            
+          agregarProdCuenta(){   
             const cuenta={
 
               id:this.cuenta_selecionada.id,
@@ -204,7 +199,6 @@
               nombre_cuenta:this.cuenta_selecionada.nombre_cuenta,
               tipo_cuenta:this.cuenta_selecionada.tipo_cuenta,
               precio_unitario:this.cuenta_selecionada.precio_unitario
-                        
             };
                                              
             this.lista_productos_usuarios.push(cuenta);
@@ -225,18 +219,21 @@
             }
             axios.post('/permisos/register',cuenta_asociada1).then(res=>{
                 const error=res.data.error;
-                let cuenta_asociada=res.data.cuenta_asociada;
-               
-                if(error==0){
-                  //  alert('Se realizo el pago exitosamente se con Nº DE SERIE '+cuenta_asociada);
-                  console.log(res.data);
-                  this.productCuenta.cuenta_id=cuenta_asociada.cuenta_id;
-                  this.productCuenta.numero_cuenta=cuenta_asociada.numero_cuenta;
-                  this.productCuenta.nombre_cuenta=cuenta_asociada.nombre_cuenta;
-                  this.productCuenta.tipo_cuenta=cuenta_asociada.tipo_cuenta;
-                  this.productCuenta.id=cuenta_asociada.id;
-                }else if(error==2){
-                   // alert('Ya Registro la Materia, No se puede registrar 2 veces en la misma gestion');
+            let cuenta_asociada=res.data.cuenta_asociada;
+             console.log(res.data);
+                if(error==0){   
+                   console.log(res.data);
+                  // this.productCuenta.cuenta_id=cuenta_asociada.cuenta_id;
+                  // this.productCuenta.numero_cuenta=cuenta_asociada.numero_cuenta;
+                  // this.productCuenta.nombre_cuenta=cuenta_asociada.nombre_cuenta;
+                  // this.productCuenta.tipo_cuenta=cuenta_asociada.tipo_cuenta;
+                  //  this.productCuenta.id=cuenta_asociada.id;
+                  alert('Permiso agregado '); 
+                }else 
+                if(error==2){
+                  alert('Ya Registro el permiso, No se puede registrar 2 veces el mismo permiso');
+                  this.lista_productos_usuarios.pop(cuenta);
+                  //location.reload();
                 }
             });
             
@@ -342,15 +339,20 @@
             eliminarCuentaClasificador(cuenta1, index){
                 const confirmacion = confirm(`Se va a eliminar este detalle y se perderan\n el clasificador ${cuenta1.nombre_cuenta}`);
                 if(confirmacion){
-                    axios.delete(`/cuenta_prod_clasificador/eliminar/${cuenta1.id}`).then((res)=>{
-                      this.lista_cuenta_clasificador.splice(index, 1);
 
+
+
+                    axios.delete(`/permiso_prod/eliminar/${cuenta1.numero_cuenta}`).then((res)=>
+                    {
+                     
                       if(res.data.error==0){
-                           this.clasificador.numero_clasificador='';
-                           this.clasificador.descripcion='';
+                          this.lista_productos_usuarios.splice(index, 1);
+                          this.clasificador.numero_clasificador='';
+                          this.clasificador.descripcion='';
                            alert('Se elimino correctamente ');
-
                          
+                      }else{
+                        alert('No se encontro  ');
                       }
                         
                     
@@ -506,7 +508,8 @@
              let _lista_cuentas=res.data;
                 this.lista_productos_usuarios=[];
                 _lista_cuentas.forEach(cuenta => {
-                  let _cuenta={//cuenta asociada           
+                  let _cuenta={//
+                   // cuenta_id:cuenta.id,           
                     numero_cuenta:cuenta.numero_cuenta,
                     nombre_cuenta:cuenta.nombre_cuenta,
                     precio_unitario:cuenta.precio_unitario,

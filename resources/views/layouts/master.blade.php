@@ -12,6 +12,45 @@
   <link rel="stylesheet" href="{{asset('css/app.css')}}">
   <link rel="stylesheet" href="{{ asset('js/chosen.css') }}"">  
   <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
+   <style>
+    
+
+    .print{
+      display: none;
+    }
+
+    @media print
+    { 
+      
+      
+        .no-print, .no-print *
+        {
+            display: none !important;
+        }
+        
+        /* 
+        .print-left{
+          display: inline !important;
+            text-align: start !important;
+            background-color: yellow !important;
+            border: 1px solid;
+        }
+      .print-right{
+        display: inline !important;
+            text-align: right !important;
+            background-color: aqua !important;
+            border: 1px solid; width: 60%; */
+       }
+    /* }
+    @media screen {
+      .print-left{
+            display: none !important;
+        }
+      .print-right{
+            display: none !important;
+       }
+    } */
+   </style>
 </head>
 <body class=" hold-transition sidebar-mini layout-fixed">
 
@@ -318,7 +357,7 @@ Preloader
             </li>
             @endif
 
-
+            @if ((Auth::user()->categoria)=='2')
             <li class="nav-item ">
               <a href="#" class="nav-link ">
               <i class="nav-icon  fa fa-book" ></i>
@@ -340,12 +379,9 @@ Preloader
                     <p>Realizar Clasificador de cuentas</p>
                   </a>
                 </li>
-              
-
-
               </ul>
             </li>
-
+            @endif
           </ul>
         </nav>
         <!-- /.sidebar-menu -->
@@ -393,8 +429,8 @@ Preloader
       <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
-    <footer class="main-footer">
-      <strong>Copyright &copy; 2023 <a href="https://unibolguarani.edu.bo/">UNIBOL-AT</a>.</strong>
+    <footer class="main-footer no-print">
+      <strong >Copyright &copy; 2023 <a href="https://unibolguarani.edu.bo/">UNIBOL-AT</a>.</strong>
       Todos los derechos reservados
       <div class="float-right d-none d-sm-inline-block">
         <b>Version</b> 1.0

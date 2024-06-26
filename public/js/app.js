@@ -2214,7 +2214,7 @@ __webpack_require__.r(__webpack_exports__);
       fecha_pago: '12/04/2021',
       nombres_apellidos: "",
       numero_recibo: 0,
-      ci: "6304332",
+      ci: "",
       cliente_id: -1,
       id_pago: -1,
       id_pago_detalle: 1,
@@ -2388,7 +2388,10 @@ __webpack_require__.r(__webpack_exports__);
 
       if (confirmacion) {
         // axios.delete(`/ajax/ajaxRegistrarMateriasAvanzada/${materia.id}`).then(()=>{
-        this.lista_pagos.splice(index, 1); // });
+        var montoDelPago = pago.monto;
+        this.total = this.total - montoDelPago;
+        this.lista_pagos.splice(index, 1); // console.log("El monto del pago es: " + this.total);
+        // });
       }
     },
     registrarClasificadorPago: function registrarClasificadorPago() {
@@ -2482,6 +2485,7 @@ __webpack_require__.r(__webpack_exports__);
 
         if (_this10.cliente_id == undefined) {
           _this10.cliente_id = -1;
+          alert("No existe!!!!!");
         } else {
           _this10.nombres_apellidos = _this10.cliente.nombres + " " + _this10.cliente.apellidos;
           console.log(_this10.cliente);
@@ -3161,6 +3165,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ProductComp',
@@ -3179,12 +3184,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         //   descripcion:'descripcion'
         // }
       ],
-      lista_datos_obtenidos: [// {
-        //   id:0,
-        //   numero_identificador:1,                      
-        //   descripcion:'descripcion'
-        // }
-      ],
+      lista_datos_obtenidos: [],
       lista_productos_usuarios: [],
       lista_cuenta: [{
         id: 0,
@@ -3269,16 +3269,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       axios.post('/permisos/register', cuenta_asociada1).then(function (res) {
         var error = res.data.error;
         var cuenta_asociada = res.data.cuenta_asociada;
+        console.log(res.data);
 
         if (error == 0) {
-          //  alert('Se realizo el pago exitosamente se con Nº DE SERIE '+cuenta_asociada);
-          console.log(res.data);
-          _this.productCuenta.cuenta_id = cuenta_asociada.cuenta_id;
-          _this.productCuenta.numero_cuenta = cuenta_asociada.numero_cuenta;
-          _this.productCuenta.nombre_cuenta = cuenta_asociada.nombre_cuenta;
-          _this.productCuenta.tipo_cuenta = cuenta_asociada.tipo_cuenta;
-          _this.productCuenta.id = cuenta_asociada.id;
-        } else if (error == 2) {// alert('Ya Registro la Materia, No se puede registrar 2 veces en la misma gestion');
+          console.log(res.data); // this.productCuenta.cuenta_id=cuenta_asociada.cuenta_id;
+          // this.productCuenta.numero_cuenta=cuenta_asociada.numero_cuenta;
+          // this.productCuenta.nombre_cuenta=cuenta_asociada.nombre_cuenta;
+          // this.productCuenta.tipo_cuenta=cuenta_asociada.tipo_cuenta;
+          //  this.productCuenta.id=cuenta_asociada.id;
+
+          alert('Permiso agregado ');
+        } else if (error == 2) {
+          alert('Ya Registro el permiso, No se puede registrar 2 veces el mismo permiso');
+
+          _this.lista_productos_usuarios.pop(cuenta); //location.reload();
+
         }
       });
     },
@@ -3376,13 +3381,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var confirmacion = confirm("Se va a eliminar este detalle y se perderan\n el clasificador ".concat(cuenta1.nombre_cuenta));
 
       if (confirmacion) {
-        axios["delete"]("/cuenta_prod_clasificador/eliminar/".concat(cuenta1.id)).then(function (res) {
-          _this3.lista_cuenta_clasificador.splice(index, 1);
-
+        axios["delete"]("/permiso_prod/eliminar/".concat(cuenta1.numero_cuenta)).then(function (res) {
           if (res.data.error == 0) {
+            _this3.lista_productos_usuarios.splice(index, 1);
+
             _this3.clasificador.numero_clasificador = '';
             _this3.clasificador.descripcion = '';
             alert('Se elimino correctamente ');
+          } else {
+            alert('No se encontro  ');
           }
         });
       }
@@ -3539,7 +3546,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         _lista_cuentas.forEach(function (cuenta) {
           var _cuenta = {
-            //cuenta asociada           
+            //
+            // cuenta_id:cuenta.id,           
             numero_cuenta: cuenta.numero_cuenta,
             nombre_cuenta: cuenta.nombre_cuenta,
             precio_unitario: cuenta.precio_unitario,
@@ -8126,7 +8134,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* .bs-tooltip-top {\n  border-top-color: #f00 !important;\n \n  background-color: #f00;\n} */\n.tooltip-inner {\n    background-color: #0bf8b1;\n   /* box-shadow: 0px 0px 4px rgb(233, 199, 5);*/\n    opacity: 1 !important;\n    border-radius: 20%;\n    color: black;\n    font-weight: bold;\n}\n\n ", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* .bs-tooltip-top {\n  border-top-color: #f00 !important;\n \n  background-color: #f00;\n} */\n.tooltip-inner {\n    background-color: #0bf8b1;\n   /* box-shadow: 0px 0px 4px rgb(233, 199, 5);*/\n    opacity: 1 !important;\n    border-radius: 20%;\n    color: black;\n    font-weight: bold;\n}\n\n ", ""]);
 
 // exports
 
@@ -41497,7 +41505,7 @@ var render = function() {
                     attrs: {
                       type: "text",
                       id: "nombres",
-                      placeholder: "NOMBRE Y APELLIDOS",
+                      placeholder: "",
                       name: "nombres",
                       value: "",
                       readonly: ""
@@ -41719,7 +41727,7 @@ var render = function() {
               _vm.cambiar
                 ? _c("div", { staticClass: "col-md-4" }, [
                     _c("label", { attrs: { for: "concept" } }, [
-                      _vm._v("CONCEPTO DE COBRO")
+                      _vm._v("CONCEPTO DE COBRO(Opcional)")
                     ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "input-group" }, [
@@ -42486,8 +42494,7 @@ var render = function() {
                         id: "email",
                         placeholder: "",
                         name: "email",
-                        value: "",
-                        readonly: _vm.pid_clasificador != undefined
+                        value: ""
                       },
                       domProps: { value: _vm.email },
                       on: {
@@ -42595,16 +42602,6 @@ var render = function() {
                 on: { click: _vm.agregarProdCuenta }
               },
               [_vm._v("Permitir")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary",
-                attrs: { type: "button", id: "button-pagar" },
-                on: { click: function($event) {} }
-              },
-              [_vm._v("Permitir Todo")]
             )
           ])
         ]),
@@ -42627,11 +42624,7 @@ var render = function() {
                     _vm._v(" "),
                     cuenta1.tipo_cuenta == 2
                       ? _c("td", [_vm._v("No es producto")])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    cuenta1.tipo_cuenta == 1
-                      ? _c("td", [_vm._v("Es producto")])
-                      : _vm._e(),
+                      : _c("td", [_vm._v("Es producto")]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(cuenta1.precio_unitario))]),
                     _vm._v(" "),

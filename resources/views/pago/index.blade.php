@@ -2,7 +2,14 @@
 
 @extends('layouts.master')
 @section('contenido')
-
+@if(session('mensaje'))
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      {{ session('mensaje') }}<i class="em em-face_palm" aria-role="presentation" aria-label="FACE PALM"></i>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+@endif
 <!-- @if(Session::has('mensaje'))
 <div class="alert alert-success alert-dismissible" role="alert">
     {{ Session :: get('mensaje')}}
@@ -25,7 +32,19 @@
 </div>
 
 @endif -->
-
+<form action="{{route('pago.index')}}">
+<div class="input-group">
+  <div class="form-outline" data-mdb-input-init>
+     <label class="form-label" for="form1">BUSCAR</label>
+     <input type="search"  placeholder="CI o SERIE" name="busq" id="form1" class="form-control" />
+   
+  </div>
+  <button type="submit" class="btn btn-primary" data-mdb-ripple-init>
+    <i class="fas fa-search"></i>
+  </button>
+</div>
+</form>
+<BR>
 <div class="modal fade" tabindex="-1" role="dialog"  id="introduccion_guia">
   <div class="modal-dialog" role="document">
     <div class="modal-content" ">
@@ -71,8 +90,13 @@
                     <th>Estado de pago</th>                    
                     <th>Opciones</th>
                     </thead>
+ 
+
+
                     @foreach($lpagos as $pago)
                     <tr>
+                    @if ($pago->categoria==1 and (Auth::user()->categoria)!='2')
+                   
                         <td>{{$pago->getNumeroSerieStr()}}</td>                        
                         <td>{{$pago->cliente->ci." ".$pago->cliente->ci_expedido}}</td>                        
                         <td>{{$pago->cliente->nombres." ".$pago->cliente->apellidos}}</td>                        
@@ -94,7 +118,34 @@
                             <button id="anular" class="btn btn-dark" style="background-color: darkgray;" disabled="true" onclick="mostrar_dialog(event,{{$pago->id}})" >Anular</button>  
                         @endif   
                       </tr>
-                  
+
+                      @else
+                      @if ($pago->categoria==2 and (Auth::user()->categoria)=='2')
+                   
+                   <td>{{$pago->getNumeroSerieStr()}}</td>                        
+                   <td>{{$pago->cliente->ci." ".$pago->cliente->ci_expedido}}</td>                        
+                   <td>{{$pago->cliente->nombres." ".$pago->cliente->apellidos}}</td>                        
+                   <td>{{$pago->getFechaPagoStr()}}</td>                              
+                   <td>{{$pago->total}}</td>     
+                   <td>
+                     @if($pago->estado_pago == 'Anulado')
+                     <del>
+                     {{$pago->estado_pago}}</del>
+                     @elseuy 0
+                     {{$pago->estado_pago}}
+                     @endif
+                   </td>                
+                   <td>
+                   <a href="{{route('pago.show',$pago->id)}}"><button class="btn btn-primary">Ver</button></a>       
+                   @if($pago->estado_pago!='Anulado')               
+                       <button id="anular" class="btn btn-danger" onclick="mostrar_dialog(event,{{$pago->id}})" >Anular</button>  
+                       @else
+                       <button id="anular" class="btn btn-dark" style="background-color: darkgray;" disabled="true" onclick="mostrar_dialog(event,{{$pago->id}})" >Anular</button>  
+                   @endif   
+                  </tr>
+                   @endif 
+
+                  @endif 
                     @endforeach
                 </table>
             </div>

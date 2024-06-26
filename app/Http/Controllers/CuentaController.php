@@ -40,12 +40,25 @@ class CuentaController extends Controller
         $cuenta=new Cuenta();      
         $numero_cuenta=$request->get('numero_cuenta');
         $nombre_cuenta=$request->get('nombre_cuenta');
-        $descripcion=$request->get('descripcion');        
-        $precio_unitario=$request->get('precio_unitario');        
+       
+        if($request->get('descripcion')==null){
+        $descripcion="";
+        }else{
+           $descripcion=$request->get('descripcion');
+        }
+        if($request->get('precio_unitario')==null){
+        $precio_unitario=0;
+        }else{
+            $precio_unitario=$request->get('precio_unitario');
+        }
         $rubro_id=$request->get('rubro_id');  
         $unidad_id=$request->get('unidad_id');    
         $tipo_cuenta=$request->get('tipo_cuenta');    
-        $stock=$request->get('stock');      
+        if($request->get('stock')==null){
+            $stock=0;
+            }else{
+                $stock=$request->get('stock'); 
+            }     
         $unidad=$request->get('unidad');          
         $cuenta->numero_cuenta=$numero_cuenta;
         $cuenta->nombre_cuenta=$nombre_cuenta;

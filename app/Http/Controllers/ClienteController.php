@@ -26,12 +26,16 @@ class ClienteController extends Controller
         $nombres=$request->get('nombres');
         $apellidos=$request->get('apellidos');
         $ci=$request->get('ci');        
-        $ci_expedido=$request->get('ci_expedido');        
-        
+        if($request->get('ci_expedido')!=null){
+            $ci_expedido=$request->get('ci_expedido');  
+        }else{
+            $ci_expedido="";
+        }
         $cliente->nombres=strtoupper($nombres);
         $cliente->apellidos=strtoupper($apellidos);
         $cliente->ci=$ci;
         $cliente->ci_expedido=$ci_expedido;
+        dd($cliente);
         $cliente_aux=Cliente::where('ci','=',$ci)->first();
         if($cliente_aux==null){
             $cliente->save();        
@@ -78,9 +82,13 @@ class ClienteController extends Controller
         $cliente=new Cliente();      
         $nombres=$request->get('nombres');
         $apellidos=$request->get('apellidos');        
-        $ci=$request->get('ci');                
-        $ci_expedido=$request->get('ci_expedido');                
-
+        $ci=$request->get('ci');    
+        if($request->get('ci_expedido')!=null){
+            $ci_expedido=$request->get('ci_expedido');  
+        }else{
+            $ci_expedido="";
+        }
+        
         $cliente->nombres=strtoupper($nombres);
         $cliente->apellidos=strtoupper($apellidos);
         $cliente->ci=$ci;

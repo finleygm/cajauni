@@ -17,6 +17,7 @@
                     <thead>
                     <th>Numero de Cuenta del Producto</th>
                     <th>Nombre del Producto</th>
+                    <th>Rubro</th>
                     <th style="text-align: center;">Unidad del Producto</th>  
                     <th style="text-align: center;">Precio del Producto</th> 
                     <th style="text-align: center;">Tipo de Clasificacion del Producto</th>    
@@ -27,6 +28,7 @@
                     <tr>
                         <td>{{$cuenta->numero_cuenta}}</td>
                         <td>{{$cuenta->nombre_cuenta}}</td>
+                        <td>{{$cuenta->rubro->numero_identificador}}</td>
                         <td style="text-align: center;">{{$cuenta->unidad}}</td>           
                         <td  style="text-align: center;" >{{$cuenta->precio_unitario}}</td>
                         @if (($cuenta->tipo_cuenta)==1)                    

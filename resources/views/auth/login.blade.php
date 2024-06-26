@@ -1,13 +1,20 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<BR></BR><br><BR></BR><br>
+<h1 style="color: aliceblue; font-size: 60px; font-family: 'Forte'; text-shadow:4px 4px 4px #D8DB00;"> 
+<Center>SISTEMA DE TESORERÍA-COMERCIALIZACIÓN </Center> 
+</h1>
+</BR><br>
+<div class="container"  >
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-              <div class="card-header"><center><H1><B>{{ __('Bienvenid@') }}</B></H1></center></div> 
+        <div class="col-md-6">
+            <div class="card" style="background-color: #CC86692D;">
+              <div class="card-header transparent">
+                <center><H1 style="color: black; font-family: 'Bauhaus 93'; text-shadow:6px 6px 6px #ff0000; "><B>{{ __('INICIAR SESION') }}</B></H1></center>
+              </div> 
 
-                <div class="card-body">
+                <div class="card-body" style="background-color: rgba(255, 255, 255, 1) !important; ">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 

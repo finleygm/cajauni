@@ -63,14 +63,18 @@
             }
         </style>
     </head>
-    <body>
+    <body style="height: 100vh; margin: auto;  background-image: url('caja2.jfif'); background-repeat: no-repeat; background-size: 70% 100%; 
+    background-position: top;
+    
+    
+    " >
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
                     @auth
                         <a href="{{ url('/home') }}">Inicio</a>
                     @else
-                        <a href="{{ route('login') }}">Iniciar session</a>
+                        <a href="{{ route('login') }}" style="color: blue; font-size: 30px; font-family: 'Algerian'; text-shadow:4px 4px 4px #D5D5E2;">Iniciar session</a>
 
                     <!--   @if (Route::has('register'))
                             <a href="{{ route('register') }}">Register</a>
@@ -78,13 +82,12 @@
                     @endauth
                 </div>
             @endif
-
-            <div class="content">
-                <div class="title m-b-md">
+           <div class="content" style="width: 18rem; text-align: start;">
+                <div class="title mb-mb">
                     CAJA
                 </div>
                
-            </div>
+            </div> 
         </div>
     </body>
 </html>

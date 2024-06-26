@@ -37,11 +37,11 @@
 
           <div class="form-group">
             <label for="iprecio_unitario">Precio Unitario</label>
-            <input type="text" class="form-control" id="iprecio_unitario" required placeholder="Indique el precio del producto" name="precio_unitario" value="{{old('precio_unitario')}}">
+            <input type="text" class="form-control" id="iprecio_unitario" placeholder="Indique el precio del producto" name="precio_unitario" value="{{old('precio_unitario')}}">
           </div>
           <div class="form-group">
             <label for="idescripcion">Descripción</label>
-            <input type="text" class="form-control" id="idescripcion" required placeholder="Descrpcion del producto {opcional}" name="descripcion" value="{{old('descripcion')}}">
+            <input type="text" class="form-control" id="idescripcion"  placeholder="Descrpcion del producto {opcional}" name="descripcion" value="{{old('descripcion')}}">
           </div>
 
           <div class="form-group">
@@ -75,7 +75,7 @@
 
           <div class="form-group">
             <label for="idescripcion">Stock</label>
-            <input type="text" class="form-control" required id="stock" placeholder="Stock" name="stock" value="{{old('stock')}}">
+            <input type="text" class="form-control"  id="stock" placeholder="Stock" name="stock" value="{{old('stock')}}">
           </div>
 
 

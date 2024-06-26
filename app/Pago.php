@@ -1,7 +1,7 @@
 <?php
 
 namespace App;
-
+date_default_timezone_set('America/La_Paz');
 use Illuminate\Database\Eloquent\Model;
 class Pago extends Model
 {
@@ -20,7 +20,9 @@ class Pago extends Model
         'categoria',
         'nro_recibo',
         'clasificador_pago_id',
-        'estado_pago'
+        'estado_pago',
+        'justificacion',
+        'fecha_anulacion'
     ];    
     public function detalle_pago()
     {        
@@ -34,7 +36,8 @@ class Pago extends Model
 
     public function getFechaPagoStr(){
         if($this->fecha_pago!=null)
-            return \DateTime::createFromFormat('Y-m-d',$this->fecha_pago)->format('d/m/Y');
+        
+            return \DateTime::createFromFormat('Y-m-d H:i:s',$this->fecha_pago)->format('d/m/Y H:i:s');
         else 
             return "";
     }

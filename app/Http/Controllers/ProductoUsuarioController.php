@@ -7,6 +7,7 @@ use App\CuentaClasificador;
 use App\CuentaProdClasificador;
 use App\ProductoUsuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use SebastianBergmann\Environment\Console;
 
@@ -32,7 +33,31 @@ class ProductoUsuarioController extends Controller
 
     public function delete($id)
     {
-        //dd($id);
+       $numeroEntero = intval($id);
+      $prodUs =Cuenta::where('numero_cuenta',$numeroEntero)->orderBy('id','desc')->first();
+   //   dd($prodUs->id);
+   $user_id = Auth::id();
+    // dd($user_id);
+      $pagocat=ProductoUsuario::where('cuenta_id',$prodUs->id )->where('user_id', $user_id)->first();
+
+         //   $prodUs = ProductoUsuario::find($numeroEntero);
+         //   $buscarIdClasificador = CuentaProdClasificador::where('cuenta_clasificador_id',$cuenta_clasificadorD->cuenta_clasificador_id)->get();
+          //  dd($buscarIdClasificador);
+        
+            if($pagocat->id!=""){ // dd($pagocat->id);
+            $pagocat->delete();
+            $success = true;
+           // DB::rollback();      
+           $respuesta=(object)[];
+           $respuesta->error=0;
+          return json_encode($respuesta);
+          }else{
+            $respuesta=(object)[];
+            $respuesta->error=1;
+            $respuesta->mensaje='Error al borrar';
+            return json_encode($respuesta);
+          }
+         //   
      //   $cuenta_clasificadorD = ProductoUsuarioController::find($id);
 //$buscarIdClasificador = ProductoUsuarioController::where('cuenta_clasificador_id',$cuenta_clasificadorD->cuenta_clasificador_id)->get();
       //  dd($buscarIdClasificador);
@@ -79,20 +104,31 @@ class ProductoUsuarioController extends Controller
         //dd($productUser);
        // dd($cuenta);
         $tproductoUser=new ProductoUsuario();
-        $tproductoUser->cuenta_id=$cuenta->id;
-        $tproductoUser->user_id=$productUser->id;
-        $tproductoUser->save();
-     //   dd($cuentaRe);
-        $cuenta_asociada=(object)[];
-        $cuenta_asociada->error=0;
-        $cuenta_asociada->cuenta_id=$cuenta->id;
-        $cuenta_asociada->numero_cuenta=$cuenta->numero_cuenta;
-        $cuenta_asociada->nombre_cuenta=$cuenta->nombre_cuenta;
-        $cuenta_asociada->precio_unitario=$cuenta->precio_unitario;
-        $cuenta_asociada->tipo_cuenta=$cuenta->tipo_cuenta;
-        $cuenta_asociada->id=$tproductoUser->id;
-        // dd($cuenta_asociada);
-        return json_encode($cuenta_asociada) ;
+        $pr=ProductoUsuario::where('cuenta_id',$cuenta->id )->where('user_id',$productUser->id)->first();
+        
+//dd($pr);
+        if($pr!=""){
+         $cuenta_asociada=(object)[]; 
+         $cuenta_asociada->error=2;
+          return json_encode($cuenta_asociada) ;
+        }else{
+          $tproductoUser->cuenta_id=$cuenta->id;
+          $tproductoUser->user_id=$productUser->id;
+          $tproductoUser->save();
+       //   dd($cuentaRe);
+          $cuenta_asociada=(object)[];
+          $cuenta_asociada->error=0;
+          $cuenta_asociada->cuenta_id=$cuenta->id;
+          $cuenta_asociada->numero_cuenta=$cuenta->numero_cuenta;
+          $cuenta_asociada->nombre_cuenta=$cuenta->nombre_cuenta;
+          $cuenta_asociada->precio_unitario=$cuenta->precio_unitario;
+          $cuenta_asociada->tipo_cuenta=$cuenta->tipo_cuenta;
+          $cuenta_asociada->id=$tproductoUser->id;
+          // dd($cuenta_asociada);
+          return json_encode($cuenta_asociada) ;
+        }
+
+
     }
  
     public function cargaProdUser($user_id){

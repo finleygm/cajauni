@@ -31,7 +31,7 @@ class CuentaProdClasificadorController extends Controller
 
     public function delete($id)
     {
-        //dd($id);
+        dd($id);
         $cuenta_clasificadorD = CuentaProdClasificador::find($id);
         $buscarIdClasificador = CuentaProdClasificador::where('cuenta_clasificador_id',$cuenta_clasificadorD->cuenta_clasificador_id)->get();
       //  dd($buscarIdClasificador);
